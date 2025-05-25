@@ -21,3 +21,8 @@ Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerun
 
 1. Repository klonen oder herunterladen  
 2. Abhängigkeiten installieren
+
+
+## Hinweise zur Spracherkennung
+
+Die Sprachsteuerung verwendet die Google Web Speech API, die online ist und evt.  Nutzungslimits hat. Für umfangreiche oder kommerzielle Nutzung sollte eine eigene API-Lösung erwogen werden.
