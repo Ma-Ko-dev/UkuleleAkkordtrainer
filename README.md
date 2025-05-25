@@ -10,6 +10,9 @@ Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerun
 - Sprachsteuerung zur Bedienung („weiter“, „stopp“)  
 - Vermeidung von Wiederholungen bei den angezeigten Akkorden  
 
+## Vorschau
+![Vorschau des Ukulele Akkordtrainers](preview.png)
+
 ## Voraussetzungen
 
 - Python 3.x  
