@@ -13,7 +13,7 @@ Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerun
 ## Voraussetzungen
 
 - Python 3.x  
-- Tkinter (für GUI, normalerweise vorinstalliert)  
+- Tkinter 
 - SpeechRecognition
 - PyAudio
 
