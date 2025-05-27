@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -22,28 +22,25 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-
+          
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-tk
+          python -m pip install --upgrade pip
           pip install pyinstaller
 
       - name: Build .exe file
         run: pyinstaller main.py --onefile
-
+        
       - name: Copy akkorde.json next to .exe
-        run: cp akkorde.json dist/
-
+        run: copy akkorde.json dist\
+        
       - name: Check dist folder
-        run: ls -la dist/
+        run: dir dist\
 
       - name: Create zip archive
         run: |
-          cd dist
+          powershell Compress-Archive -Path dist\main.exe,dist\akkorde.json -DestinationPath dist\UkuleleAkkordtrainer.zip
           ls -la  # zur Sicherheit anzeigen
-          zip UkuleleAkkordtrainer.zip main akkorde.json
-          cd ..
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
