@@ -43,11 +43,17 @@ jobs:
         run: |
           powershell Compress-Archive -Path dist\main.exe,dist\akkorde.json -DestinationPath dist\UkuleleAkkordtrainer.zip
 
+      - name: Extract version from main.py
+        id: get_version
+        run: |
+          VERSION=$(grep -Po '(?<=__version__ = ")[^"]*' main.py)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v1.0.${{ github.run_number }}
-          name: Release v1.0.${{ github.run_number }}
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: Release v${{ steps.get_version.outputs.version }}
           body: |
             Automatisch erstelltes Release.
 
