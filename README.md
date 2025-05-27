@@ -23,8 +23,13 @@ Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerun
 
 ## Installation
 
+Aktuellsten Release herunterladen, entpacken und starten.
+
+-- oder --
+
 1. Repository klonen oder herunterladen  
 2. Abhängigkeiten installieren
+3. Ausführen
 
 
 ## Hinweise zur Spracherkennung
