@@ -31,9 +31,13 @@ jobs:
       - name: Copy akkorde.json next to .exe
         run: cp akkorde.json dist/
 
+      - name: Check dist folder
+        run: ls -la dist/
+
       - name: Create zip archive
         run: |
           cd dist
+          ls -la  # zur Sicherheit anzeigen
           zip UkuleleAkkordtrainer.zip main.exe akkorde.json
           cd ..
 
