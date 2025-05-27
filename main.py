@@ -95,6 +95,12 @@ class AkkordTrainerGUI:
         if len(VERGANGENE_AKKORDE) > MAX_HISTORY:
             VERGANGENE_AKKORDE.pop(0)
 
+        try:
+            with open("letzte_akkorde.txt", "w", encoding="utf-8") as f:
+                f.write(" - ".join(VERGANGENE_AKKORDE))
+        except IOError as e:
+            print("Fehler beim schreiben der Datei:", e)
+
         self.label.config(text=akkord["name"])
         self.griffbrett.zeichne_akkord(akkord["griff"])
 
