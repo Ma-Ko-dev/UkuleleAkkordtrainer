@@ -23,7 +23,7 @@ Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerun
 
 ## Installation
 
-Aktuellsten Release herunterladen, entpacken und starten.
+Aktuellsten [Release](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/releases/latest) herunterladen, entpacken und starten.
 
 -- oder --
 
