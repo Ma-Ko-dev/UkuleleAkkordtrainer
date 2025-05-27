@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -38,13 +38,18 @@ jobs:
         run: |
           cd dist
           ls -la  # zur Sicherheit anzeigen
-          zip UkuleleAkkordtrainer.zip main.exe akkorde.json
+          zip UkuleleAkkordtrainer.zip main akkorde.json
           cd ..
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v1.0.${{ github.run_number }}
+          name: Release v1.0.${{ github.run_number }}
+          body: |
+            Automatisch erstelltes Release.
+
+            **Hinweis:** Diese Version laeuft aktuell nur unter Windows.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
