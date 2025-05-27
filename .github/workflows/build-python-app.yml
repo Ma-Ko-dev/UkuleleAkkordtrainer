@@ -40,7 +40,6 @@ jobs:
       - name: Create zip archive
         run: |
           powershell Compress-Archive -Path dist\main.exe,dist\akkorde.json -DestinationPath dist\UkuleleAkkordtrainer.zip
-          ls -la  # zur Sicherheit anzeigen
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
