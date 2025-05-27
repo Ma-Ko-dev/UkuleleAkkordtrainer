@@ -1,3 +1,5 @@
+![Build Status](https://github.com/<user>/<repo>/actions/workflows/<workflow-file>.yml/badge.svg)
+
 # Ukulele Akkordtrainer
 
 Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerung in Python.
