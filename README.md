@@ -1,4 +1,10 @@
 ![Build Status](https://github.com/<user>/<repo>/actions/workflows/<workflow-file>.yml/badge.svg)
+![GitHub release](https://img.shields.io/github/v/release/<user>/<repo>)
+![GitHub release downloads](https://img.shields.io/github/downloads/<user>/<repo>/total)
+![License](https://img.shields.io/github/license/<user>/<repo>)
+![Python](https://img.shields.io/badge/python-3.x-blue)
+![Platform](https://img.shields.io/badge/platform-Windows-blue)
+
 
 # Ukulele Akkordtrainer
 
