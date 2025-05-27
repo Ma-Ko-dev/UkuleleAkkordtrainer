@@ -6,6 +6,8 @@ import os
 import speech_recognition as sr
 import threading
 
+__VERSION__ = "1.0.1"
+
 AKKORD_DATEI = "akkorde.json"
 VERGANGENE_AKKORDE = []
 MAX_HISTORY = 4
