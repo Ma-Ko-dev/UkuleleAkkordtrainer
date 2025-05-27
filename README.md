@@ -1,4 +1,3 @@
-![Build Status](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/actions/workflows/automatic_build.yml/badge.svg)
 ![GitHub Release](https://img.shields.io/github/v/release/Ma-Ko-dev/UkuleleAkkordtrainer?style=flat-square)
 ![GitHub issues](https://img.shields.io/github/issues/Ma-Ko-dev/UkuleleAkkordtrainer?style=flat-square)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Ma-Ko-dev/UkuleleAkkordtrainer?style=flat-square)
