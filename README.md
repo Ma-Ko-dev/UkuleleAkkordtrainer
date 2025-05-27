@@ -8,7 +8,8 @@ Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerun
 - Visualisierung von Akkorden (bis zu 12 Bünde, 4 Saiten)  
 - Anzeige der Akkordnamen  
 - Sprachsteuerung zur Bedienung („weiter“, „stopp“)  
-- Vermeidung von Wiederholungen bei den angezeigten Akkorden  
+- Vermeidung von Wiederholungen bei den angezeigten Akkorden
+- Verlauf/Historie der letzten 4 Akkorde anzeigen
 
 ## Vorschau
 ![Vorschau des Ukulele Akkordtrainers](preview.png)
