@@ -31,11 +31,6 @@ jobs:
             }
           }
 
-       
-      - name: Show extracted version
-        run: | 
-          echo "Extracted version is: ${{ steps.get_version.outputs.version }}"
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
@@ -52,10 +47,7 @@ jobs:
         
       - name: Copy akkorde.json next to .exe
         run: copy akkorde.json dist\
-        
-      - name: Check dist folder
-        run: dir dist\
-
+    
       - name: Create zip archive
         run: |
           powershell Compress-Archive -Path dist\main.exe,dist\akkorde.json -DestinationPath dist\UkuleleAkkordtrainer.zip
