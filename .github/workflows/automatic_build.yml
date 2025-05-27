@@ -71,11 +71,12 @@ jobs:
             **Hinweis:** Diese Version laeuft aktuell nur unter Windows.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+          
       - name: Upload zip to Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: v1.0.${{ github.run_number }}
+          tag_name: v${{ steps.get_version.outputs.version }}
           files: dist/UkuleleAkkordtrainer.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
