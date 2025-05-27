@@ -30,7 +30,11 @@ jobs:
               Write-Output "version=$($matches[1])" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
             }
           }
+
        
+      - name: Show extracted version
+        run: | 
+          echo "Extracted version is: ${{ steps.get_version.outputs.version }}"
 
       - name: Setup Python
         uses: actions/setup-python@v4
