@@ -9,6 +9,8 @@ on:
       - '*.md'
       - '.github/**'
       - '.gitignore'
+      - '*.png'
+      - '*.jpg'
   workflow_dispatch:
 
 jobs:
