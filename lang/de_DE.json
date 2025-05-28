@@ -37,5 +37,5 @@
     "error_write_file": "Fehler beim schreiben der Datei:",
     "error_api": "API-Fehler",
     "error_reloading_chords": "Fehler beim Akkorde neu laden",
-    "error_missing_chords_file": "akkorde.json wurde nicht gefunden."
+    "error_missing_chords_file": "chords.json wurde nicht gefunden."
 }
