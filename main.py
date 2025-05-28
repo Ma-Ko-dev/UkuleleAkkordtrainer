@@ -10,7 +10,7 @@ import locale
 
 __VERSION__ = "1.0.2"
 
-CHORD_FILE = "akkorde.json"
+CHORD_FILE = "chords.json"
 PAST_CHORDS = []
 MAX_HISTORY = 4
 LANG_CODE = ""
@@ -108,7 +108,7 @@ class ChordTrainerGUI:
             print(lang["error_write_file"], e)
 
         self.label.config(text=chord["name"])
-        self.fretboard.draw_chord(chord["griff"])
+        self.fretboard.draw_chord(chord["fingering"])
 
     def speech_recognition(self, lang):
         recognizer = sr.Recognizer()
