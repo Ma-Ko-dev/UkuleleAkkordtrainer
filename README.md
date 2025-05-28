@@ -9,40 +9,41 @@
 ![Platform](https://img.shields.io/badge/platform-Windows-blue)
 
 
-# Ukulele Akkordtrainer
+# Ukulele Chord Trainer
 
-Ein einfacher Ukulele-Akkordtrainer mit grafischem Griffbrett und Sprachsteuerung in Python.
+A simple ukulele chord trainer with graphical fretboard and voice control, written in Python.
 
-## Funktionen
+## Features
 
-- Darstellung eines vollständigen Ukulele-Griffbretts mit Saiten- und Bundmarkierungen  
-- Visualisierung von Akkorden (bis zu 12 Bünde, 4 Saiten)  
-- Anzeige der Akkordnamen  
-- Sprachsteuerung zur Bedienung („weiter“, „stopp“)  
-- Vermeidung von Wiederholungen bei den angezeigten Akkorden
-- Verlauf/Historie der letzten 4 Akkorde anzeigen
+- Full ukulele fretboard display with string and fret markers
+- Chord visualization (up to 12 frets, 4 strings)
+- Display of chord names
+- Voice control for navigation (“next”, “stop”)
+- Avoids repeating previously shown chords
+- Shows a history of the last 4 chords
+- Multilanguage support (currently: German, English, Italian)
+- Chord list can be reloaded at any time
 
-## Vorschau
-![Vorschau des Ukulele Akkordtrainers](preview.png)
+## Preview
+![Preview of the Ukulele Chord Trainer](preview.png)
 
-## Voraussetzungen
+## Requirements
 
 - Python 3.x  
-- Tkinter 
-- SpeechRecognition
-- PyAudio
+- Tkinter  
+- SpeechRecognition  
+- PyAudio  
 
 ## Installation
 
-Aktuellsten [Release](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/releases/latest) herunterladen, entpacken und starten.
+Download the latest [release](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/releases/latest), extract it, and run the program.
 
--- oder --
+-- or --
 
-1. Repository klonen oder herunterladen  
-2. Abhängigkeiten installieren
-3. Ausführen
+1. Clone or download the repository  
+2. Install dependencies  
+3. Run the app  
 
+## Notes on voice recognition
 
-## Hinweise zur Spracherkennung
-
-Die Sprachsteuerung verwendet die Google Web Speech API, die online ist und evt.  Nutzungslimits hat. Für umfangreiche oder kommerzielle Nutzung sollte eine eigene API-Lösung erwogen werden.
+Voice control uses the Google Web Speech API, which requires an internet connection and may be subject to usage limits. For extensive or commercial use, consider using your own API solution.
