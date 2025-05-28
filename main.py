@@ -13,6 +13,7 @@ __VERSION__ = "1.0.2"
 CHORD_FILE = "akkorde.json"
 PAST_CHORDS = []
 MAX_HISTORY = 4
+LANG_CODE = ""
 
 class Fretboard(Canvas):
     def __init__(self, master, width=800, height=200, **kwargs):
@@ -77,6 +78,7 @@ class ChordTrainerGUI:
         self.button = tk.Button(master, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
         self.button.pack(pady=10)
         self.running = True
+        self.lang_s = "en_US"
 
         self.next_chord(lang)
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
@@ -116,15 +118,12 @@ class ChordTrainerGUI:
                 try:
                     print(lang["speech_info"])
                     audio = recognizer.listen(source, timeout=5)
-                    audio_command = recognizer.recognize_google(audio, language="de-DE").lower()
+                    audio_command = recognizer.recognize_google(audio, language=LANG_CODE).lower()
                     print(f"{lang['speech_recognized'].format(command=audio_command)}")
                     
-                    # spracherkennung ist noch nicht multilingual
-                    # speech recognition is not multilingual yet
-                    if "weiter" in audio_command:
-                        self.next_chord()
-                    elif "stop" in audio_command:
-                        print("Beendet.")
+                    if lang["speech_next"] in audio_command:
+                        self.next_chord(lang)
+                    elif lang["speech_stop"] in audio_command:
                         self.running = False
                         self.master.quit()
                 except sr.WaitTimeoutError:
@@ -152,6 +151,13 @@ def load_language(lang_code):
         # load failsafe
         return load_language("en_US")
 
+def get_system_language():
+    locale.setlocale(locale.LC_ALL, '') 
+    lang, _ = locale.getlocale()
+    if not lang:
+        lang = "en_US" #fallback
+    return lang
+
 def load_chords(file_path, lang):
     if not os.path.exists(file_path):
         print(f"{lang['error_missing_chords_file']}")
@@ -176,16 +182,11 @@ def show_tutorial(lang):
 def open_github():
     webbrowser.open("https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer")
 
-def get_system_language():
-    locale.setlocale(locale.LC_ALL, '') 
-    lang, _ = locale.getlocale()
-    if not lang:
-        lang = "en_US" #fallback
-    return lang
-
 def main():
     # load language
+    global LANG_CODE
     lang = load_language(get_system_language())
+    LANG_CODE = get_system_language()
 
     chords = load_chords(CHORD_FILE, lang)
 

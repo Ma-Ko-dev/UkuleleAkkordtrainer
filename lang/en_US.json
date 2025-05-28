@@ -31,6 +31,8 @@
 
     "speech_info": "Say 'next' or 'stop'...",
     "speech_recognized": "Recognized: {command}",
+    "speech_next": "next",
+    "speech_stop": "stop",
 
     "error_write_file": "Error writing file:",
     "error_api": "API error",

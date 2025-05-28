@@ -31,6 +31,8 @@
 
     "speech_info": "Sage 'weiter' oder 'stop'...",
     "speech_recognized": "Erkannt: {command}",
+    "speech_next": "weiter",
+    "speech_stop": "stopp",
 
     "error_write_file": "Fehler beim schreiben der Datei:",
     "error_api": "API-Fehler",
