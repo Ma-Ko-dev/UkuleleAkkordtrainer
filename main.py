@@ -1,10 +1,11 @@
 import tkinter as tk
-from tkinter import Canvas
+from tkinter import Canvas, messagebox
 import random
 import json
 import os
 import speech_recognition as sr
 import threading
+import webbrowser
 
 __VERSION__ = "1.0.1"
 
@@ -130,18 +131,67 @@ class AkkordTrainerGUI:
                     print("API-Fehler")
                     break
 
+    def akkorde_neu_laden(self):
+        neue_akkorde = lade_akkorde(AKKORD_DATEI)
+        if neue_akkorde:
+            self.akkorde = neue_akkorde
+        else:
+            print("Fehler beim Akkorde neu laden")                
+
 def lade_akkorde(dateipfad):
     if not os.path.exists(dateipfad):
         print("Fehlende akkorde.json Datei!")
         return []
     with open(dateipfad, "r", encoding="utf-8") as f:
         return json.load(f)
+    
+def zeige_info():
+    info_text = (
+        "Ukulele Akkordtrainer\n"
+        f"Version: {__VERSION__}\n\n"
+        "Author: Mathias K.\n\n"
+        "Beschreibung:\n"
+        "Dieses Programm zeigt zufällige Ukulele-Akkorde an und unterstützt Sprachsteuerung.\n"
+        "Es richtet sich an Einsteiger und Fortgeschrittene.\n"
+    )
+    messagebox.showinfo("Info", info_text)
+
+def zeige_kurzanleitung():
+    anleitung_text = (
+        "Ukulele Akkordtrainer\n\n"
+        "• Klicke auf 'Nächster Akkord', um einen neuen Akkord zu sehen.\n"
+        "• Oder sage 'weiter', um per Sprache zum nächsten Akkord zu wechseln.\n"
+        "• Sage 'stopp', um das Programm zu beenden.\n"
+        "• Akkorde werden zufällig angezeigt – Wiederholungen werden vermieden.\n"
+        "• Alle gespielten Akkorde werden in 'letzte_akkorde.txt' gespeichert."
+    )
+    messagebox.showinfo("Kurzanleitung", anleitung_text)
+
+def oeffne_github():
+    webbrowser.open("https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer")
 
 def main():
     akkorde = lade_akkorde(AKKORD_DATEI)
     root = tk.Tk()
     root.title("Ukulele Akkordtrainer")
+
     app = AkkordTrainerGUI(root, akkorde)
+
+    # Menüleiste etc.
+    menubar = tk.Menu(root)
+
+    filemenu = tk.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Datei", menu=filemenu)
+    filemenu.add_command(label="Akkorde neu laden", command=app.akkorde_neu_laden)
+    filemenu.add_command(label="Beenden", command=root.quit)
+
+    helpmenu = tk.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Hilfe", menu=helpmenu)
+    helpmenu.add_command(label="Info", command=zeige_info)
+    helpmenu.add_command(label="Kurzanleitung", command=zeige_kurzanleitung)
+    helpmenu.add_command(label="Github öffnen", command=oeffne_github)
+
+    root.config(menu=menubar)
     root.mainloop()
 
 if __name__ == "__main__":
