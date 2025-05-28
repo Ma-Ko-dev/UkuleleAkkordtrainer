@@ -62,9 +62,9 @@ jobs:
           name: Release v${{ steps.get_version.outputs.version }}
           generate_release_notes: "true"
           body: |
-            Automatisch erstelltes Release.
+            Automatically generated release.
 
-            **Hinweis:** Diese Version laeuft aktuell nur unter Windows.
+            *Note:** This version currently only runs on Windows.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
