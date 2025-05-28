@@ -7,7 +7,7 @@ import speech_recognition as sr
 import threading
 import webbrowser
 
-__VERSION__ = "1.0.1"
+__VERSION__ = "1.0.2"
 
 AKKORD_DATEI = "akkorde.json"
 VERGANGENE_AKKORDE = []
