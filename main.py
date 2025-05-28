@@ -84,7 +84,6 @@ class ChordTrainerGUI:
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
 
     def next_chord(self, lang):
-        # Normalize names
         past_names = [n.strip().lower() for n in PAST_CHORDS]
 
         possible = [
@@ -103,7 +102,7 @@ class ChordTrainerGUI:
             PAST_CHORDS.pop(0)
 
         try:
-            with open("letzte_akkorde.txt", "w", encoding="utf-8") as f:
+            with open("last_chords.txt", "w", encoding="utf-8") as f:
                 f.write(" - ".join(PAST_CHORDS))
         except IOError as e:
             print(lang["error_write_file"], e)

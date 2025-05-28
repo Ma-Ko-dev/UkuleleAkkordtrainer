@@ -11,6 +11,7 @@ on:
       - '.gitignore'
       - '*.png'
       - '*.jpg'
+      - '*.txt'
   workflow_dispatch:
 
 jobs:
