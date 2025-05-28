@@ -1,0 +1,39 @@
+{
+    "title": "Ukulele Chord Trainer",
+
+    "next_chord_button": "Next Chord",
+
+    "menu_file": "File",
+    "submenu_reload_chords": "Reload Chords",
+    "submenu_exit": "Exit",
+
+    "menu_help": "Help",
+    "submenu_info": "Info",
+    "submenu_short_manual": "Short Manual",
+    "submenu_github": "Open GitHub",
+
+    "info_title": "Ukulele Chord Trainer",
+    "info_version": "Version {version}",
+    "info_author": "Author: Mathias K.",
+    "info_description_heading": "Description",
+    "info_description": "This program shows random ukulele chords and supports voice control.\nIt is aimed at beginners and advanced users.",
+
+    "short_manual_title": "Short Manual",
+    "short_manual_text": [
+        "Ukulele Chord Trainer",
+        "",
+        "• Click 'Next Chord' to see a new chord.",
+        "• Or say 'next' to move to the next chord using voice control.",
+        "• Say 'stop' to quit the program.",
+        "• Chords are shown randomly – repeats are avoided.",
+        "• All played chords are saved in 'last_chords.txt'."
+    ],
+
+    "speech_info": "Say 'next' or 'stop'...",
+    "speech_recognized": "Recognized: {command}",
+
+    "error_write_file": "Error writing file:",
+    "error_api": "API error",
+    "error_reloading_chords": "Error reloading chords",
+    "error_missing_chords_file": "chords.json not found."
+}
