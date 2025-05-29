@@ -9,7 +9,7 @@ import threading
 import webbrowser
 import locale
 
-__VERSION__ = "1.0.2"
+__VERSION__ = "1.1.0"
 
 CHORD_FILE = "chords.json"
 PAST_CHORDS = []
