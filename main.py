@@ -157,8 +157,6 @@ def set_font(lang_code):
     fonts = tkfont.families()
 
     if lang_code == "jp_JP":
-        print("Japanese system detected")
-
         preferred_fonts = ["Yu Gothic UI", "Meiryo", "MS UI Gothic"]
 
         for font_name in preferred_fonts:
@@ -176,10 +174,20 @@ def get_system_language():
     global LANG_CODE
     locale.setlocale(locale.LC_ALL, '') 
     lang, _ = locale.getlocale()
-    LANG_CODE = lang
+
+    # fallback if lang is None
     if not lang:
-        lang = "en_US" #fallback
-    return lang
+        lang = "en_US"
+
+    lang_map = {
+        "Japanese_Japan": "jp_JP",
+        "German_Germany": "de_DE",
+        "English_United States": "en_US",
+        "Italian_Italy": "it_IT"
+    }
+
+    LANG_CODE = lang_map.get(lang, lang)
+    return LANG_CODE
 
 def load_chords(file_path, lang):
     if not os.path.exists(file_path):

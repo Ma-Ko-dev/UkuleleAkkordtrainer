@@ -12,6 +12,7 @@ on:
       - '*.png'
       - '*.jpg'
       - '*.txt'
+      - 'lang/*.json'
   workflow_dispatch:
 
 jobs:
