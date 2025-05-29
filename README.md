@@ -21,7 +21,7 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Voice control for navigation (“next”, “stop”)
 - Avoids repeating previously shown chords
 - Shows a history of the last 4 chords
-- Multilanguage support (currently: German, English, Italian)
+- Multilanguage support (currently: German, English, Italian, Japanese. Default and fallback language is english)
 - Chord list can be reloaded at any time
 
 ## Preview
