@@ -66,7 +66,7 @@ jobs:
           body: |
             Automatically generated release.
 
-            *Note:** This version currently only runs on Windows.
+            **Note:** This version currently only runs on Windows.
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
