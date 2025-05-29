@@ -49,8 +49,8 @@ jobs:
       - name: Build .exe file
         run: pyinstaller main.py --onefile
         
-      - name: Copy akkorde.json next to .exe
-        run: copy akkorde.json dist\
+      - name: Copy chords.json next to .exe
+        run: copy chords.json dist\
     
       - name: Create zip archive
         run: |
