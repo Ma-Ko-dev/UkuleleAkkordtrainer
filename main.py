@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import Canvas, messagebox
+import tkinter.font as tkfont
 import random
 import json
 import os
@@ -14,6 +15,7 @@ CHORD_FILE = "chords.json"
 PAST_CHORDS = []
 MAX_HISTORY = 4
 LANG_CODE = ""
+BASE_FONT = ""
 
 class Fretboard(Canvas):
     def __init__(self, master, width=800, height=200, **kwargs):
@@ -32,7 +34,7 @@ class Fretboard(Canvas):
         # Stringnames left
         for i, name in enumerate(self.string_names):
             y = (i + 1) * self.string_spacing
-            self.create_text(12, y, text=name, font=("Arial", 16, "bold"), anchor="w", fill="#3B3B3B")
+            self.create_text(12, y, text=name, font=(BASE_FONT, 16, "bold"), anchor="w", fill="#3B3B3B")
 
         # Frets (vertical) - brown, realistic like metal rods
         for i in range(self.fret_count + 1):
@@ -61,7 +63,7 @@ class Fretboard(Canvas):
                     x = self.string_label_width + self.fret_spacing * (fret_num - 0.5)
                     y = (string_idx + 1) * self.string_spacing
                     circle = self.create_oval(x - 12, y - 12, x + 12, y + 12, fill="#8B0000") 
-                    number = self.create_text(x, y, text=str(fret), fill="white", font=("Arial", 12, "bold"))
+                    number = self.create_text(x, y, text=str(fret), fill="white", font=(BASE_FONT, 12, "bold"))
                     self.markers.extend([circle, number])
             except ValueError:
                 continue
@@ -71,7 +73,7 @@ class ChordTrainerGUI:
         self.master = master
         self.chords = chords
         self.lang = lang
-        self.label = tk.Label(master, text="", font=("Arial", 24))
+        self.label = tk.Label(master, text="", font=(BASE_FONT, 24))
         self.label.pack(pady=10)
         self.fretboard = Fretboard(master)
         self.fretboard.pack()
@@ -150,9 +152,31 @@ def load_language(lang_code):
         # load failsafe
         return load_language("en_US")
 
+def set_font(lang_code):
+    global BASE_FONT
+    fonts = tkfont.families()
+
+    if lang_code == "jp_JP":
+        print("Japanese system detected")
+
+        preferred_fonts = ["Yu Gothic UI", "Meiryo", "MS UI Gothic"]
+
+        for font_name in preferred_fonts:
+            if font_name in fonts:
+                print(f"Using font: {font_name}")
+                BASE_FONT = font_name
+                break
+        else:
+            print("⚠ No Japanese font found. Falling back to Arial.")
+            BASE_FONT = "Arial"
+    else:
+        BASE_FONT = "Arial"
+
 def get_system_language():
+    global LANG_CODE
     locale.setlocale(locale.LC_ALL, '') 
     lang, _ = locale.getlocale()
+    LANG_CODE = lang
     if not lang:
         lang = "en_US" #fallback
     return lang
@@ -182,14 +206,13 @@ def open_github():
     webbrowser.open("https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer")
 
 def main():
-    # load language
-    global LANG_CODE
+    root = tk.Tk()
+
     lang = load_language(get_system_language())
-    LANG_CODE = get_system_language()
+    set_font(LANG_CODE)
 
     chords = load_chords(CHORD_FILE, lang)
 
-    root = tk.Tk()
     root.title(f"{lang['title']}")
 
     app = ChordTrainerGUI(root, chords, lang)
