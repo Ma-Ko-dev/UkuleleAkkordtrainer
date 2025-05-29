@@ -55,7 +55,7 @@ jobs:
       - name: Create zip archive
         run: |
           Copy-Item -Recurse -Force lang dist\lang    
-          powershell Compress-Archive -Path dist\main.exe,dist\akkorde.json,dist\lang -DestinationPath dist\UkuleleAkkordtrainer.zip
+          powershell Compress-Archive -Path dist\main.exe,dist\chords.json,dist\lang -DestinationPath dist\UkuleleAkkordtrainer.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
