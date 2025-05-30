@@ -4,9 +4,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'lang/en_US.json'
   pull_request:
     branches:
       - main
+    paths:
+      - 'lang/en_US.json'
+  workflow_dispatch:
 
 jobs:
   check-translations:
