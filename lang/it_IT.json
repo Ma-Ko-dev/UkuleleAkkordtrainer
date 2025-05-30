@@ -33,5 +33,6 @@
   "error_write_file": "Errore nella scrittura del file:",
   "error_api": "Errore API",
   "error_reloading_chords": "Errore nel ricaricamento degli accordi",
-  "error_missing_chords_file": "chords.json non trovato."
+  "error_missing_chords_file": "chords.json non trovato.",
+  "test": "[MISSING] just a test"
 }
