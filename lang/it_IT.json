@@ -1,41 +1,37 @@
 {
-    "title": "Ukulele Chord Trainer",
-
-    "next_chord_button": "Prossimo Accordo",
-
-    "menu_file": "File",
-    "submenu_reload_chords": "Ricarica Accordi",
-    "submenu_exit": "Esci",
-
-    "menu_help": "Aiuto",
-    "submenu_info": "Info",
-    "submenu_short_manual": "Guida",
-    "submenu_github": "Vai a GitHub",
-
-    "info_title": "Ukulele Chord Trainer",
-    "info_version": "Versione {version}",
-    "info_author": "Autore: Mathias K.",
-    "info_description_heading": "Descrizione",
-    "info_description": "Questo programma genera accordi casuali per l'ukulele e supporta il controllo vocale.\nE' destinato ad utenti  principianti ed esperti.",
-
-    "short_manual_title": "Guida",
-    "short_manual_text": [
-        "Ukulele Chord Trainer",
-        "",
-        "• Clicca su 'Prossimo Accordo' per passare al prossimo accordo.",
-        "• Oppure pronuncia 'avanti' per passare ad un nuovo accordo usando il controllo vocale.",
-        "• Pronuncia 'Stop' per chiudere il programma.",
-        "• Gli accordi sono presentati casualmente senza ripetizioni.",
-        "• Tutti gli accordi già suonati sono salvati nel file 'last_chords.txt'."
-    ],
-
-    "speech_info": "Pronuncia 'Avanti' o 'Stop'...",
-    "speech_recognized": "Riconosciuto: {command}",
-    "speech_next": "avanti",
-    "speech_stop": "stop",
-
-    "error_write_file": "Errore nella scrittura del file:",
-    "error_api": "Errore API",
-    "error_reloading_chords": "Errore nel ricaricamento degli accordi",
-    "error_missing_chords_file": "chords.json non trovato."
+  "title": "Ukulele Chord Trainer",
+  "next_chord_button": "Prossimo Accordo",
+  "timer_button_start": "please translate",
+  "timer_button_stop": "please translate",
+  "menu_file": "File",
+  "submenu_reload_chords": "Ricarica Accordi",
+  "submenu_exit": "Esci",
+  "menu_help": "Aiuto",
+  "submenu_info": "Info",
+  "submenu_short_manual": "Guida",
+  "submenu_github": "Vai a GitHub",
+  "info_title": "Ukulele Chord Trainer",
+  "info_version": "Versione {version}",
+  "info_author": "Autore: Mathias K.",
+  "info_description_heading": "Descrizione",
+  "info_description": "Questo programma genera accordi casuali per l'ukulele e supporta il controllo vocale.\nE' destinato ad utenti  principianti ed esperti.",
+  "short_manual_title": "Guida",
+  "short_manual_text": [
+    "Ukulele Chord Trainer",
+    "",
+    "• Clicca su 'Prossimo Accordo' per passare al prossimo accordo.",
+    "• Oppure pronuncia 'avanti' per passare ad un nuovo accordo usando il controllo vocale.",
+    "• Pronuncia 'Stop' per chiudere il programma.",
+    "• Gli accordi sono presentati casualmente senza ripetizioni.",
+    "• Tutti gli accordi già suonati sono salvati nel file 'last_chords.txt'."
+  ],
+  "speech_info": "Pronuncia 'Avanti' o 'Stop'...",
+  "speech_recognized": "Riconosciuto: {command}",
+  "speech_next": "avanti",
+  "speech_stop": "stop",
+  "timer_text": "please translate",
+  "error_write_file": "Errore nella scrittura del file:",
+  "error_api": "Errore API",
+  "error_reloading_chords": "Errore nel ricaricamento degli accordi",
+  "error_missing_chords_file": "chords.json non trovato."
 }

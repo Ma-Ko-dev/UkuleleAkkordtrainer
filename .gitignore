@@ -176,3 +176,5 @@ cython_debug/
 # Custom
 letzte_akkorde.txt
 last_chords.txt
+.vscode
+check_translations.py

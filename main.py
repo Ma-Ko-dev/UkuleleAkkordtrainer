@@ -91,7 +91,7 @@ class ChordTrainerGUI:
         self.next_chord_button = tk.Button(button_frame, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
         self.next_chord_button.pack(side="left", pady=10)
 
-        self.timer_button = tk.Button(button_frame, text="Timer starten", command=self.toggle_timer)
+        self.timer_button = tk.Button(button_frame, text="Timer starten", command=lambda: self.toggle_timer(lang))
         self.timer_button.pack(side="left", pady=5)
 
         self.running = True
@@ -162,7 +162,7 @@ class ChordTrainerGUI:
         else:
             print(f"{lang['error_reloading_chords']}")
 
-    def toggle_timer(self):
+    def toggle_timer(self, lang):
         if self.timer_active:
             self.timer_active = False
             if self.timer_id:
@@ -178,8 +178,7 @@ class ChordTrainerGUI:
             self.speech_enabled = False
             self.schedule_next_timer()
 
-        # TODO Add strings to lang files
-        self.timer_button.config(text="Timer stoppen" if self.timer_active else "Timer starten")
+        self.timer_button.config(text=lang["timer_button_stop"] if self.timer_active else lang["timer_button_start"])
     
     def schedule_next_timer(self):
         if self.timer_active:
@@ -188,8 +187,8 @@ class ChordTrainerGUI:
             #self.timer_id = self.master.after(self.timer_interval, self.schedule_next_timer)
 
     def update_timer_display(self, seconds_left):
-        # TODO Add string to lang files
         self.timer_display.config(text=f"Noch {seconds_left} Sekunden bis zum nächsten Akkord")
+        self.timer_display.config(text=f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
 
     def countdown(self, seconds_left):
         if not self.timer_active:
@@ -210,10 +209,12 @@ def load_language(lang_code):
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
-        # TODO Add string in lang files
-        print(f"Speech file not found: {path}.")
-        # load failsafe
-        return load_language("en_US")
+        if lang_code != "en_US":
+            print(f"Speech file not found: {path}. Falling back to English.")
+            return load_language("en_US")
+        else:
+            print("Critical error: English language file missing.")
+            raise FileNotFoundError("English language file missing. Cannot continue.")
 
 def set_font(lang_code):
     global BASE_FONT
@@ -228,9 +229,7 @@ def set_font(lang_code):
                 BASE_FONT = font_name
                 break
         else:
-            # TODO Add string in lang files
-            print("⚠ No Japanese font found. Falling back to Arial.")
-            BASE_FONT = "Arial"
+            raise RuntimeError("No suitable Japanese font found. Please install a Japanese font.")
     else:
         BASE_FONT = "Arial"
 

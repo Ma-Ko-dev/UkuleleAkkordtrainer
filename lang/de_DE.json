@@ -1,23 +1,20 @@
 {
     "title": "Ukulele Akkordtrainer",
-
     "next_chord_button": "Nächster Akkord",
-
+    "timer_button_start": "Timer Starten",
+    "timer_button_stop": "Timer stoppen",
     "menu_file": "Datei",
     "submenu_reload_chords": "Akkorde neu laden",
     "submenu_exit": "Beenden",
-
     "menu_help": "Hilfe",
     "submenu_info": "Info",
     "submenu_short_manual": "Kurzanleitung",
     "submenu_github": "GitHub öffnen",
-
     "info_title": "Ukulele Akkordtrainer",
     "info_version": "Version {version}",
     "info_author": "Autor: Mathias K.",
     "info_description_heading": "Beschreibung",
     "info_description": "Dieses Programm zeigt zufällige Ukulele-Akkorde an und unterstützt Sprachsteuerung.\nEs richtet sich an Einsteiger und Fortgeschrittene.",
-
     "short_manual_title": "Kurzanleitung",
     "short_manual_text": [
         "Ukulele Akkordtrainer",
@@ -28,12 +25,11 @@
         "• Akkorde werden zufällig angezeigt – Wiederholungen werden vermieden.",
         "• Alle gespielten Akkorde werden in 'letzte_akkorde.txt' gespeichert."
     ],
-
     "speech_info": "Sage 'weiter' oder 'stop'...",
     "speech_recognized": "Erkannt: {command}",
     "speech_next": "weiter",
     "speech_stop": "stopp",
-
+    "timer_text": "Noch {seconds_left} Sekunden bis zum nächsten Akkord",
     "error_write_file": "Fehler beim schreiben der Datei:",
     "error_api": "API-Fehler",
     "error_reloading_chords": "Fehler beim Akkorde neu laden",
