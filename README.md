@@ -23,6 +23,7 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Shows a history of the last 4 chords
 - Multilanguage support (currently: German, English, Italian, Japanese. Default and fallback language is english)
 - Chord list can be reloaded at any time
+- Automatic 10-second countdown timer with visible countdown that advances to the next random chord
 
 ## Preview
 ![Preview of the Ukulele Chord Trainer](preview.png)
