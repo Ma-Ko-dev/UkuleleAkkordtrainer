@@ -183,8 +183,6 @@ class ChordTrainerGUI:
     def schedule_next_timer(self):
         if self.timer_active:
             self.countdown(self.timer_interval // 1000)
-            #self.next_chord(self.lang)
-            #self.timer_id = self.master.after(self.timer_interval, self.schedule_next_timer)
 
     def update_timer_display(self, seconds_left):
         self.timer_display.config(text=f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
