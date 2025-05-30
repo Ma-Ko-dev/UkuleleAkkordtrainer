@@ -34,5 +34,5 @@
   "error_api": "API エラー",
   "error_reloading_chords": "コードの再読み込み中にエラーが発生しました。",
   "error_missing_chords_file": "chords.json が見つかりませんでした。",
-  "test": "[MISSING] just a test"
+  "_comment": "[MISSING] Please dont translate anything within {}"
 }
