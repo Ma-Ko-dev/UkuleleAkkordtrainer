@@ -10,7 +10,7 @@ import webbrowser
 import locale
 import time
 
-__VERSION__ = "1.1.0"
+__VERSION__ = "1.1.1"
 
 CHORD_FILE = "chords.json"
 PAST_CHORDS = []
