@@ -187,7 +187,6 @@ class ChordTrainerGUI:
             #self.timer_id = self.master.after(self.timer_interval, self.schedule_next_timer)
 
     def update_timer_display(self, seconds_left):
-        self.timer_display.config(text=f"Noch {seconds_left} Sekunden bis zum nächsten Akkord")
         self.timer_display.config(text=f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
 
     def countdown(self, seconds_left):
