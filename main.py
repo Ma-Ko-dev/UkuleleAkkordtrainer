@@ -8,6 +8,7 @@ import speech_recognition as sr
 import threading
 import webbrowser
 import locale
+import time
 
 __VERSION__ = "1.1.0"
 
@@ -73,12 +74,26 @@ class ChordTrainerGUI:
         self.master = master
         self.chords = chords
         self.lang = lang
-        self.label = tk.Label(master, text="", font=(BASE_FONT, 24))
-        self.label.pack(pady=10)
+        self.speech_enabled = True
+        self.chord_label = tk.Label(master, text="", font=(BASE_FONT, 24))
+        self.chord_label.pack(pady=10)
         self.fretboard = Fretboard(master)
         self.fretboard.pack()
-        self.button = tk.Button(master, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
-        self.button.pack(pady=10)
+        self.timer_active = False
+        self.timer_interval = 10000 # in ms ca. 10 seconds
+        self.timer_id = None
+        self.timer_display = tk.Label(master, text="", font=(BASE_FONT, 14))
+        self.timer_display.pack()
+
+        button_frame = tk.Frame(master)
+        button_frame.pack(pady=10)
+
+        self.next_chord_button = tk.Button(button_frame, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
+        self.next_chord_button.pack(side="left", pady=10)
+
+        self.timer_button = tk.Button(button_frame, text="Timer starten", command=self.toggle_timer)
+        self.timer_button.pack(side="left", pady=5)
+
         self.running = True
         self.lang_s = "en_US"
 
@@ -109,7 +124,7 @@ class ChordTrainerGUI:
         except IOError as e:
             print(lang["error_write_file"], e)
 
-        self.label.config(text=chord["name"])
+        self.chord_label.config(text=chord["name"])
         self.fretboard.draw_chord(chord["fingering"])
 
     def speech_recognition(self, lang):
@@ -117,8 +132,13 @@ class ChordTrainerGUI:
         with sr.Microphone() as source:
             while self.running:
                 try:
+                    if not self.speech_enabled:
+                        time.sleep(0.5)
+                        continue
                     print(lang["speech_info"])
                     audio = recognizer.listen(source, timeout=5)
+                    if not self.speech_enabled:
+                        continue
                     audio_command = recognizer.recognize_google(audio, language=LANG_CODE).lower()
                     print(f"{lang['speech_recognized'].format(command=audio_command)}")
                     
@@ -142,12 +162,55 @@ class ChordTrainerGUI:
         else:
             print(f"{lang['error_reloading_chords']}")
 
+    def toggle_timer(self):
+        if self.timer_active:
+            self.timer_active = False
+            if self.timer_id:
+                self.master.after_cancel(self.timer_id)
+                self.timer_id = None
+            
+            self.next_chord_button.config(state="normal")
+            self.speech_enabled = True
+            self.timer_display.config(text="")
+        else:
+            self.timer_active = True
+            self.next_chord_button.config(state="disabled")
+            self.speech_enabled = False
+            self.schedule_next_timer()
+
+        # TODO Add strings to lang files
+        self.timer_button.config(text="Timer stoppen" if self.timer_active else "Timer starten")
+    
+    def schedule_next_timer(self):
+        if self.timer_active:
+            self.countdown(self.timer_interval // 1000)
+            #self.next_chord(self.lang)
+            #self.timer_id = self.master.after(self.timer_interval, self.schedule_next_timer)
+
+    def update_timer_display(self, seconds_left):
+        # TODO Add string to lang files
+        self.timer_display.config(text=f"Noch {seconds_left} Sekunden bis zum nächsten Akkord")
+
+    def countdown(self, seconds_left):
+        if not self.timer_active:
+            self.timer_display.config(text="")
+            return
+        
+        self.update_timer_display(seconds_left)
+
+        if seconds_left <= 0:
+            self.next_chord(self.lang)
+            self.countdown(self.timer_interval // 1000)
+        else:
+            self.timer_id = self.master.after(1000, lambda: self.countdown(seconds_left - 1))
+
 def load_language(lang_code):
     path = os.path.join("lang", f"{lang_code}.json")
     try:
         with open(path, "r", encoding="utf-8") as f:
             return json.load(f)
     except FileNotFoundError:
+        # TODO Add string in lang files
         print(f"Speech file not found: {path}.")
         # load failsafe
         return load_language("en_US")
@@ -165,6 +228,7 @@ def set_font(lang_code):
                 BASE_FONT = font_name
                 break
         else:
+            # TODO Add string in lang files
             print("⚠ No Japanese font found. Falling back to Arial.")
             BASE_FONT = "Arial"
     else:
