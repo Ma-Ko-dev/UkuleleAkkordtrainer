@@ -19,43 +19,40 @@ LANG_CODE = ""
 BASE_FONT = ""
 
 class Fretboard(Canvas):
-    def __init__(self, master, width=450, height=350, **kwargs):
-        super().__init__(master, width=width, height=height, bg='#F3E9D2', **kwargs)
+    def __init__(self, master, width=800, height=200, **kwargs):
+        self.string_label_width = 40
+        super().__init__(master, width=width + self.string_label_width, height=height, bg='#F3E9D2', **kwargs)  # light wood
         self.fret_count = 12
         self.string_count = 4
-        self.width = width
-        self.height = height
-        self.top_padding = 40
-        self.circle_radius = 9
-
-        self.fret_spacing = (height - self.top_padding - 20) / (self.fret_count + 1)  # height per fret
-        self.string_spacing = 40  # fixed string spacing
-
-        # calculate left dynamically to center the fretboard horizontally
-        fretboard_width = self.string_spacing * (self.string_count - 1)
-        self.left_padding = (self.width - fretboard_width) / 2
-
+        self.fret_spacing = width / self.fret_count
+        self.string_spacing = height / (self.string_count + 1)
         self.markers = []
         self.string_names = ["G", "C", "E", "A"]
         self.draw_base_lines()
 
     def draw_base_lines(self):
         self.delete("all")
-        # strings (vertical lines) with labels on top
+        # Stringnames left
         for i, name in enumerate(self.string_names):
-            x = self.left_padding + i * self.string_spacing
-            self.create_text(x, self.top_padding - 10, text=name, font=(BASE_FONT, 16, "bold"), anchor="s", fill="#3B3B3B")
-            self.create_line(x, self.top_padding, x, self.height - 20, fill="#4A4A4A", width=3)
+            y = (i + 1) * self.string_spacing
+            self.create_text(12, y, text=name, font=(BASE_FONT, 16, "bold"), anchor="w", fill="#3B3B3B")
 
-        # frets (horizontal lines)
+        # Frets (vertical) - brown, realistic like metal rods
         for i in range(self.fret_count + 1):
-            y = self.top_padding + i * self.fret_spacing
-            line_color = "#6B4C3B"
-            line_width = 3 if i == 0 else 1  #first fret thicker (nut)
-            self.create_line(self.left_padding, y, self.left_padding + self.string_spacing * (self.string_count -1), y, fill=line_color, width=line_width)
+            x = self.string_label_width + i * self.fret_spacing
+            line_color = "#6B4C3B"  # dunkles braun
+            line_style = (2, 4) if i != 0 else None
+            line_width = 3 if i == 0 else 1
+            self.create_line(x, 0, x, self.winfo_reqheight(), fill=line_color, dash=line_style, width=line_width)
+
+        # Strings (horizontal) - dark gray, slightly thicker for a realistic feel
+        for i in range(1, self.string_count + 1):
+            y = i * self.string_spacing
+            start_x = self.string_label_width
+            end_x = self.string_label_width + self.fret_spacing * self.fret_count
+            self.create_line(start_x, y, end_x, y, fill="#4A4A4A", width=3)
 
     def draw_chord(self, fretboard):
-        radius = self.circle_radius
         for m in self.markers:
             self.delete(m)
         self.markers.clear()
@@ -64,15 +61,13 @@ class Fretboard(Canvas):
             try:
                 fret_num = int(fret)
                 if 1 <= fret_num <= self.fret_count:
-                    x = self.left_padding + string_idx * self.string_spacing
-                    y = self.top_padding + fret_num * self.fret_spacing - self.fret_spacing / 2
-                    circle = self.create_oval(x - radius, y - radius, x + radius, y + radius, fill="#8B0000")
-                    number = self.create_text(x, y, text=str(fret), fill="white", font=(BASE_FONT, 10, "bold"))
+                    x = self.string_label_width + self.fret_spacing * (fret_num - 0.5)
+                    y = (string_idx + 1) * self.string_spacing
+                    circle = self.create_oval(x - 12, y - 12, x + 12, y + 12, fill="#8B0000") 
+                    number = self.create_text(x, y, text=str(fret), fill="white", font=(BASE_FONT, 12, "bold"))
                     self.markers.extend([circle, number])
             except ValueError:
                 continue
-
-
 
 class ChordTrainerGUI:
     def __init__(self, master, chords, lang):
@@ -96,7 +91,7 @@ class ChordTrainerGUI:
         self.next_chord_button = tk.Button(button_frame, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
         self.next_chord_button.pack(side="left", pady=10)
 
-        self.timer_button = tk.Button(button_frame, text="Timer starten", command=lambda: self.toggle_timer(lang))
+        self.timer_button = tk.Button(button_frame, text=f"{lang['timer_button_start']}", command=lambda: self.toggle_timer(lang))
         self.timer_button.pack(side="left", pady=5)
 
         self.running = True
@@ -188,8 +183,11 @@ class ChordTrainerGUI:
     def schedule_next_timer(self):
         if self.timer_active:
             self.countdown(self.timer_interval // 1000)
+            #self.next_chord(self.lang)
+            #self.timer_id = self.master.after(self.timer_interval, self.schedule_next_timer)
 
     def update_timer_display(self, seconds_left):
+        self.timer_display.config(text=f"Noch {seconds_left} Sekunden bis zum nächsten Akkord")
         self.timer_display.config(text=f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
 
     def countdown(self, seconds_left):
@@ -204,6 +202,7 @@ class ChordTrainerGUI:
             self.countdown(self.timer_interval // 1000)
         else:
             self.timer_id = self.master.after(1000, lambda: self.countdown(seconds_left - 1))
+
 
 def load_language(lang_code):
     path = os.path.join("lang", f"{lang_code}.json")
