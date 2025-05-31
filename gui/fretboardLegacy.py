@@ -2,7 +2,7 @@ from tkinter import Canvas
 import config
 
 
-class Fretboard(Canvas):
+class LegacyFretboard(Canvas):
     def __init__(self, master, width=800, height=200, **kwargs):
         self.string_label_width = 40
         super().__init__(master, width=width + self.string_label_width, height=height, bg='#F3E9D2', **kwargs)  # light wood

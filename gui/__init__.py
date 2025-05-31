@@ -1,4 +1,6 @@
-from .fretboard import Fretboard
-from .chordTrainerGUILegacy import ChordTrainerGUI
+from .chordTrainerGUIDefault import DefaultChordTrainerGUI
+from .chordTrainerGUILegacy import LegacyChordTrainerGUI
+from .fretboardDefault import DefaultFretboard
+from .fretboardLegacy import LegacyFretboard
 
-__all__ = ["Fretboard", "ChordTrainerGUI"]
+__all__ = ["DefaultChordTrainerGUI", "DefaultFretboard", "LegacyChordTrainerGUI", "LegacyFretboard"]

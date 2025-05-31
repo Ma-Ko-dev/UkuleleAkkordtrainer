@@ -4,39 +4,65 @@ import time
 import tkinter as tk
 import config
 import speech_recognition as sr
-from gui.fretboardLegacy import LegacyFretboard
+from tkinter import Tk
+from gui.fretboardDefault import DefaultFretboard
 from utils.gui_helpers import load_chords
 
 
-class LegacyChordTrainerGUI:
-    def __init__(self, master, chords, lang):
+class DefaultChordTrainerGUI:
+    def __init__(self, master: Tk, chords, lang):
         self.master = master
+
         self.chords = chords
         self.lang = lang
         self.speech_enabled = True
+
+        self.master.grid_columnconfigure(0, weight=1)
+        self.master.grid_columnconfigure(1, weight=0)
+        self.master.grid_columnconfigure(2, weight=1)
+
+        self.master.grid_rowconfigure(1, weight=1)
+
         self.chord_label = tk.Label(master, text="", font=(config.BASE_FONT, 24))
-        self.chord_label.pack(pady=10)
-        self.fretboard = LegacyFretboard(master)
-        self.fretboard.pack()
+        self.chord_label.grid(row=0, column=0, columnspan=3, sticky="ew", pady=10)
+
+        self.fretboard_frame = tk.Frame(master, width=400, height=350)
+        self.fretboard_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
+        self.fretboard_frame.grid_propagate(False)
+
+        self.fretboard = DefaultFretboard(self.fretboard_frame)
+        self.fretboard.pack(expand=False, fill=None)
+
+        self.left_dummy = tk.Frame(master)
+        self.left_dummy.grid(row=1, column=0, sticky="nsew")
+
+        self.right_dummy = tk.Frame(master)
+        self.right_dummy.grid(row=1, column=2, sticky="nsew")
+
         self.timer_active = False
         self.timer_interval = 10000 # in ms ca. 10 seconds
         self.timer_id = None
+
         self.timer_display = tk.Label(master, text="", font=(config.BASE_FONT, 14))
-        self.timer_display.pack()
+        self.timer_display.grid(row=2, column=0, columnspan=3, sticky="ew", pady=5)
 
-        button_frame = tk.Frame(master)
-        button_frame.pack(pady=10)
+        self.buttom_frame = tk.Frame(master)
+        self.buttom_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=10)
 
-        self.next_chord_button = tk.Button(button_frame, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
-        self.next_chord_button.pack(side="left", pady=10)
+        self.buttons_inner = tk.Frame(self.buttom_frame)       
+        self.buttons_inner.pack(expand=True)
 
-        self.timer_button = tk.Button(button_frame, text=f"{lang['timer_button_start']}", command=lambda: self.toggle_timer(lang))
-        self.timer_button.pack(side="left", pady=5)
+        self.next_chord_button = tk.Button(self.buttons_inner, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
+        self.next_chord_button.pack(side="left", padx=5)
+
+        self.timer_button = tk.Button(self.buttons_inner, text=f"{lang['timer_button_start']}", command=lambda: self.toggle_timer(lang))
+        self.timer_button.pack(side="left", padx=5)
 
         self.running = True
         self.lang_s = "en_US"
 
-        self.next_chord(lang)
+        # self.next_chord(lang)
+        self.master.after(100, lambda: self.next_chord(lang))
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
 
     def next_chord(self, lang):
@@ -124,7 +150,6 @@ class LegacyChordTrainerGUI:
             self.countdown(self.timer_interval // 1000)
 
     def update_timer_display(self, seconds_left):
-        self.timer_display.config(text=f"Noch {seconds_left} Sekunden bis zum nächsten Akkord")
         self.timer_display.config(text=f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
 
     def countdown(self, seconds_left):
@@ -139,6 +164,9 @@ class LegacyChordTrainerGUI:
             self.countdown(self.timer_interval // 1000)
         else:
             self.timer_id = self.master.after(1000, lambda: self.countdown(seconds_left - 1))
+
+    # def destroy(self):
+    #     self.frame.destroy()
 
     def stop(self):
         # Stop timer if active
