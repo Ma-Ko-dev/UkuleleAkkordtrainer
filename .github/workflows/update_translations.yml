@@ -32,7 +32,7 @@ jobs:
 
     - name: Run translation check script
       run: |
-        python check_translations.py
+        python tools/check_translations.py
 
     - name: Commit updated translations
       run: |
