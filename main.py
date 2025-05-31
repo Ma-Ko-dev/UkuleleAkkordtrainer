@@ -15,11 +15,11 @@ def create_menubar(root, app, lang, config_data):
 
     # Options menu
     optionmenu = tk.Menu(menubar, tearoff=0)
-    menubar.add_cascade(label="Options", menu=optionmenu)
+    menubar.add_cascade(label=lang["menu_options"], menu=optionmenu)
 
     # Layout submenu
     layout_submenu = tk.Menu(optionmenu, tearoff=0)
-    optionmenu.add_cascade(label="Layout", menu=layout_submenu)
+    optionmenu.add_cascade(label=lang["submenu_layouts"], menu=layout_submenu)
 
     # layout form config
     current_layout = config_data.get("layout", "default")
@@ -34,17 +34,17 @@ def create_menubar(root, app, lang, config_data):
                 # Layout in config speichern
                 config_data["layout"] = layout
                 utils.save_config(config_data)
-                tk.messagebox.showinfo("Restart needed", "Please restart the program to apply the layout change.")
+                tk.messagebox.showinfo(lang["restart_info_title"], lang["restart_info_text"])
         layout_submenu.add_command(label=label, state=state, command=on_select)
 
     # Difficulty submenu
     difficulty_submenu = tk.Menu(optionmenu, tearoff=0)
-    optionmenu.add_cascade(label="Difficulty", menu=difficulty_submenu)
+    optionmenu.add_cascade(label=lang["difficulty"], menu=difficulty_submenu)
 
     difficulty_labels = {
-        "easy": "Easy",
-        "medium": "Medium",
-        "hard": "Hard"
+        "easy": lang["difficulty_easy"],
+        "medium": lang["difficulty_medium"],
+        "hard": lang["difficulty_hard"]
     }
 
     # Lade aktuelle Schwierigkeit aus config oder setze Default

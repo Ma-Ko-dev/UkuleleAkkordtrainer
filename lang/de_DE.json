@@ -6,6 +6,10 @@
   "menu_file": "Datei",
   "submenu_reload_chords": "Akkorde neu laden",
   "submenu_exit": "Beenden",
+  "menu_options": "Optionen",
+  "submenu_layouts": "Layouts",
+  "restart_info_title": "Neustart erforderlich",
+  "restart_info_text": "Bitte starten Sie das Programm neu, um die Layout-Aenderung zu uebernehmen",
   "menu_help": "Hilfe",
   "submenu_info": "Info",
   "submenu_short_manual": "Kurzanleitung",
@@ -25,6 +29,10 @@
     "• Akkorde werden zufällig angezeigt – Wiederholungen werden vermieden.",
     "• Alle gespielten Akkorde werden in 'letzte_akkorde.txt' gespeichert."
   ],
+  "difficulty": "Schwierigkeit",
+  "difficulty_easy": "Einfach",
+  "difficulty_medium": "Mittel",
+  "difficulty_hard": "Schwer",
   "speech_info": "Sage 'weiter' oder 'stop'...",
   "speech_recognized": "Erkannt: {command}",
   "speech_next": "weiter",
@@ -34,5 +42,5 @@
   "error_api": "API-Fehler",
   "error_reloading_chords": "Fehler beim Akkorde neu laden",
   "error_missing_chords_file": "chords.json wurde nicht gefunden.",
-  "_comment": "[MISSING] Please dont translate anything within {}"
+  "_comment": "Wichtig! Bitte Übersetze nichts in den geschweiften Klammern {}"
 }
