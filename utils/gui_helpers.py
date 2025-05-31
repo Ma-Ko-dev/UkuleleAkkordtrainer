@@ -1,7 +1,8 @@
 import json
 import os
-from tkinter import messagebox
 import webbrowser
+import config
+from tkinter import messagebox
 from version import __VERSION__
 
 
@@ -12,6 +13,10 @@ def load_chords(file_path, lang):
     with open(file_path, "r", encoding="utf-8") as f:
         return json.load(f)
     
+
+def get_chord_file():
+    return f"chords/chords_{config.DIFFICULTY}.json"
+
 
 def show_info(lang):
     info_text = (
@@ -31,3 +36,17 @@ def show_tutorial(lang):
 
 def open_github():
     webbrowser.open("https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer")
+
+
+def load_config():
+    if not os.path.exists(config.CONFIG_PATH):
+        # create default config
+        default_config = {"layout": "default", "difficulty": "easy"}
+        save_config(default_config)
+        return default_config
+    with open(config.CONFIG_PATH, "r") as f:
+        return json.load(f)
+
+def save_config(config_data):
+    with open(config.CONFIG_PATH, "w") as f:
+        json.dump(config_data, f, indent=4)

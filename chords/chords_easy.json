@@ -1,0 +1,14 @@
+[
+  { "name": "C",       "fingering": ["0", "0", "0", "3"] },
+  { "name": "Am",      "fingering": ["2", "0", "0", "0"] },
+  { "name": "A",       "fingering": ["2", "1", "0", "0"] },
+  { "name": "F",       "fingering": ["2", "0", "1", "0"] },
+  { "name": "G",       "fingering": ["0", "2", "3", "2"] },
+  { "name": "Em",      "fingering": ["0", "4", "3", "2"] },
+  { "name": "D",       "fingering": ["2", "2", "2", "0"] },
+  { "name": "Dm",      "fingering": ["2", "2", "1", "0"] },
+  { "name": "E7",      "fingering": ["1", "2", "0", "2"] },
+  { "name": "C7",      "fingering": ["0", "0", "0", "1"] },
+  { "name": "G7",      "fingering": ["0", "2", "1", "2"] },
+  { "name": "A7",      "fingering": ["0", "1", "0", "0"] }
+]

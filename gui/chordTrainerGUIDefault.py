@@ -6,7 +6,7 @@ import config
 import speech_recognition as sr
 from tkinter import Tk
 from gui.fretboardDefault import DefaultFretboard
-from utils.gui_helpers import load_chords
+from utils.gui_helpers import load_chords, get_chord_file
 
 
 class DefaultChordTrainerGUI:
@@ -121,7 +121,7 @@ class DefaultChordTrainerGUI:
                     break
 
     def reload_chords(self, lang):
-        new_chords = load_chords(config.CHORD_FILE, lang)
+        new_chords = load_chords(get_chord_file(), lang)
         if new_chords:
             self.chords = new_chords
         else:
@@ -165,19 +165,16 @@ class DefaultChordTrainerGUI:
         else:
             self.timer_id = self.master.after(1000, lambda: self.countdown(seconds_left - 1))
 
-    # def destroy(self):
-    #     self.frame.destroy()
+    # def stop(self):
+    #     # Stop timer if active
+    #     if self.timer_active:
+    #         self.timer_active = False
+    #         if self.timer_id:
+    #             self.master.after_cancel(self.timer_id)
+    #             self.timer_id = None
+    #         self.next_chord_button.config(state="normal")
+    #         self.speech_enabled = True
+    #         self.timer_display.config(text="")
+    #         self.timer_button.config(text=self.lang["timer_button_start"])
 
-    def stop(self):
-        # Stop timer if active
-        if self.timer_active:
-            self.timer_active = False
-            if self.timer_id:
-                self.master.after_cancel(self.timer_id)
-                self.timer_id = None
-            self.next_chord_button.config(state="normal")
-            self.speech_enabled = True
-            self.timer_display.config(text="")
-            self.timer_button.config(text=self.lang["timer_button_start"])
-
-        self.running = False
+    #     self.running = False

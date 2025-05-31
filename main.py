@@ -4,35 +4,78 @@ import utils
 from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI
 
 
-def create_menubar(root, app_ref, chords, lang):
+def create_menubar(root, app, lang, config_data):
     menubar = tk.Menu(root)
 
+    # File menu
     filemenu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label=lang["menu_file"], menu=filemenu)
-    filemenu.add_command(label=lang["submenu_reload_chords"], command=lambda: app_ref[0].reload_chords(lang))
+    filemenu.add_command(label=lang["submenu_reload_chords"], command=lambda: app.reload_chords(lang))
     filemenu.add_command(label=lang["submenu_exit"], command=root.quit)
 
+    # Options menu
     optionmenu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Options", menu=optionmenu)
 
+    # Layout submenu
     layout_submenu = tk.Menu(optionmenu, tearoff=0)
-
-    def switch_to_default():
-        switch_layout(DefaultChordTrainerGUI, root, app_ref, chords, lang)
-
-    def switch_to_legacy():
-        switch_layout(LegacyChordTrainerGUI, root, app_ref, chords, lang)
-
-    # Layout menu with choices, disables current layout
-    if isinstance(app_ref[0], DefaultChordTrainerGUI):
-        layout_submenu.add_command(label="Default Layout", state="disabled")
-        layout_submenu.add_command(label="Legacy Layout", command=switch_to_legacy)
-    else:
-        layout_submenu.add_command(label="Default Layout", command=switch_to_default)
-        layout_submenu.add_command(label="Legacy Layout", state="disabled")
-
     optionmenu.add_cascade(label="Layout", menu=layout_submenu)
 
+    # layout form config
+    current_layout = config_data.get("layout", "default")
+
+    for layout_key, label, gui_class in [
+        ("default", "Default", DefaultChordTrainerGUI),
+        ("legacy", "Legacy", LegacyChordTrainerGUI),
+    ]:
+        state = "disabled" if layout_key == current_layout else "normal"
+        def on_select(layout=layout_key):
+            if layout != current_layout:
+                # Layout in config speichern
+                config_data["layout"] = layout
+                utils.save_config(config_data)
+                tk.messagebox.showinfo("Restart needed", "Please restart the program to apply the layout change.")
+        layout_submenu.add_command(label=label, state=state, command=on_select)
+
+    # Difficulty submenu
+    difficulty_submenu = tk.Menu(optionmenu, tearoff=0)
+    optionmenu.add_cascade(label="Difficulty", menu=difficulty_submenu)
+
+    difficulty_labels = {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+    }
+
+    # Lade aktuelle Schwierigkeit aus config oder setze Default
+    current_difficulty = config_data.get("difficulty", "easy")
+
+    def set_difficulty(level):
+        nonlocal current_difficulty
+        if level != current_difficulty:
+            config_data["difficulty"] = level
+            utils.save_config(config_data)
+            current_difficulty = level
+            config.DIFFICULTY = level
+            app.reload_chords(lang)
+            if hasattr(app, "set_difficulty"):
+                app.set_difficulty(level)
+            # Menü aktualisieren (Deaktivieren des aktuellen Levels)
+            update_difficulty_menu()
+
+    def update_difficulty_menu():
+        difficulty_submenu.delete(0, "end")
+        for level in difficulty_labels:
+            state = "disabled" if level == current_difficulty else "normal"
+            difficulty_submenu.add_command(
+                label=difficulty_labels[level],
+                state=state,
+                command=lambda lvl=level: set_difficulty(lvl)
+            )
+
+    update_difficulty_menu()
+
+    # Help menu
     helpmenu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label=lang["menu_help"], menu=helpmenu)
     helpmenu.add_command(label=lang["submenu_info"], command=lambda: utils.show_info(lang))
@@ -41,42 +84,32 @@ def create_menubar(root, app_ref, chords, lang):
 
     return menubar
 
-def switch_layout(gui_class, root, app_ref, chords, lang):
-    # Stop GUI thread if running
-    if app_ref[0] is not None:
-        app_ref[0].stop()
-
-    # Remove all widgets from root
-    for widget in root.winfo_children():
-        widget.destroy()
-
-    # Set window size based on layout
-    if gui_class == DefaultChordTrainerGUI:
-        root.geometry("450x500")
-    elif gui_class == LegacyChordTrainerGUI:
-        root.geometry("900x400")
-
-    # Create new GUI and save reference
-    app_ref[0] = gui_class(root, chords, lang)
-
-    # Reset the menu
-    root.config(menu=create_menubar(root, app_ref, chords, lang))
 
 def main():
     root = tk.Tk()
-    root.geometry("450x500")
 
+    config_data = utils.load_config()
+    layout = config_data.get("layout", "default")
+    
     lang = utils.load_language(utils.get_system_language())
     utils.set_font(config.LANG_CODE)
 
-    chords = utils.load_chords(config.CHORD_FILE, lang)
+    config.DIFFICULTY = config_data.get("difficulty", "easy")
+    chords = utils.load_chords(utils.get_chord_file(), lang)
+
+    # Fenstergröße je Layout
+    if layout == "default":
+        root.geometry("450x500")
+        app_class = DefaultChordTrainerGUI
+    else:
+        root.geometry("900x400")
+        app_class = LegacyChordTrainerGUI
 
     root.title(f"{lang['title']}")
 
-    # Store app in list to modify in nested funcs
-    app = [DefaultChordTrainerGUI(root, chords, lang)]
+    app = app_class(root, chords, lang)
 
-    root.config(menu=create_menubar(root, app, chords, lang))
+    root.config(menu=create_menubar(root, app, lang, config_data))
 
     root.mainloop()
 
