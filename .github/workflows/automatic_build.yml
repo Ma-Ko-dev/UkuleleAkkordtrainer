@@ -27,7 +27,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Extract version from main.py (PowerShell)
+      - name: Extract version from version.py (PowerShell)
         id: get_version
         shell: pwsh
         run: |
