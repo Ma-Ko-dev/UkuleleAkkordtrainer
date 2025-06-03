@@ -8,5 +8,11 @@
   { "name": "D7",      "fingering": ["2", "2", "2", "3"] },
   { "name": "Gm",      "fingering": ["0", "2", "3", "1"] },
   { "name": "A#m",     "fingering": ["3", "1", "1", "1"] },
+  { "name": "G7",      "fingering": ["0", "2", "1", "2"] },
+  { "name": "E7",      "fingering": ["1", "2", "0", "2"] },
+  { "name": "Dm",      "fingering": ["2", "2", "1", "0"] },
+  { "name": "D",       "fingering": ["2", "2", "2", "0"] },
+  { "name": "Em",      "fingering": ["0", "4", "3", "2"] },
+  { "name": "G",       "fingering": ["0", "2", "3", "2"] },
   { "name": "A#m7",    "fingering": ["1", "1", "1", "1"] }
 ]
