@@ -38,6 +38,7 @@
   "speech_next": "next",
   "speech_stop": "stop",
   "timer_text": "{seconds_left} seconds left until the next chord",
+  "learned_chords_text": "Learned:\n{count} Chords",
   "error_write_file": "Error writing file:",
   "error_api": "API error",
   "error_reloading_chords": "Error reloading chords",

@@ -12,56 +12,50 @@ from utils.gui_helpers import load_chords, get_chord_file
 class DefaultChordTrainerGUI:
     def __init__(self, master: Tk, chords, lang):
         self.master = master
-
         self.chords = chords
         self.lang = lang
         self.speech_enabled = True
-
-        self.master.grid_columnconfigure(0, weight=1)
-        self.master.grid_columnconfigure(1, weight=0)
-        self.master.grid_columnconfigure(2, weight=1)
-
-        self.master.grid_rowconfigure(1, weight=1)
-
-        self.chord_label = tk.Label(master, text="", font=(config.BASE_FONT, 24))
-        self.chord_label.grid(row=0, column=0, columnspan=3, sticky="ew", pady=10)
-
-        self.fretboard_frame = tk.Frame(master, width=400, height=350)
-        self.fretboard_frame.grid(row=1, column=1, sticky="nsew", padx=5, pady=5)
-        self.fretboard_frame.grid_propagate(False)
-
-        self.fretboard = DefaultFretboard(self.fretboard_frame)
-        self.fretboard.pack(expand=False, fill=None)
-
-        self.left_dummy = tk.Frame(master)
-        self.left_dummy.grid(row=1, column=0, sticky="nsew")
-
-        self.right_dummy = tk.Frame(master)
-        self.right_dummy.grid(row=1, column=2, sticky="nsew")
-
+        self.learned_chords = 0
         self.timer_active = False
         self.timer_interval = 10000 # in ms ca. 10 seconds
         self.timer_id = None
+        self.running = True
+
+        self.master.grid_columnconfigure(0, weight=1, minsize=150)
+        self.master.grid_columnconfigure(1, weight=1, minsize=160)
+        self.master.grid_columnconfigure(2, weight=1, minsize=150)
+
+        self.master.grid_rowconfigure(0, weight=0)
+        self.master.grid_rowconfigure(1, weight=1)
+        self.master.grid_rowconfigure(2, weight=0)
+        self.master.grid_rowconfigure(3, weight=0)
+
+        self.chord_label = tk.Label(master, text="", font=(config.BASE_FONT, 24))
+        self.chord_label.grid(row=0, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+
+        self.learned_label_left = tk.Label(master, text="", anchor="nw", wraplength=120, justify="left", font=(config.BASE_FONT, 14))
+        self.learned_label_left.grid(row=1, column=0, padx=5, pady=2, sticky="nsew")
+
+        self.fretboard_middle = DefaultFretboard(master)
+        self.fretboard_middle.grid(row=1, column=1, padx=5, pady=5, sticky="nsew")
+
+        self.dummy_label_right = tk.Label(master, text=" ", anchor="nw", wraplength=120, justify="left", font=(config.BASE_FONT, 12))
+        self.dummy_label_right.grid(row=1, column=2, padx=5, pady=2, sticky="nsew")
 
         self.timer_display = tk.Label(master, text="", font=(config.BASE_FONT, 14))
-        self.timer_display.grid(row=2, column=0, columnspan=3, sticky="ew", pady=5)
+        self.timer_display.grid(row=2, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
 
         self.buttom_frame = tk.Frame(master)
-        self.buttom_frame.grid(row=3, column=0, columnspan=3, sticky="ew", pady=10)
+        self.buttom_frame.grid(row=3, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
 
         self.buttons_inner = tk.Frame(self.buttom_frame)       
-        self.buttons_inner.pack(expand=True)
+        self.buttons_inner.pack(anchor="center")
 
         self.next_chord_button = tk.Button(self.buttons_inner, text=f"{lang['next_chord_button']}", command=lambda: self.next_chord(lang))
         self.next_chord_button.pack(side="left", padx=5)
-
         self.timer_button = tk.Button(self.buttons_inner, text=f"{lang['timer_button_start']}", command=lambda: self.toggle_timer(lang))
         self.timer_button.pack(side="left", padx=5)
 
-        self.running = True
-        self.lang_s = "en_US"
-
-        # self.next_chord(lang)
         self.master.after(100, lambda: self.next_chord(lang))
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
 
@@ -90,7 +84,9 @@ class DefaultChordTrainerGUI:
             print(lang["error_write_file"], e)
 
         self.chord_label.config(text=chord["name"])
-        self.fretboard.draw_chord(chord["fingering"])
+        self.fretboard_middle.draw_chord(chord["fingering"])
+        self.learned_chords = self.learned_chords + 1
+        self.learned_label_left.config(text=self.lang["learned_chords_text"].format(count=self.learned_chords))
 
     def speech_recognition(self, lang):
         recognizer = sr.Recognizer()
