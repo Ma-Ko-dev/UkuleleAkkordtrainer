@@ -38,6 +38,7 @@
   "speech_next": "avanti",
   "speech_stop": "stop",
   "timer_text": "[MISSING] {seconds_left} seconds left until the next chord",
+  "learned_chords_text": "[MISSING] Learned:\n{count} Chords",
   "error_write_file": "Errore nella scrittura del file:",
   "error_api": "Errore API",
   "error_reloading_chords": "Errore nel ricaricamento degli accordi",
