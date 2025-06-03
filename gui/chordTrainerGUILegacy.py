@@ -9,6 +9,7 @@ from utils.gui_helpers import load_chords, get_chord_file
 
 
 class LegacyChordTrainerGUI:
+    # TODO Refactor Legacy and Default GUI 
     def __init__(self, master, chords, lang):
         self.master = master
         self.chords = chords
