@@ -26,7 +26,7 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Automatic 10-second countdown timer with visible countdown that advances to the next random chord
 - 2 Different layouts
 - 3 difficulty settings with chords to practice
-- Displaying how many chords you learned in the current session.
+- Displaying how many chords you learned in the current session
 
 ## Preview
 
