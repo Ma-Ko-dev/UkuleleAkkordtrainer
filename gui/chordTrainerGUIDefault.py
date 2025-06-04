@@ -1,7 +1,5 @@
 import tkinter as tk
 import config
-import speech_recognition as sr
-from tkinter import Tk
 from gui.fretboardDefault import DefaultFretboard
 from gui.baseChordTrainerGUI import BaseChordTrainerGUI
 
