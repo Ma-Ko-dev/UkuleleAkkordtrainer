@@ -1,6 +1,8 @@
+import customtkinter as ctk
 import tkinter as tk
 import config
 import utils
+import version
 from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI
 
 
@@ -47,7 +49,7 @@ def create_menubar(root, app, lang, config_data):
         "hard": lang["difficulty_hard"]
     }
 
-    # Lade aktuelle Schwierigkeit aus config oder setze Default
+    # load difficulty from file or set easy as default
     current_difficulty = config_data.get("difficulty", "easy")
 
     def set_difficulty(level):
@@ -60,7 +62,7 @@ def create_menubar(root, app, lang, config_data):
             app.reload_chords(lang)
             if hasattr(app, "set_difficulty"):
                 app.set_difficulty(level)
-            # Menü aktualisieren (Deaktivieren des aktuellen Levels)
+            # refresh menu
             update_difficulty_menu()
 
     def update_difficulty_menu():
@@ -86,7 +88,9 @@ def create_menubar(root, app, lang, config_data):
 
 
 def main():
-    root = tk.Tk()
+    ctk.set_appearance_mode("System")  # Optional: "Dark", "Light", "System"
+    ctk.set_default_color_theme("blue")
+    root = ctk.CTk()
 
     config_data = utils.load_config()
     layout = config_data.get("layout", "default")
@@ -105,7 +109,7 @@ def main():
         root.geometry("900x400")
         app_class = LegacyChordTrainerGUI
 
-    root.title(f"{lang['title']}")
+    root.title(f"{lang['title']} Version: {version.__VERSION__}")
 
     app = app_class(root, chords, lang)
 
