@@ -7,8 +7,8 @@ from tkinter import Tk
 from utils.gui_helpers import load_chords, get_chord_file
 
 
-class BaseChordTrainerGUI:
-    def __init__(self, master: Tk, chords, lang):
+class GuiLogicManager:
+    def __init__(self, master, chords, lang):
         self.master = master
         self.chords = chords
         self.lang = lang
@@ -19,13 +19,8 @@ class BaseChordTrainerGUI:
         self.timer_id = None
         self.running = True
 
-        self.build_widgets(master, lang) 
-
         self.master.after(100, lambda: self.next_chord(lang))
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
-
-    def build_widgets(self, master, lang):
-        raise NotImplementedError("Subclasses must implement build_widgets")
 
     def next_chord(self, lang):
         past_names = [n.strip().lower() for n in config.PAST_CHORDS]
@@ -51,10 +46,10 @@ class BaseChordTrainerGUI:
         except IOError as e:
             print(lang["error_write_file"], e)
 
-        self.chord_label.config(text=chord["name"])
-        self.fretboard_middle.draw_chord(chord["fingering"])
+        self.master.update_chord_label(chord["name"])
+        self.master.update_fretboard(chord["fingering"])
         self.learned_chords = self.learned_chords + 1
-        self.learned_label_left.config(text=self.lang["learned_chords_text"].format(count=self.learned_chords))
+        self.master.update_learned_label(self.lang["learned_chords_text"].format(count=self.learned_chords))
 
     def speech_recognition(self, lang):
         recognizer = sr.Recognizer()
@@ -98,27 +93,27 @@ class BaseChordTrainerGUI:
                 self.master.after_cancel(self.timer_id)
                 self.timer_id = None
             
-            self.next_chord_button.config(state="normal")
+            self.master.set_next_chord_button_state("normal")
             self.speech_enabled = True
-            self.timer_display.config(text="")
+            self.master.update_timer_label("")
         else:
             self.timer_active = True
-            self.next_chord_button.config(state="disabled")
+            self.master.set_next_chord_button_state("disabled")
             self.speech_enabled = False
             self.schedule_next_timer()
 
-        self.timer_button.config(text=lang["timer_button_stop"] if self.timer_active else lang["timer_button_start"])
+        self.master.set_timer_button_text(lang["timer_button_stop"] if self.timer_active else lang["timer_button_start"])
     
     def schedule_next_timer(self):
         if self.timer_active:
             self.countdown(self.timer_interval // 1000)
 
     def update_timer_display(self, seconds_left):
-        self.timer_display.config(text=f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
+        self.master.update_timer_label(f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
 
     def countdown(self, seconds_left):
         if not self.timer_active:
-            self.timer_display.config(text="")
+            self.master.update_timer_label("")
             return
         
         self.update_timer_display(seconds_left)

@@ -15,7 +15,6 @@ def load_chords(file_path, lang):
     
 
 def get_chord_file():
-    # TODO dont use global difficulty
     return f"chords/chords_{config.DIFFICULTY}.json"
 
 
@@ -40,7 +39,6 @@ def open_github():
 
 
 def load_config():
-    # TODO check this. we already have a config.py
     if not os.path.exists(config.CONFIG_PATH):
         # create default config
         default_config = {"layout": "default", "difficulty": "easy"}

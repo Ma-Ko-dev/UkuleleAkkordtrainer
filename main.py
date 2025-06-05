@@ -51,7 +51,6 @@ def create_menubar(root, app, lang, config_data):
     current_difficulty = config_data.get("difficulty", "easy")
 
     def set_difficulty(level):
-        # TODO Fix this. difficulty is loaded from config.json
         nonlocal current_difficulty
         if level != current_difficulty:
             config_data["difficulty"] = level
@@ -95,7 +94,6 @@ def main():
     lang = utils.load_language(utils.get_system_language())
     utils.set_font(config.LANG_CODE)
 
-    # TODO check this. difficulty is from json. dont make it a global
     config.DIFFICULTY = config_data.get("difficulty", "easy")
     chords = utils.load_chords(utils.get_chord_file(), lang)
 
