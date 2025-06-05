@@ -19,7 +19,7 @@ class GuiLogicManager:
         self.timer_id = None
         self.running = True
 
-        self.master.after(100, lambda: self.next_chord(lang))
+        self.master.after(100, lambda: self.master.get_first_chord())
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
 
     def next_chord(self, lang):

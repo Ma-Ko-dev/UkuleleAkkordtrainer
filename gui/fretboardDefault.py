@@ -1,72 +1,130 @@
-from tkinter import Canvas
-import config
+import customtkinter as ctk
 
 
-class DefaultFretboard(Canvas):
+class DefaultFretboard(ctk.CTkCanvas):
     def __init__(self, master, **kwargs):
-        super().__init__(master, bg='#F3E9D2', **kwargs)
-        self.fret_count = 12
-        self.string_count = 4
-        self.top_padding = 40
-        self.circle_radius = 9
+        self.frets = 12
+        self.strings = 4
+        self.fret_width = 45
+        self.string_height = 45
 
-        self.left_padding = 0
-        self.string_spacing = 0
-        self.fret_spacing = 0
+        width = self.fret_width * self.strings + 60
+        height = self.string_height * self.frets + 60
 
-        self.bind("<Configure>", self.on_resize)
+        theme_mode = ctk.get_appearance_mode()
+        if theme_mode == "Dark":
+            background = "#2B2B2B"
+        else:
+            background = "#F3F3F3"
+
+        super().__init__(master, width=width, height=height, bg=background, highlightthickness=0, **kwargs)
+
+        self.canvas_width = width
+        self.canvas_height = height
+        self.padding_x = (self.canvas_width - (self.fret_width * (self.strings - 1))) // 2
+        self.padding_y = 30
 
         self.markers = []
-        self.string_names = ["G", "C", "E", "A"]
-        # self.draw_base_lines()
+
+        self.draw_fretboard()
+        self.draw_string_names()
+        self.bind("<Configure>", self.on_resize)
 
     def on_resize(self, event):
-        self.width = event.width
-        self.height = event.height
+        min_width = self.fret_width * (self.strings - 1) + 60
+        min_height = self.string_height * self.frets + 60
 
-        # Fixe String-Spacings, Fretboard-Breite nicht größer als Canvas-Frame
-        self.string_spacing = 40
-        fretboard_width = self.string_spacing * (self.string_count - 1)
-        self.left_padding = (self.width - fretboard_width) / 2
-        self.fret_spacing = (self.height - self.top_padding - 20) / (self.fret_count + 1) + 2
+        new_width = max(event.width, min_width)
+        new_height = max(event.height, min_height)
 
-        # Falls Canvas größer als fretboard_width: begrenzen
-        canvas_width = min(self.width, fretboard_width + 20)  # 20px Puffer
-        canvas_height = self.height
+        self.config(width=new_width, height=new_height)
 
-        self.config(width=canvas_width, height=canvas_height)
-        self.draw_base_lines()
+        self.canvas_width = new_width
+        self.canvas_height = new_height
+
+        self.redraw()
 
 
-    def draw_base_lines(self):
+    def redraw(self):
         self.delete("all")
-        # strings (vertical lines) with labels on top
-        for i, name in enumerate(self.string_names):
-            x = self.left_padding + i * self.string_spacing
-            self.create_text(x, self.top_padding - 10, text=name, font=(config.BASE_FONT, 16, "bold"), anchor="s", fill="#3B3B3B")
-            self.create_line(x, self.top_padding, x, self.height - 20, fill="#4A4A4A", width=3)
 
-        # frets (horizontal lines)
-        for i in range(self.fret_count + 1):
-            y = self.top_padding + i * self.fret_spacing
-            line_color = "#6B4C3B"
-            line_width = 3 if i == 0 else 1  #first fret thicker (nut)
-            self.create_line(self.left_padding, y, self.left_padding + self.string_spacing * (self.string_count -1), y, fill=line_color, width=line_width)
+        self.padding_x = (self.canvas_width - (self.fret_width * (self.strings - 1))) // 2
+        self.padding_y = 30
 
-    def draw_chord(self, fretboard):
-        radius = self.circle_radius
-        for m in self.markers:
-            self.delete(m)
+        self.draw_fretboard()
+        self.draw_string_names()
+
+
+    def draw_fretboard(self):
+        board_width = self.fret_width * (self.strings - 1)
+        board_height = self.string_height * self.frets
+
+        self.create_rectangle(
+            self.padding_x,
+            self.padding_y,
+            self.padding_x + board_width,
+            self.padding_y + board_height,
+            fill="#5a381e",
+            outline=""
+        )
+
+        for i in range(self.frets + 1):
+            y = self.padding_y + i * self.string_height
+            start_x = self.padding_x - 1 if i == 0 else self.padding_x
+            end_x = self.padding_x + board_width + 2 if i == 0 else self.padding_x + board_width
+            self.create_line(
+                start_x,
+                y,
+                end_x,
+                y,
+                width=6 if i == 0 else 1,
+                fill="silver"
+            )
+
+        for i in range(self.strings):
+            x = self.padding_x + i * self.fret_width
+            self.create_line(
+                x,
+                self.padding_y,
+                x,
+                self.padding_y + board_height,
+                width=3,
+                fill="#e6d4b6"
+            )
+
+    def draw_string_names(self):
+        string_names = ["G", "C", "E", "A"]
+        y = self.padding_y - 15
+
+        for i, name in enumerate(string_names):
+            x = self.padding_x + i * self.fret_width
+            self.create_text(
+                x,
+                y,
+                text=name,
+                fill="white",
+                font=("Arial", 12, "bold")
+            )
+
+    def draw_chord(self, fingering):
+        for marker in self.markers:
+            self.delete(marker)
         self.markers.clear()
 
-        for string_idx, fret in enumerate(fretboard):
+        for string_index, fret_str in enumerate(fingering):
             try:
-                fret_num = int(fret)
-                if 1 <= fret_num <= self.fret_count:
-                    x = self.left_padding + string_idx * self.string_spacing
-                    y = self.top_padding + fret_num * self.fret_spacing - self.fret_spacing / 2
-                    circle = self.create_oval(x - radius, y - radius, x + radius, y + radius, fill="#8B0000")
-                    number = self.create_text(x, y, text=str(fret), fill="white", font=(config.BASE_FONT, 10, "bold"))
-                    self.markers.extend([circle, number])
+                fret = int(fret_str)
             except ValueError:
                 continue
+            if fret == 0:
+                continue
+            if 1 <= fret <= self.frets:
+                x = self.padding_x + string_index * self.fret_width
+                y = self.padding_y + (fret - 1) * self.string_height + self.string_height / 2
+
+                circle = self.create_oval(
+                    x - 10, y - 10, x + 10, y + 10,
+                    fill="green", outline=""
+                )
+                text = self.create_text(x, y, text=str(fret), fill="white", font=("Arial", 10, "bold"))
+                self.markers.extend([circle, text])

@@ -2,7 +2,7 @@ import customtkinter as ctk
 import tkinter as tk
 import config
 import utils
-import version
+from version import __VERSION__
 from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI
 
 
@@ -101,15 +101,15 @@ def main():
     config.DIFFICULTY = config_data.get("difficulty", "easy")
     chords = utils.load_chords(utils.get_chord_file(), lang)
 
-    # Fenstergröße je Layout
+    # windowsize by layout
     if layout == "default":
-        root.geometry("450x500")
+        root.minsize(450, 725)
         app_class = DefaultChordTrainerGUI
     else:
-        root.geometry("900x400")
+        root.minsize(900, 400)
         app_class = LegacyChordTrainerGUI
 
-    root.title(f"{lang['title']} Version: {version.__VERSION__}")
+    root.title(f"{lang['title']} - {lang['info_version'].format(version=__VERSION__)}")
 
     app = app_class(root, chords, lang)
 

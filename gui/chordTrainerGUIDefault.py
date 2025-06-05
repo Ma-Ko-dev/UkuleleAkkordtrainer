@@ -14,6 +14,9 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.logic = GuiLogicManager(self, chords, lang)
 
         self.pack(fill="both", expand=True)
+    
+    def get_first_chord(self):
+        self.logic.next_chord(self.lang)
 
     def update_chord_label(self, text):
         self.chord_label.configure(text=text)
@@ -34,9 +37,9 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.next_chord_button.configure(state=state)
 
     def build_widgets(self):
-        self.grid_columnconfigure(0, weight=1, minsize=150)
-        self.grid_columnconfigure(1, weight=1, minsize=160)
-        self.grid_columnconfigure(2, weight=1, minsize=150)
+        self.grid_columnconfigure(0, weight=1, minsize=50)
+        self.grid_columnconfigure(1, weight=0, minsize=75)
+        self.grid_columnconfigure(2, weight=1, minsize=50)
 
         self.grid_rowconfigure(0, weight=0)
         self.grid_rowconfigure(1, weight=1)
