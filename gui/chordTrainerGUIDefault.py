@@ -47,22 +47,22 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.grid_rowconfigure(3, weight=0)
 
         self.chord_label = ctk.CTkLabel(self, text="", font=(config.BASE_FONT, 24))
-        self.chord_label.grid(row=0, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        self.chord_label.grid(row=0, column=0, columnspan=3, sticky="ew", padx=5, pady=10)
 
-        self.learned_label_left = ctk.CTkLabel(self, text="", anchor="nw", wraplength=120, justify="left", font=(config.BASE_FONT, 14))
+        self.learned_label_left = ctk.CTkLabel(self, text="", anchor="nw", wraplength=40, justify="left", font=(config.BASE_FONT, 14))
         self.learned_label_left.grid(row=1, column=0, padx=5, pady=2, sticky="nsew")
 
         self.fretboard_middle = DefaultFretboard(self)
         self.fretboard_middle.grid(row=1, column=1, padx=5, pady=5, sticky="nsew")
 
-        self.dummy_label_right = ctk.CTkLabel(self, text=" ", anchor="nw", wraplength=120, justify="left", font=(config.BASE_FONT, 12))
+        self.dummy_label_right = ctk.CTkLabel(self, text=" ", anchor="nw", wraplength=40, justify="left", font=(config.BASE_FONT, 12))
         self.dummy_label_right.grid(row=1, column=2, padx=5, pady=2, sticky="nsew")
 
         self.timer_display = ctk.CTkLabel(self, text="", font=(config.BASE_FONT, 14))
         self.timer_display.grid(row=2, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
 
         self.buttom_frame = ctk.CTkFrame(self)
-        self.buttom_frame.grid(row=3, column=0, columnspan=3, sticky="ew", padx=5, pady=5)
+        self.buttom_frame.grid(row=3, column=0, columnspan=3, sticky="ew", padx=5, pady=10)
 
         self.buttons_inner = ctk.CTkFrame(self.buttom_frame)
         self.buttons_inner.pack(anchor="center")
