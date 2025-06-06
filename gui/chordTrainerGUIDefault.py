@@ -62,7 +62,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.learned_label_left = ctk.CTkLabel(self.left_frame_frame1, text="", wraplength=180, font=(config.BASE_FONT, 16))
         self.learned_label_left.pack(pady=5)
         # middle frame of second inner frame (fretboard)
-        self.fretboard_frame = ctk.CTkFrame(self.middle_frame, border_width=1, corner_radius=5)
+        self.fretboard_frame = ctk.CTkFrame(self.middle_frame, fg_color="transparent")
         self.fretboard_frame.grid(row=0, column=1, sticky="nsew", pady=10)
         self.fretboard_middle = DefaultFretboard(self.fretboard_frame)
         self.fretboard_middle.pack(fill="both", expand=True, padx=5, pady=5)

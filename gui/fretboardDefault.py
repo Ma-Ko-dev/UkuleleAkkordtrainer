@@ -14,10 +14,8 @@ class DefaultFretboard(ctk.CTkCanvas):
         height = self.string_height * self.frets + 60
 
         theme_mode = ctk.get_appearance_mode()
-        if theme_mode == "Dark":
-            background = "#2B2B2B"
-        else:
-            background = "#F3F3F3"
+        color_list = ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
+        background = color_list[1] if theme_mode == "Dark" else color_list[0]
 
         super().__init__(master, width=width, height=height, bg=background, highlightthickness=0, **kwargs)
 
