@@ -45,10 +45,11 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.outer_frame.pack(expand=True, fill="both", pady=10, padx=10)
 
         # first inner frame, inside of outer frame
-        self.top_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10)
+        self.top_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10, height=50)
         self.top_frame.pack(fill="x", padx=10, pady=10)
+        self.top_frame.pack_propagate(False)
         self.top_label = ctk.CTkLabel(self.top_frame, text="", font=(config.BASE_FONT, 24))
-        self.top_label.pack(pady=5)
+        self.top_label.pack(expand=True)
 
         # second inner frame, inside outer frame
         self.middle_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10)
@@ -76,18 +77,20 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.dummy_label_right.pack(pady=5)
 
         # third inner frame, inside outer frame
-        self.buttom_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10)
+        self.buttom_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10, height=50)
         self.buttom_frame.pack(fill="x", padx=10, pady=5)
+        self.buttom_frame.pack_propagate(False)
         self.timer_display = ctk.CTkLabel(self.buttom_frame, text="", font=(config.BASE_FONT, 16))
-        self.timer_display.pack(pady=10)
+        self.timer_display.pack(expand=True)
 
-        self.button_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10)
+        self.button_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10, height=50)
         self.button_frame.pack(fill="both", padx=10, pady=10)
+        self.button_frame.pack_propagate(False)
         self.buttons_inner = ctk.CTkFrame(self.button_frame, fg_color="transparent")
         self.buttons_inner.pack(pady=10)
         self.next_chord_button = ctk.CTkButton(self.buttons_inner, text=f"{self.lang['next_chord_button']}", command=lambda: self.logic.next_chord(self.lang))
-        self.next_chord_button.pack(side="left", padx=10, pady=5)
+        self.next_chord_button.pack(side="left", padx=10)
         self.timer_button = ctk.CTkButton(self.buttons_inner, text=f"{self.lang['timer_button_start']}", command=lambda: self.logic.toggle_timer(self.lang))
-        self.timer_button.pack(side="left", padx=10, pady=5)
+        self.timer_button.pack(side="left", padx=10)
 
 
