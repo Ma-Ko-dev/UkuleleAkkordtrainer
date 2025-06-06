@@ -51,12 +51,17 @@ jobs:
 
       - name: Build .exe file
         run: pyinstaller main.py --onefile
+
+      - name: Copy assets without preview folder
+        run: |
+          New-Item -ItemType Directory -Force -Path dist\assets
+          robocopy assets dist\assets /E /XD previews
     
       - name: Create zip archive
         run: |
           Copy-Item -Recurse -Force lang dist\lang   
           Copy-Item -Recurse -Force chords dist\chords
-          powershell Compress-Archive -Path dist\main.exe,dist\chords,dist\lang -DestinationPath dist\UkuleleAkkordtrainer.zip
+          powershell Compress-Archive -Path dist\main.exe,dist\chords,dist\lang,dist\assets -DestinationPath dist\UkuleleAkkordtrainer.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
