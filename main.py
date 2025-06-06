@@ -12,7 +12,7 @@ def create_menubar(root, app, lang, config_data):
     # File menu
     filemenu = tk.Menu(menubar, tearoff=0)
     menubar.add_cascade(label=lang["menu_file"], menu=filemenu)
-    filemenu.add_command(label=lang["submenu_reload_chords"], command=lambda: app.reload_chords(lang))
+    filemenu.add_command(label=lang["submenu_reload_chords"], command=lambda: app.logic.reload_chords(lang))
     filemenu.add_command(label=lang["submenu_exit"], command=root.quit)
 
     # Options menu
@@ -59,7 +59,7 @@ def create_menubar(root, app, lang, config_data):
             utils.save_config(config_data)
             current_difficulty = level
             config.DIFFICULTY = level
-            app.reload_chords(lang)
+            app.logic.reload_chords(lang)
             if hasattr(app, "set_difficulty"):
                 app.set_difficulty(level)
             # refresh menu
