@@ -55,7 +55,7 @@ jobs:
       - name: Copy assets without preview folder
         run: |
           New-Item -ItemType Directory -Force -Path dist\assets
-          robocopy assets dist\assets /E /XD previews
+          robocopy assets dist\assets /E /XD previews; exit 0
     
       - name: Create zip archive
         run: |
