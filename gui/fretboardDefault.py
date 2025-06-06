@@ -9,6 +9,7 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.fret_width = 45
         self.string_height = 45
         self.marker_radius = 13
+        self.fingering = []
 
         width = self.fret_width * self.strings + 60
         height = self.string_height * self.frets + 60
@@ -28,6 +29,16 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.draw_fretboard()
         self.draw_string_names()
         # self.bind("<Configure>", self.on_resize)
+
+    def update_theme(self):
+        theme_mode = ctk.get_appearance_mode()
+        color_list = ctk.ThemeManager.theme["CTkFrame"]["fg_color"]
+        background = color_list[1] if theme_mode == "Dark" else color_list[0]
+        self.configure(bg=background)
+        self.delete("all")
+        self.draw_fretboard()
+        self.draw_string_names()
+        self.draw_chord(self.fingering)
 
     def on_resize(self, event):
         min_width = self.fret_width * (self.strings - 1) + 60
@@ -117,6 +128,7 @@ class DefaultFretboard(ctk.CTkCanvas):
             )
 
     def draw_chord(self, fingering):
+        self.fingering = fingering
         r = self.marker_radius
         for marker in self.markers:
             self.delete(marker)

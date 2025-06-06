@@ -7,6 +7,41 @@ from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI
 
 
 def create_menubar(root, app, lang, config_data):
+    root.theme_var = tk.StringVar()
+    root.theme_var.set(ctk.get_appearance_mode()) 
+
+    def set_difficulty(level):
+        nonlocal current_difficulty
+        if level != current_difficulty:
+            config_data["difficulty"] = level
+            utils.save_config(config_data)
+            current_difficulty = level
+            config.DIFFICULTY = level
+            app.logic.reload_chords(lang)
+            if hasattr(app, "set_difficulty"):
+                app.set_difficulty(level)
+            # refresh menu
+            update_difficulty_menu()
+
+    def update_difficulty_menu():
+        difficulty_submenu.delete(0, "end")
+        for level in difficulty_labels:
+            state = "disabled" if level == current_difficulty else "normal"
+            difficulty_submenu.add_command(
+                label=difficulty_labels[level],
+                state=state,
+                command=lambda lvl=level: set_difficulty(lvl)
+            )
+
+    def switch_theme(mode):
+        if mode == ctk.get_appearance_mode():
+            return
+        ctk.set_appearance_mode(mode)
+        root.update()
+        if hasattr(app, "update_theme"):
+            app.update_theme()
+
+
     menubar = tk.Menu(root)
 
     # File menu
@@ -39,6 +74,13 @@ def create_menubar(root, app, lang, config_data):
                 tk.messagebox.showinfo(lang["restart_info_title"], lang["restart_info_text"])
         layout_submenu.add_command(label=label, state=state, command=on_select)
 
+    # theme submenu
+    theme_submenu = tk.Menu(optionmenu, tearoff=0)
+    # TODO add strings to lang files
+    optionmenu.add_cascade(label="Farbschema", menu=theme_submenu)
+    theme_submenu.add_radiobutton(label="Hell", variable=root.theme_var, value="Light", command=lambda: switch_theme("Light"))
+    theme_submenu.add_radiobutton(label="Dunkel", variable=root.theme_var, value="Dark", command=lambda: switch_theme("Dark"))
+
     # Difficulty submenu
     difficulty_submenu = tk.Menu(optionmenu, tearoff=0)
     optionmenu.add_cascade(label=lang["difficulty"], menu=difficulty_submenu)
@@ -51,30 +93,6 @@ def create_menubar(root, app, lang, config_data):
 
     # load difficulty from file or set easy as default
     current_difficulty = config_data.get("difficulty", "easy")
-
-    def set_difficulty(level):
-        nonlocal current_difficulty
-        if level != current_difficulty:
-            config_data["difficulty"] = level
-            utils.save_config(config_data)
-            current_difficulty = level
-            config.DIFFICULTY = level
-            app.logic.reload_chords(lang)
-            if hasattr(app, "set_difficulty"):
-                app.set_difficulty(level)
-            # refresh menu
-            update_difficulty_menu()
-
-    def update_difficulty_menu():
-        difficulty_submenu.delete(0, "end")
-        for level in difficulty_labels:
-            state = "disabled" if level == current_difficulty else "normal"
-            difficulty_submenu.add_command(
-                label=difficulty_labels[level],
-                state=state,
-                command=lambda lvl=level: set_difficulty(lvl)
-            )
-
     update_difficulty_menu()
 
     # Help menu

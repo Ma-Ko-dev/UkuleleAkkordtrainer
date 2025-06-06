@@ -36,6 +36,9 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
     def set_next_chord_button_state(self, state):
         self.next_chord_button.configure(state=state)
 
+    def update_theme(self):
+        self.fretboard_middle.update_theme()
+
     def build_widgets(self):
         # outer frame
         self.outer_frame = ctk.CTkFrame(self, border_width=3, corner_radius=16)
