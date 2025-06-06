@@ -9,6 +9,5 @@
   { "name": "A7",      "fingering": ["0", "1", "0", "0"] },
   { "name": "C#dim",   "fingering": ["0", "1", "0", "1"] },
   { "name": "Em7",     "fingering": ["0", "2", "0", "2"] },
-  { "name": "Eaug",    "fingering": ["0", "1", "0", "0"] },
   { "name": "Em6",     "fingering": ["0", "1", "0", "2"] }
 ]

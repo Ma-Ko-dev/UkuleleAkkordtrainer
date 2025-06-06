@@ -8,6 +8,7 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.strings = 4
         self.fret_width = 45
         self.string_height = 45
+        self.marker_radius = 13
 
         width = self.fret_width * self.strings + 60
         height = self.string_height * self.frets + 60
@@ -118,6 +119,7 @@ class DefaultFretboard(ctk.CTkCanvas):
             )
 
     def draw_chord(self, fingering):
+        r = self.marker_radius
         for marker in self.markers:
             self.delete(marker)
         self.markers.clear()
@@ -134,7 +136,7 @@ class DefaultFretboard(ctk.CTkCanvas):
                 y = self.padding_y + (fret - 1) * self.string_height + self.string_height / 2
 
                 circle = self.create_oval(
-                    x - 10, y - 10, x + 10, y + 10,
+                    x - r, y - r, x + r, y + r,
                     fill="green", outline=""
                 )
                 text = self.create_text(x, y, text=str(fret), fill="white", font=("Arial", 10, "bold"))
