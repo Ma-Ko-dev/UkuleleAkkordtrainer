@@ -38,7 +38,7 @@
   "speech_next": "weiter",
   "speech_stop": "stopp",
   "timer_text": "Noch {seconds_left} Sekunden bis zum nächsten Akkord",
-  "learned_chords_text": "Gelernt:\n{count} Akkorde",
+  "learned_chords_text": "Gelernt: {count} Akkorde",
   "error_write_file": "Fehler beim schreiben der Datei:",
   "error_api": "API-Fehler",
   "error_reloading_chords": "Fehler beim Akkorde neu laden",

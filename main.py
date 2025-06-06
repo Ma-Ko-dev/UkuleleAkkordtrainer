@@ -88,8 +88,8 @@ def create_menubar(root, app, lang, config_data):
 
 
 def main():
-    ctk.set_appearance_mode("System")  # Optional: "Dark", "Light", "System"
-    ctk.set_default_color_theme("blue")
+    ctk.set_appearance_mode("Dark")  # Optional: "Dark", "Light", "System"
+    ctk.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
     root = ctk.CTk()
 
     config_data = utils.load_config()
@@ -103,13 +103,14 @@ def main():
 
     # windowsize by layout
     if layout == "default":
-        root.minsize(450, 725)
+        root.minsize(600, 725)
         app_class = DefaultChordTrainerGUI
     else:
         root.minsize(900, 400)
         app_class = LegacyChordTrainerGUI
 
     root.title(f"{lang['title']} - {lang['info_version'].format(version=__VERSION__)}")
+    root.resizable(False, False)
 
     app = app_class(root, chords, lang)
 

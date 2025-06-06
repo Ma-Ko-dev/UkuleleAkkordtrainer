@@ -1,5 +1,6 @@
 import customtkinter as ctk
-
+import config
+from PIL import Image, ImageTk
 
 class DefaultFretboard(ctk.CTkCanvas):
     def __init__(self, master, **kwargs):
@@ -23,12 +24,11 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.canvas_height = height
         self.padding_x = (self.canvas_width - (self.fret_width * (self.strings - 1))) // 2
         self.padding_y = 30
-
         self.markers = []
 
         self.draw_fretboard()
         self.draw_string_names()
-        self.bind("<Configure>", self.on_resize)
+        # self.bind("<Configure>", self.on_resize)
 
     def on_resize(self, event):
         min_width = self.fret_width * (self.strings - 1) + 60
@@ -59,14 +59,25 @@ class DefaultFretboard(ctk.CTkCanvas):
         board_width = self.fret_width * (self.strings - 1)
         board_height = self.string_height * self.frets
 
-        self.create_rectangle(
-            self.padding_x,
-            self.padding_y,
-            self.padding_x + board_width,
-            self.padding_y + board_height,
-            fill="#5a381e",
-            outline=""
-        )
+        try:
+            image = Image.open(config.TEXTURE_PATH).resize((board_width, board_height))
+            self.wood_texture = ImageTk.PhotoImage(image)
+            self.create_image(
+                self.padding_x,
+                self.padding_y,
+                image=self.wood_texture,
+                anchor="nw"
+            )
+        except Exception as e:
+            print("Fehler beim Laden der Textur:", e)
+            self.create_rectangle(
+                self.padding_x,
+                self.padding_y,
+                self.padding_x + board_width,
+                self.padding_y + board_height,
+                fill="#5a381e",  # fallback-farbe
+                outline=""
+            )
 
         for i in range(self.frets + 1):
             y = self.padding_y + i * self.string_height
