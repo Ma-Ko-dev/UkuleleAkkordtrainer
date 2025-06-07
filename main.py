@@ -2,9 +2,10 @@ import customtkinter as ctk
 import tkinter as tk
 import config
 import utils
-from version import __VERSION__
-from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI
+from gui import LegacyChordTrainerGUI 
+from gui import DefaultChordTrainerGUI
 from gui import create_menubar
+from version import __VERSION__
 
 
 def main():
