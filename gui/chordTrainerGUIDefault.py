@@ -73,28 +73,28 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
 
         # left frame of second inner frame
         self.left_frame = ctk.CTkFrame(self.middle_frame, border_width=1, corner_radius=5)
-        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=5, pady=10)
+        self.left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
         self.left_frame.grid_propagate(False)
         self.left_frame_frame1 = ctk.CTkFrame(self.left_frame, border_width=1, corner_radius=5, height=30)
         self.left_frame_frame1.pack(fill="x", padx=5, pady=5)
-        self.learned_label_left = ctk.CTkLabel(self.left_frame_frame1, text="", wraplength=180, font=(config.BASE_FONT, 16))
-        self.learned_label_left.pack(expand=True, pady=2)
+        self.learned_label_left = ctk.CTkLabel(self.left_frame_frame1, text="", wraplength=170, font=(config.BASE_FONT, 16))
+        self.learned_label_left.pack(expand=True, pady=5)
 
         # middle frame of second inner frame (fretboard)
-        self.fretboard_frame = ctk.CTkFrame(self.middle_frame, fg_color="transparent")
+        self.fretboard_frame = ctk.CTkFrame(self.middle_frame, fg_color="transparent", width=200)
         self.fretboard_frame.grid(row=0, column=1, sticky="nsew", pady=10)
         self.fretboard_middle = DefaultFretboard(self.fretboard_frame)
         self.fretboard_middle.pack(fill="both", expand=True)
 
         # right frame of second inner frame
         self.right_frame = ctk.CTkFrame(self.middle_frame, border_width=1, corner_radius=5)
-        self.right_frame.grid(row=0, column=2, sticky="nsew", padx=5, pady=10)
+        self.right_frame.grid(row=0, column=2, sticky="nsew", padx=10, pady=10)
         self.right_frame.grid_propagate(False)    
         # frame for future widgets
         # self.right_frame_frame1 = ctk.CTkFrame(self.right_frame, border_width=1, corner_radius=5, height=30)
         # self.right_frame_frame1.pack(fill="x", padx=5, pady=5)
         self.dummy_label_right = ctk.CTkLabel(self.right_frame, text="", wraplength=180, font=(config.BASE_FONT, 16))
-        self.dummy_label_right.pack(expand=True, pady=2)
+        self.dummy_label_right.pack(expand=True, pady=5)
 
 
         # third inner frame, inside of outer frame
