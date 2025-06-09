@@ -13,6 +13,9 @@ class LegacyChordTrainerGUI(tk.Frame):
         self.build_widgets(lang)
         self.pack(fill="both", expand=True)
 
+    def get_first_chord(self):
+        self.logic.next_chord(self.lang)
+
 
     def update_chord_label(self, text):
         self.chord_label.config(text=text)
