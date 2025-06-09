@@ -37,9 +37,11 @@ def create_menubar(root, app, lang, config_data):
         if mode == ctk.get_appearance_mode():
             return
         ctk.set_appearance_mode(mode)
+        config_data["theme"] = mode
         root.update()
         if hasattr(app, "update_theme"):
             app.update_theme()
+        utils.save_config(config_data)
 
 
     menubar = tk.Menu(root)
@@ -58,7 +60,7 @@ def create_menubar(root, app, lang, config_data):
     layout_submenu = tk.Menu(optionmenu, tearoff=0)
     optionmenu.add_cascade(label=lang["submenu_layouts"], menu=layout_submenu)
 
-    # layout form config
+    # layout from config
     current_layout = config_data.get("layout", "default")
 
     for layout_key, label, gui_class in [
@@ -77,8 +79,8 @@ def create_menubar(root, app, lang, config_data):
     # theme submenu
     theme_submenu = tk.Menu(optionmenu, tearoff=0)
     optionmenu.add_cascade(label=lang["submenu_colortheme"], menu=theme_submenu)
-    theme_submenu.add_radiobutton(label=lang["theme_light"], variable=root.theme_var, value="Light", command=lambda: switch_theme("Light"))
-    theme_submenu.add_radiobutton(label=lang["theme_dark"], variable=root.theme_var, value="Dark", command=lambda: switch_theme("Dark"))
+    theme_submenu.add_radiobutton(label=lang["theme_light"], variable=root.theme_var, value="Light", command=lambda: switch_theme("light"))
+    theme_submenu.add_radiobutton(label=lang["theme_dark"], variable=root.theme_var, value="Dark", command=lambda: switch_theme("dark"))
 
     # Difficulty submenu
     difficulty_submenu = tk.Menu(optionmenu, tearoff=0)

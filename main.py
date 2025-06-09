@@ -9,15 +9,14 @@ from version import __VERSION__
 
 
 def main():
-    # set color theme
-    # TODO save and load theme from file
-    ctk.set_appearance_mode("Dark")  # Optional: "Dark", "Light", "System"
-    ctk.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
-
     root = ctk.CTk()
 
     config_data = utils.load_config()
     layout = config_data.get("layout", "default")
+
+    # set color theme
+    ctk.set_appearance_mode(config_data["theme"])  # "Dark" (standard), "Light", "System"
+    ctk.set_default_color_theme("dark-blue")  # "blue" (standard), "green", "dark-blue"
     
     lang = utils.load_language(utils.get_system_language())
     utils.set_font(config.LANG_CODE)

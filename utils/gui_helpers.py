@@ -41,7 +41,11 @@ def open_github():
 def load_config():
     if not os.path.exists(config.CONFIG_PATH):
         # create default config
-        default_config = {"layout": "default", "difficulty": "easy"}
+        default_config = {
+            "layout": "default", 
+            "difficulty": "easy",
+            "theme": "dark"
+            }
         save_config(default_config)
         return default_config
     with open(config.CONFIG_PATH, "r") as f:
