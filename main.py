@@ -8,6 +8,7 @@ from gui import create_menubar
 from version import __VERSION__
 
 
+
 def main():
     root = ctk.CTk()
 
@@ -26,18 +27,24 @@ def main():
 
     # windowsize by layout
     if layout == "default":
-        root.minsize(600, 725)
+        root.minsize(700, 850)
         app_class = DefaultChordTrainerGUI
     else:
         root.minsize(900, 400)
         app_class = LegacyChordTrainerGUI
 
+
     root.title(f"{lang['title']} - {lang['info_version'].format(version=__VERSION__)}")
-    root.resizable(False, False)
+    root.resizable(True, False)
 
     app = app_class(root, chords, lang)
 
     root.config(menu=create_menubar(root, app, lang, config_data))
+
+    # debug
+    # root.update()  # Layout erzwingen
+    # print(f"Fenstergröße nach update(): {root.winfo_width()}x{root.winfo_height()}")
+
 
     root.mainloop()
 

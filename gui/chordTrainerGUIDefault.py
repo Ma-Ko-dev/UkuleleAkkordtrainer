@@ -67,14 +67,14 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.middle_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10)
         self.middle_frame.pack(fill="both", expand=True, padx=10)
         self.middle_frame.grid_columnconfigure(0, weight=1, minsize=200)
-        self.middle_frame.grid_columnconfigure(1, weight=1, minsize=200)
+        self.middle_frame.grid_columnconfigure(1, weight=0, minsize=200)
         self.middle_frame.grid_columnconfigure(2, weight=1, minsize=200)
 
 
         # left frame of second inner frame
         self.left_frame = ctk.CTkFrame(self.middle_frame, border_width=1, corner_radius=5)
         self.left_frame.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-        self.left_frame.grid_propagate(False)
+        self.left_frame.grid_propagate(True)
         self.left_frame_frame1 = ctk.CTkFrame(self.left_frame, border_width=1, corner_radius=5, height=30)
         self.left_frame_frame1.pack(fill="x", padx=5, pady=5)
         self.learned_label_left = ctk.CTkLabel(self.left_frame_frame1, text="", wraplength=170, font=(config.BASE_FONT, 16))
@@ -84,12 +84,12 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.fretboard_frame = ctk.CTkFrame(self.middle_frame, fg_color="transparent", width=200)
         self.fretboard_frame.grid(row=0, column=1, sticky="nsew", pady=10)
         self.fretboard_middle = DefaultFretboard(self.fretboard_frame)
-        self.fretboard_middle.pack(fill="both", expand=True)
+        self.fretboard_middle.pack(anchor="center", expand=False)
 
         # right frame of second inner frame
         self.right_frame = ctk.CTkFrame(self.middle_frame, border_width=1, corner_radius=5)
         self.right_frame.grid(row=0, column=2, sticky="nsew", padx=10, pady=10)
-        self.right_frame.grid_propagate(False)    
+        self.right_frame.grid_propagate(True)    
         # frame for future widgets
         # self.right_frame_frame1 = ctk.CTkFrame(self.right_frame, border_width=1, corner_radius=5, height=30)
         # self.right_frame_frame1.pack(fill="x", padx=5, pady=5)
@@ -117,12 +117,12 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             self.buttons_inner, text=f"{self.lang['next_chord_button']}", 
             font=(config.BASE_FONT, 14), 
             command=lambda: self.logic.next_chord(self.lang))
-        self.next_chord_button.pack(side="left", padx=10)
+        self.next_chord_button.pack(side="left", padx=5)
 
         self.timer_button = ctk.CTkButton(
             self.buttons_inner, text=f"{self.lang['timer_button_start']}", 
             font=(config.BASE_FONT, 14), 
             command=lambda: self.logic.toggle_timer(self.lang))
-        self.timer_button.pack(side="left", padx=10)
+        self.timer_button.pack(side="left", padx=5)
 
 
