@@ -5,6 +5,7 @@ import config
 import speech_recognition as sr
 from tkinter import Tk
 from utils.gui_helpers import load_chords, get_chord_file
+from utils.discord_presence import DiscordRichPresence
 
 
 class GuiLogicManager:
@@ -18,6 +19,9 @@ class GuiLogicManager:
         self.timer_interval = 10000 # in ms ca. 10 seconds
         self.timer_id = None
         self.running = True
+
+        self.discord_rpc = DiscordRichPresence(config.DISCORD_CLIENT_ID)
+        self.discord_rpc.start()
 
         self.master.after(100, lambda: self.master.get_first_chord())
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
@@ -35,6 +39,7 @@ class GuiLogicManager:
             possible = self.chords[:]
 
         chord = random.choice(possible)
+        self.discord_rpc.update_chord(chord["name"])
         config.PAST_CHORDS.append(chord["name"].strip())
 
         if len(config.PAST_CHORDS) > config.MAX_HISTORY:
