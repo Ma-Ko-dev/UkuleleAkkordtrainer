@@ -28,6 +28,7 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - 3 difficulty settings with chords to practice
 - Displaying how many chords you learned in the current session
 - Dark/Light colortheme
+- Discord rich presence shows what chord you are currently learning
 
 ## Preview
 
