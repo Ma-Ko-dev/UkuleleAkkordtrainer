@@ -85,7 +85,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.current_chord_label = ctk.CTkLabel(self.chord_info_frame, text="Aktueller Akkord", font=(config.BASE_FONT, 18, "underline"))
         self.current_chord_label.pack(expand=True, pady=5)
 
-        self.current_chord = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16))
+        self.current_chord = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16, "bold"))
         self.current_chord.pack(expand=True)
 
         self.chord_interval = ctk.CTkLabel(self.chord_info_frame, text="Intervalle: 1-3-5", font=(config.BASE_FONT, 16))
@@ -94,7 +94,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.chord_tones = ctk.CTkLabel(self.chord_info_frame, text="Töne: G-B-D", font=(config.BASE_FONT, 16))
         self.chord_tones.pack(expand=True, pady=(0, 5))
 
-        # maybe add chord info like "did you know?" inbetween
+        # maybe add chord info like "did you know?" somewhere
 
         # chord stats frame
         self.chord_stats_frame = ctk.CTkFrame(self.left_frame, border_width=1, corner_radius=5)
@@ -107,7 +107,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.learned_label.pack(expand=True, pady=5)
 
         self.chord_history = ctk.CTkLabel(self.chord_stats_frame, text="Letzte 4 Akkorde: G-C-F-Am", wraplength=180, font=(config.BASE_FONT, 16))
-        self.chord_history.pack(expand=True, pady=5)
+        self.chord_history.pack(expand=True, pady=(5, 10))
 
         # middle frame of second inner frame (fretboard)
         self.fretboard_frame = ctk.CTkFrame(self.middle_frame, fg_color="transparent", width=200)
@@ -148,9 +148,10 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.mode_label = ctk.CTkLabel(self.mode_frame, text="Lernmodus", font=(config.BASE_FONT, 18, "underline"))
         self.mode_label.pack(expand=True, pady=5)
 
-        for mode in self.modes:
+        for index, mode in enumerate(self.modes):
+            pady = (2, 10) if index == len(self.modes) - 1 else (2, 2)
             rb = ctk.CTkRadioButton(self.mode_frame, text=mode, variable=self.mode_var, value=mode, radiobutton_width=18, radiobutton_height=18)
-            rb.pack(anchor="w", padx=10, pady=2)
+            rb.pack(anchor="w", padx=10, pady=pady)
 
         # controls frame
         self.control_frame = ctk.CTkFrame(self.right_frame, border_width=1, corner_radius=5)
