@@ -27,7 +27,7 @@ def main():
 
     # windowsize by layout
     if layout == "default":
-        root.minsize(700, 850)
+        root.minsize(700, 750)
         app_class = DefaultChordTrainerGUI
     else:
         root.minsize(900, 400)
