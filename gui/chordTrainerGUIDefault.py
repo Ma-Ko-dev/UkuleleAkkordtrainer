@@ -130,14 +130,14 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.fingering_setting_label = ctk.CTkLabel(self.display_settings_frame, text="Akkordanzeige", font=(config.BASE_FONT, 16, "underline"))
         self.fingering_setting_label.pack(expand=True, pady=(5, 0))
 
-        self.fingering_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=["Bund", "Finger"], font=(config.BASE_FONT, 16))
+        self.fingering_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=["Bund", "Finger"], font=(config.BASE_FONT, 16), state="disabled")
         self.fingering_setting.set("Bund")
         self.fingering_setting.pack(expand=True, pady=(0, 5))
 
         self.left_hand_display = ctk.CTkLabel(self.display_settings_frame, text="Links/Rechtshänder", font=(config.BASE_FONT, 16, "underline"))
         self.left_hand_display.pack(expand=True, pady=5)
 
-        self.left_hand_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=["Links", "Rechts"], font=(config.BASE_FONT, 16))
+        self.left_hand_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=["Links", "Rechts"], font=(config.BASE_FONT, 16), state="disabled")
         self.left_hand_setting.set("Rechts")
         self.left_hand_setting.pack(expand=True, padx=10, pady=(0, 10))
 
@@ -150,7 +150,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
 
         for index, mode in enumerate(self.modes):
             pady = (2, 10) if index == len(self.modes) - 1 else (2, 2)
-            rb = ctk.CTkRadioButton(self.mode_frame, text=mode, variable=self.mode_var, value=mode, radiobutton_width=18, radiobutton_height=18)
+            rb = ctk.CTkRadioButton(self.mode_frame, text=mode, variable=self.mode_var, value=mode, radiobutton_width=18, radiobutton_height=18, state="disabled")
             rb.pack(anchor="w", padx=10, pady=pady)
 
         # controls frame
@@ -166,7 +166,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             command=lambda: self.logic.next_chord(self.lang))
         self.next_chord_button.pack(pady=(5, 2))
 
-        self.prev_chord = ctk.CTkButton(self.control_frame, text="Vorheriger Akkord", font=(config.BASE_FONT, 14))
+        self.prev_chord = ctk.CTkButton(self.control_frame, text="Vorheriger Akkord", font=(config.BASE_FONT, 14), state="disabled")
         self.prev_chord.pack(pady=2)
 
         self.timer_button = ctk.CTkButton(
