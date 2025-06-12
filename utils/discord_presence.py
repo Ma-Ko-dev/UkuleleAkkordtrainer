@@ -27,6 +27,7 @@ class DiscordRichPresence:
 
     
     def update_chord(self, chord_name):
+        # TODO Upgrade with tones and intervals
         self.update_queue.put(chord_name)
 
 

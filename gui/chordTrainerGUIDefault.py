@@ -49,20 +49,33 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
     def update_theme(self):
         self.fretboard_middle.update_theme()
 
+    def update_previous_chords(self):
+        # TODO add translation functionality
+        self.chord_history.configure(text="Letzte Akkorde:\n" + " ".join(config.PAST_CHORDS))
+
+    def update_interval(self, chord):
+        # TODO add translation functionality
+        chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
+        if chord_obj:
+            intervals = chord_obj.get("intervals", [])
+            self.chord_interval.configure(text=f"Intervalle: {' '.join(intervals)}")
+        else:
+            self.chord_interval.configure(text="Intervalle: Unbekannt")
+
+    def update_chord_tones(self, chord):
+        # TODO add translation functionality
+        chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
+        if chord_obj:
+            tones = chord_obj.get("chord_notes", [])
+            self.chord_tones.configure(text=f"Töne: {' '.join(tones)}")
+        else:
+            self.chord_tones.configure(text="Töne: Unbekannt")
 
 
     def build_widgets(self):
         # outer frame
         self.outer_frame = ctk.CTkFrame(self, border_width=3, corner_radius=16)
         self.outer_frame.pack(expand=True, fill="both", pady=10, padx=10)
-
-
-        # # first inner frame, inside of outer frame
-        # self.top_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10, height=50)
-        # self.top_frame.pack(fill="x", padx=10, pady=10)
-        # self.top_frame.pack_propagate(False)
-        # self.top_label = ctk.CTkLabel(self.top_frame, text="", font=(config.BASE_FONT, 24))
-        # self.top_label.pack(expand=True)
 
 
         # second inner frame, inside of outer frame
@@ -88,13 +101,11 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.current_chord = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16, "bold"))
         self.current_chord.pack(expand=True)
 
-        self.chord_interval = ctk.CTkLabel(self.chord_info_frame, text="Intervalle: 1-3-5", font=(config.BASE_FONT, 16))
+        self.chord_interval = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16))
         self.chord_interval.pack(expand=True)
 
-        self.chord_tones = ctk.CTkLabel(self.chord_info_frame, text="Töne: G-B-D", font=(config.BASE_FONT, 16))
+        self.chord_tones = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16))
         self.chord_tones.pack(expand=True, pady=(0, 5))
-
-        # maybe add chord info like "did you know?" somewhere
 
         # chord stats frame
         self.chord_stats_frame = ctk.CTkFrame(self.left_frame, border_width=1, corner_radius=5)
@@ -106,8 +117,10 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.learned_label = ctk.CTkLabel(self.chord_stats_frame, text="", wraplength=170, font=(config.BASE_FONT, 16))
         self.learned_label.pack(expand=True, pady=5)
 
-        self.chord_history = ctk.CTkLabel(self.chord_stats_frame, text="Letzte 4 Akkorde: G-C-F-Am", wraplength=180, font=(config.BASE_FONT, 16))
+        self.chord_history = ctk.CTkLabel(self.chord_stats_frame, text="", wraplength=180, font=(config.BASE_FONT, 16))
         self.chord_history.pack(expand=True, pady=(5, 10))
+
+        # maybe add chord info like "did you know?" somewhere
 
         # middle frame of second inner frame (fretboard)
         self.fretboard_frame = ctk.CTkFrame(self.middle_frame, fg_color="transparent", width=200)
@@ -182,26 +195,3 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.buttom_frame.pack_propagate(False)
         self.timer_display = ctk.CTkLabel(self.buttom_frame, text="", font=(config.BASE_FONT, 16))
         self.timer_display.pack(expand=True)
-
-
-        # # fourth inner frame (button frame), inside of outer frame
-        # self.button_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10, height=50)
-        # self.button_frame.pack(fill="both", padx=10, pady=10)
-        # self.button_frame.pack_propagate(False)
-        # self.buttons_inner = ctk.CTkFrame(self.button_frame, fg_color="transparent")
-        # self.buttons_inner.pack(pady=10)
-
-        # buttons for fourth frame (button frame)
-        # self.next_chord_button = ctk.CTkButton(
-        #     self.buttons_inner, text=f"{self.lang['next_chord_button']}", 
-        #     font=(config.BASE_FONT, 14), 
-        #     command=lambda: self.logic.next_chord(self.lang))
-        # self.next_chord_button.pack(side="left", padx=5)
-
-        # self.timer_button = ctk.CTkButton(
-        #     self.buttons_inner, text=f"{self.lang['timer_button_start']}", 
-        #     font=(config.BASE_FONT, 14), 
-        #     command=lambda: self.logic.toggle_timer(self.lang))
-        # self.timer_button.pack(side="left", padx=5)
-
-

@@ -55,6 +55,9 @@ class GuiLogicManager:
         self.master.update_fretboard(chord["fingering"])
         self.learned_chords = self.learned_chords + 1
         self.master.update_learned_label(self.lang["learned_chords_text"].format(count=self.learned_chords))
+        self.master.update_previous_chords()
+        self.master.update_interval(chord["name"])
+        self.master.update_chord_tones(chord["name"])
 
     def speech_recognition(self, lang):
         recognizer = sr.Recognizer()
