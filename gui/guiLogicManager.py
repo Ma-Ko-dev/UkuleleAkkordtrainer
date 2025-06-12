@@ -4,7 +4,7 @@ import time
 import config
 import speech_recognition as sr
 from tkinter import Tk
-from utils.gui_helpers import load_chords, get_chord_file
+from utils.gui_helpers import load_chords
 from utils.discord_presence import DiscordRichPresence
 
 
@@ -85,7 +85,7 @@ class GuiLogicManager:
                     break
 
     def reload_chords(self, lang):
-        new_chords = load_chords(get_chord_file(), lang)
+        new_chords = load_chords(lang)
         if new_chords:
             self.chords = new_chords
         else:
