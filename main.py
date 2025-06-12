@@ -23,7 +23,7 @@ def main():
     utils.set_font(config.LANG_CODE)
 
     config.DIFFICULTY = config_data.get("difficulty", "easy")
-    chords = utils.load_chords(utils.get_chord_file(), lang)
+    chords = utils.load_chords(lang)
 
     # windowsize by layout
     if layout == "default":

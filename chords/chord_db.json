@@ -1,42 +1,92 @@
-[
-  {
-    "name": "C",
-    "fingering": ["0", "0", "0", "3"],
-    "difficulty": "leicht",
-    "fingers": [0, 0, 0, 3],
-    "notes_on_strings": ["G", "C", "E", "C"],
-    "chord_notes": ["C", "E", "G"],
-    "intervals": ["1", "3", "5"],
-    "funfact": "Der C-Dur-Akkord ist der 'Hello World'-Akkord der Ukulele."
-  },
-  {
-    "name": "Am",
-    "fingering": ["2", "0", "0", "0"],
-    "difficulty": "leicht",
-    "fingers": [0, 0, 0, 2],
-    "notes_on_strings": ["G", "C", "E", "A"],
-    "chord_notes": ["A", "C", "E"],
-    "intervals": ["1", "b3", "5"],
-    "funfact": "Am ist einer der einfachsten Mollakkorde und ein Klassiker in vielen Songs."
-  },
-  {
-    "name": "A",
-    "fingering": ["2", "1", "0", "0"],
-    "difficulty": "leicht",
-    "fingers": [2, 1, 0, 0],
-    "notes_on_strings": ["F#", "C#", "A", "E"],
-    "chord_notes": ["A", "C#", "E"],
-    "intervals": ["1", "3", "5"],
-    "funfact": "A-Dur klingt hell und fröhlich – perfekt für viele Pop-Songs."
-  },
-  {
-    "name": "F",
-    "fingering": ["2", "0", "1", "0"],
-    "difficulty": "leicht",
-    "fingers": [2, 0, 1, 0],
-    "notes_on_strings": ["G", "C", "A", "C"],
-    "chord_notes": ["F", "A", "C"],
-    "intervals": ["1", "3", "5"],
-    "funfact": "F ist einer der beliebtesten Akkorde bei Anfängern, weil er so leicht greifbar ist."
-  }
-]
+{
+    "easy": [
+        {
+        "name": "C",
+        "fingering": ["0", "0", "0", "3"],
+        "fingers": ["0", "0", "0", "3"],
+        "notes_on_strings": ["G", "C", "E", "C"],
+        "chord_notes": ["C", "E", "G"],
+        "intervals": ["1", "3", "5"]
+        },
+        {
+        "name": "Am",
+        "fingering": ["2", "0", "0", "0"],
+        "fingers": ["2", "0", "0", "0"],
+        "notes_on_strings": ["A", "C", "E", "A"],
+        "chord_notes": ["A", "C", "E"],
+        "intervals": ["1", "b3", "5"]
+        },
+        {
+        "name": "A",
+        "fingering": ["2", "1", "0", "0"],
+        "fingers": ["2", "1", "0", "0"],
+        "notes_on_strings": ["A", "C#", "E", "A"],
+        "chord_notes": ["A", "C#", "E"],
+        "intervals": ["1", "3", "5"]
+        },
+        {
+        "name": "F",
+        "fingering": ["2", "0", "1", "0"],
+        "fingers": ["2", "0", "1", "0"],
+        "notes_on_strings": ["A", "C", "F", "A"],
+        "chord_notes": ["F", "A", "C"],
+        "intervals": ["1", "3", "5"]
+        },
+        {
+        "name": "C7",
+        "fingering": ["0", "0", "0", "1"],
+        "fingers": ["0", "0", "0", "1"],
+        "notes_on_strings": ["G", "C", "E", "B"],
+        "chord_notes": ["C", "E", "G", "B"],
+        "intervals": ["1", "3", "5", "b7"]
+        },
+        {
+        "name": "C6/Am7",
+        "fingering": ["0", "0", "0", "0"],
+        "fingers": ["0", "0", "0", "0"],
+        "notes_on_strings": ["G", "C", "E", "A"],
+        "chord_notes": ["C", "E", "G", "A"],
+        "intervals": ["1", "3", "5", "6"]
+        },
+        {
+        "name": "Gm6",
+        "fingering": ["0", "2", "0", "1"],
+        "fingers": ["0", "2", "0", "1"],
+        "notes_on_strings": ["G", "D", "E", "B"],
+        "chord_notes": ["G", "B", "D", "E"],
+        "intervals": ["1", "b3", "5", "6"]
+        },
+        {
+        "name": "A7",
+        "fingering": ["0", "1", "0", "0"],
+        "fingers": ["0", "1", "0", "0"],
+        "notes_on_strings": ["G", "C#", "E", "A"],
+        "chord_notes": ["A", "C#", "E", "G"],
+        "intervals": ["1", "3", "5", "b7"]
+        },
+        {
+        "name": "C#dim",
+        "fingering": ["0", "1", "0", "4"],
+        "fingers": ["0", "1", "0", "4"],
+        "notes_on_strings": ["G", "C#", "E", "C#"],
+        "chord_notes": ["C#", "E", "G"],
+        "intervals": ["1", "b3", "b5"]
+        },
+        {
+        "name": "Em7",
+        "fingering": ["0", "2", "0", "2"],
+        "fingers": ["0", "1", "0", "2"],
+        "notes_on_strings": ["G", "D", "E", "B"],
+        "chord_notes": ["E", "G", "B", "D"],
+        "intervals": ["1", "b3", "5", "b7"]
+        },
+        {
+        "name": "Em6",
+        "fingering": ["0", "1", "0", "2"],
+        "fingers": ["0", "1", "0", "3"],
+        "notes_on_strings": ["G", "C#", "E", "B"],
+        "chord_notes": ["E", "G", "B", "C#"],
+        "intervals": ["1", "b3", "5", "6"]
+        }
+    ]
+}

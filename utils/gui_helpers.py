@@ -6,16 +6,16 @@ from tkinter import messagebox
 from version import __VERSION__
 
 
-def load_chords(file_path, lang):
-    if not os.path.exists(file_path):
+def load_chords(lang):
+    if not os.path.exists(config.CHORD_PATH):
         print(f"{lang['error_missing_chords_file']}")
         return []
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-    
-
-def get_chord_file():
-    return f"chords/chords_{config.DIFFICULTY}.json"
+    with open(config.CHORD_PATH, "r", encoding="utf-8") as f:
+        data = json.load(f)
+        chords = data.get(config.DIFFICULTY, [])
+        if not chords:
+            print(f"{lang['error_no_chords_for_difficulty'] ({config.DIFFICULTY})}")
+        return data.get(config.DIFFICULTY, [])
 
 
 def show_info(lang):
