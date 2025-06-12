@@ -58,7 +58,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
         if chord_obj:
             intervals = chord_obj.get("intervals", [])
-            self.chord_interval.configure(text=f"Intervalle: {' '.join(intervals)}")
+            self.chord_interval.configure(text=f"Intervalle: {'-'.join(intervals)}")
         else:
             self.chord_interval.configure(text="Intervalle: Unbekannt")
 
@@ -67,7 +67,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
         if chord_obj:
             tones = chord_obj.get("chord_notes", [])
-            self.chord_tones.configure(text=f"Töne: {' '.join(tones)}")
+            self.chord_tones.configure(text=f"Töne: {'-'.join(tones)}")
         else:
             self.chord_tones.configure(text="Töne: Unbekannt")
 
