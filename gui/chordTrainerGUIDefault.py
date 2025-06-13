@@ -10,7 +10,11 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         super().__init__(master)
         self.chords = chords
         self.lang = lang
-        self.modes = ["Zufällige Akkorde", "Song", "Twitch"]
+        self.modes = [
+            f"{self.lang['trainer_mode_random']}", 
+            f"{self.lang['trainer_mode_song']}", 
+            f"{self.lang['trainer_mode_twitch']}"
+            ]
         self.mode_var = ctk.StringVar(value="Zufällige Akkorde")
 
         self.build_widgets()
@@ -50,26 +54,23 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.fretboard_middle.update_theme()
 
     def update_previous_chords(self):
-        # TODO add translation functionality
-        self.chord_history.configure(text="Letzte Akkorde:\n" + " ".join(config.PAST_CHORDS))
+        self.chord_history.configure(text=f"{self.lang['chord_history']}\n" + " ".join(config.PAST_CHORDS))
 
     def update_interval(self, chord):
-        # TODO add translation functionality
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
         if chord_obj:
             intervals = chord_obj.get("intervals", [])
-            self.chord_interval.configure(text=f"Intervalle: {'-'.join(intervals)}")
+            self.chord_interval.configure(text=f"{self.lang['chord_interval']} {'-'.join(intervals)}")
         else:
-            self.chord_interval.configure(text="Intervalle: Unbekannt")
+            self.chord_interval.configure(text=f"{self.lang['error_intervals']}")
 
     def update_chord_tones(self, chord):
-        # TODO add translation functionality
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
         if chord_obj:
             tones = chord_obj.get("chord_notes", [])
-            self.chord_tones.configure(text=f"Töne: {'-'.join(tones)}")
+            self.chord_tones.configure(text=f"{self.lang['chord_notes']} {'-'.join(tones)}")
         else:
-            self.chord_tones.configure(text="Töne: Unbekannt")
+            self.chord_tones.configure(text=f"{self.lang['error_notes']}")
 
 
     def build_widgets(self):
@@ -95,7 +96,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.chord_info_frame = ctk.CTkFrame(self.left_frame, border_width=1, corner_radius=5)
         self.chord_info_frame.pack(fill="x", padx=5, pady=5)
 
-        self.current_chord_label = ctk.CTkLabel(self.chord_info_frame, text="Aktueller Akkord", font=(config.BASE_FONT, 18, "underline"))
+        self.current_chord_label = ctk.CTkLabel(self.chord_info_frame, text=f"{self.lang['current_chord']}", font=(config.BASE_FONT, 18, "underline"))
         self.current_chord_label.pack(expand=True, pady=5)
 
         self.current_chord = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16, "bold"))
@@ -111,7 +112,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.chord_stats_frame = ctk.CTkFrame(self.left_frame, border_width=1, corner_radius=5)
         self.chord_stats_frame.pack(fill="x", padx=5, pady=5)
 
-        self.chord_stats_label = ctk.CTkLabel(self.chord_stats_frame, text="Statistiken", font=(config.BASE_FONT, 18, "underline"))
+        self.chord_stats_label = ctk.CTkLabel(self.chord_stats_frame, text=f"{self.lang['chord_statistics']}", font=(config.BASE_FONT, 18, "underline"))
         self.chord_stats_label.pack(expand=True, pady=5)
 
         self.learned_label = ctk.CTkLabel(self.chord_stats_frame, text="", wraplength=170, font=(config.BASE_FONT, 16))
@@ -137,28 +138,28 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.display_settings_frame = ctk.CTkFrame(self.right_frame, border_width=1, corner_radius=5)
         self.display_settings_frame.pack(fill="x", padx=5, pady=5)
 
-        self.display_settings_label = ctk.CTkLabel(self.display_settings_frame, text="Anzeige", font=(config.BASE_FONT, 18, "underline"))
+        self.display_settings_label = ctk.CTkLabel(self.display_settings_frame, text=f"{self.lang['chord_display_headline']}", font=(config.BASE_FONT, 18, "underline"))
         self.display_settings_label.pack(expand=True, pady=5)
 
-        self.fingering_setting_label = ctk.CTkLabel(self.display_settings_frame, text="Akkordanzeige", font=(config.BASE_FONT, 16, "underline"))
+        self.fingering_setting_label = ctk.CTkLabel(self.display_settings_frame, text=f"{self.lang['chord_display_setting']}", font=(config.BASE_FONT, 16, "underline"))
         self.fingering_setting_label.pack(expand=True, pady=(5, 0))
 
-        self.fingering_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=["Bund", "Finger"], font=(config.BASE_FONT, 16), state="disabled")
-        self.fingering_setting.set("Bund")
+        self.fingering_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=[f"{self.lang['chord_setting_frets']}", f"{self.lang['chord_setting_fingering']}"], font=(config.BASE_FONT, 16), state="disabled")
+        self.fingering_setting.set(f"{self.lang['chord_setting_frets']}")
         self.fingering_setting.pack(expand=True, pady=(0, 5))
 
-        self.left_hand_display = ctk.CTkLabel(self.display_settings_frame, text="Links/Rechtshänder", font=(config.BASE_FONT, 16, "underline"))
+        self.left_hand_display = ctk.CTkLabel(self.display_settings_frame, text=f"{self.lang['chord_hand_preference']}", font=(config.BASE_FONT, 16, "underline"))
         self.left_hand_display.pack(expand=True, pady=5)
 
-        self.left_hand_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=["Links", "Rechts"], font=(config.BASE_FONT, 16), state="disabled")
-        self.left_hand_setting.set("Rechts")
+        self.left_hand_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=[f"{self.lang['chord_hand_left']}", f"{self.lang['chord_hand_right']}"], font=(config.BASE_FONT, 16), state="disabled")
+        self.left_hand_setting.set(f"{self.lang['chord_hand_right']}")
         self.left_hand_setting.pack(expand=True, padx=10, pady=(0, 10))
 
         # learnmode frame
         self.mode_frame = ctk.CTkFrame(self.right_frame, border_width=1, corner_radius=5)
         self.mode_frame.pack(fill="x", padx=5, pady=5)
 
-        self.mode_label = ctk.CTkLabel(self.mode_frame, text="Lernmodus", font=(config.BASE_FONT, 18, "underline"))
+        self.mode_label = ctk.CTkLabel(self.mode_frame, text=f"{self.lang['trainer_learnmode']}", font=(config.BASE_FONT, 18, "underline"))
         self.mode_label.pack(expand=True, pady=5)
 
         for index, mode in enumerate(self.modes):
@@ -170,7 +171,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.control_frame = ctk.CTkFrame(self.right_frame, border_width=1, corner_radius=5)
         self.control_frame.pack(fill="x", padx=5, pady=5)
 
-        self.controls_label = ctk.CTkLabel(self.control_frame, text="Steuerung", font=(config.BASE_FONT, 18, "underline"))
+        self.controls_label = ctk.CTkLabel(self.control_frame, text=f"{self.lang['trainer_controls']}", font=(config.BASE_FONT, 18, "underline"))
         self.controls_label.pack(expand=True, pady=5)
 
         self.next_chord_button = ctk.CTkButton(
@@ -179,7 +180,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             command=lambda: self.logic.next_chord(self.lang))
         self.next_chord_button.pack(pady=(5, 2))
 
-        self.prev_chord = ctk.CTkButton(self.control_frame, text="Vorheriger Akkord", font=(config.BASE_FONT, 14), state="disabled")
+        self.prev_chord = ctk.CTkButton(self.control_frame, text=f"{self.lang['previous_chord_button']}", font=(config.BASE_FONT, 14), state="disabled")
         self.prev_chord.pack(pady=2)
 
         self.timer_button = ctk.CTkButton(
