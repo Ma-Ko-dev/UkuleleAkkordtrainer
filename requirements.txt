@@ -2,4 +2,5 @@ customtkinter @ git+https://github.com/Ma-Ko-dev/CustomTkinter-Ma-Ko-dev.git@7a3
 pillow==11.2.1
 PyAudio==0.2.14
 SpeechRecognition==3.14.3
+pypresence==4.3.0
 

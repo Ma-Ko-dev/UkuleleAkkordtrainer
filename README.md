@@ -29,11 +29,12 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Displaying how many chords you learned in the current session
 - Dark/Light colortheme
 - Discord rich presence shows what chord you are currently learning
+- Displays some musik theory
 
 ## Preview
 
 <p align="center">
-  <img src="assets/previews/preview_v1.1.8.png" alt="Preview of the Ukulele Chord Trainer" width="600">
+  <img src="assets/previews/preview_v1.1.9.png" alt="Preview of the Ukulele Chord Trainer" width="600">
 </p>
 
 ## Requirements
