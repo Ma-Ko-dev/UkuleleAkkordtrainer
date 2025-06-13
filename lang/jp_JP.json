@@ -43,7 +43,7 @@
   "speech_stop": "stop",
   "timer_text": "次のコードまであと{seconds_left}秒です",
   "learned_chords_text": "[MISSING] Learned: {count} Chords",
-  "chord_history": "[MISSING] Last Chords",
+  "chord_history": "[MISSING] Last Chords:",
   "chord_interval": "[MISSING] Intervals:",
   "chord_notes": "[MISSING] Notes:",
   "current_chord": "[MISSING] Current Chord",

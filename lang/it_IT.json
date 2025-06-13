@@ -43,7 +43,7 @@
   "speech_stop": "stop",
   "timer_text": "[MISSING] {seconds_left} seconds left until the next chord",
   "learned_chords_text": "[MISSING] Learned: {count} Chords",
-  "chord_history": "[MISSING] Last Chords",
+  "chord_history": "[MISSING] Last Chords:",
   "chord_interval": "[MISSING] Intervals:",
   "chord_notes": "[MISSING] Notes:",
   "current_chord": "[MISSING] Current Chord",
