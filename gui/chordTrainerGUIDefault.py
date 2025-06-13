@@ -15,7 +15,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             f"{self.lang['trainer_mode_song']}", 
             f"{self.lang['trainer_mode_twitch']}"
             ]
-        self.mode_var = ctk.StringVar(value="Zufällige Akkorde")
+        self.mode_var = ctk.StringVar(value=f"{self.lang['trainer_mode_random']}")
 
         self.build_widgets()
         self.logic = GuiLogicManager(self, chords, lang)
