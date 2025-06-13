@@ -66,5 +66,6 @@
   "error_api": "API-Fehler",
   "error_reloading_chords": "Fehler beim Akkorde neu laden",
   "error_missing_chords_file": "chords_db.json wurde nicht gefunden.",
+  "error_no_chords_for_difficulty": "[MISSING] No chords for this difficulty found",
   "_comment": "Wichtig! Bitte Übersetze nichts in den geschweiften Klammern {}"
 }
