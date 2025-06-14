@@ -41,14 +41,16 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
     def update_learned_label(self, text):
         self.learned_label.configure(text=text)
 
-    def update_timer_label(self, text):
-        self.timer_display.configure(text=text)
+    def update_status_display_label(self, text):
+        self.status_display_label.configure(text=text)
 
     def set_timer_button_text(self, text):
         self.timer_button.configure(text=text)
 
     def set_next_chord_button_state(self, state):
-        self.next_chord_button.configure(state=state)
+        self.next_random_chord_button.configure(state=state)
+        self.next_in_history_button.configure(state=state)
+        self.prev_in_history_button.configure(state=state)
 
     def update_theme(self):
         self.fretboard_middle.update_theme()
@@ -99,7 +101,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.current_chord_label = ctk.CTkLabel(self.chord_info_frame, text=f"{self.lang['current_chord']}", font=(config.BASE_FONT, 18, "underline"))
         self.current_chord_label.pack(expand=True, pady=5)
 
-        self.current_chord = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16, "bold"))
+        self.current_chord = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 18, "bold"))
         self.current_chord.pack(expand=True)
 
         self.chord_interval = ctk.CTkLabel(self.chord_info_frame, text="", font=(config.BASE_FONT, 16))
@@ -149,7 +151,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.fingering_setting.pack(expand=True, pady=(0, 5))
 
         self.left_hand_display = ctk.CTkLabel(self.display_settings_frame, text=f"{self.lang['chord_hand_preference']}", font=(config.BASE_FONT, 16, "underline"))
-        self.left_hand_display.pack(expand=True, pady=5)
+        self.left_hand_display.pack(expand=True, pady=(5,0))
 
         self.left_hand_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=[f"{self.lang['chord_hand_left']}", f"{self.lang['chord_hand_right']}"], font=(config.BASE_FONT, 16), state="disabled")
         self.left_hand_setting.set(f"{self.lang['chord_hand_right']}")
@@ -172,16 +174,25 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.control_frame.pack(fill="x", padx=5, pady=5)
 
         self.controls_label = ctk.CTkLabel(self.control_frame, text=f"{self.lang['trainer_controls']}", font=(config.BASE_FONT, 18, "underline"))
-        self.controls_label.pack(expand=True, pady=5)
+        self.controls_label.pack(expand=True, pady=(5,0))
 
-        self.next_chord_button = ctk.CTkButton(
+        self.next_random_chord_button = ctk.CTkButton(
             self.control_frame, text=f"{self.lang['next_chord_button']}", 
             font=(config.BASE_FONT, 14), 
             command=lambda: self.logic.next_chord(self.lang))
-        self.next_chord_button.pack(pady=(5, 2))
+        self.next_random_chord_button.pack(pady=(5, 2))
 
-        self.prev_chord = ctk.CTkButton(self.control_frame, text=f"{self.lang['previous_chord_button']}", font=(config.BASE_FONT, 14), state="disabled")
-        self.prev_chord.pack(pady=2)
+        self.next_in_history_button = ctk.CTkButton(
+            self.control_frame, text=f"{self.lang['forward_chord_button']}", 
+            font=(config.BASE_FONT, 14),
+            command=lambda: self.logic.forward_chord())
+        self.next_in_history_button.pack(pady=2)
+
+        self.prev_in_history_button = ctk.CTkButton(
+            self.control_frame, text=f"{self.lang['previous_chord_button']}", 
+            font=(config.BASE_FONT, 14),
+            command=lambda: self.logic.previous_chord())
+        self.prev_in_history_button.pack(pady=2)
 
         self.timer_button = ctk.CTkButton(
             self.control_frame, text=f"{self.lang['timer_button_start']}", 
@@ -194,5 +205,5 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.buttom_frame = ctk.CTkFrame(self.outer_frame, border_width=2, corner_radius=10, height=50)
         self.buttom_frame.pack(fill="x", padx=10, pady=(5, 10))
         self.buttom_frame.pack_propagate(False)
-        self.timer_display = ctk.CTkLabel(self.buttom_frame, text="", font=(config.BASE_FONT, 16))
-        self.timer_display.pack(expand=True)
+        self.status_display_label = ctk.CTkLabel(self.buttom_frame, text="", font=(config.BASE_FONT, 16))
+        self.status_display_label.pack(expand=True)
