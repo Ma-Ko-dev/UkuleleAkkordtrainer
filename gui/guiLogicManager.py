@@ -137,6 +137,7 @@ class GuiLogicManager:
         new_chords = load_chords(lang)
         if new_chords:
             self.chords = new_chords
+            self.master.reload_chords(new_chords)
         else:
             print(f"{lang['error_reloading_chords']}")
 

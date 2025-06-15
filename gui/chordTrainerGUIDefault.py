@@ -35,6 +35,9 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
     def get_first_chord(self):
         self.logic.next_chord(self.lang)
 
+    def reload_chords(self, chords):
+        self.chords = chords
+
     def update_chord_label(self, text):
         self.current_chord.configure(text=text)
 
