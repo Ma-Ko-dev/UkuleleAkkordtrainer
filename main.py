@@ -12,6 +12,8 @@ from version import __VERSION__
 def main():
     root = ctk.CTk()
 
+    # TODO Check error handling in the whole project, its currently a bit sloppy
+
     config_data = utils.load_config()
     layout = config_data.get("layout", "default")
 
