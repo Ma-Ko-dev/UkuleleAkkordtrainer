@@ -34,7 +34,7 @@ class GuiLogicManager:
         if chord:
             self.discord_rpc.update_chord(name)
             self.master.update_chord_label(name)
-            self.master.update_fretboard(chord["fingering"])
+            self.master.update_fretboard(chord["fingering"], chord["fingers"])
             self.master.update_interval(name)
             self.master.update_chord_tones(name)
 

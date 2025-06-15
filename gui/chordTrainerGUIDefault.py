@@ -10,6 +10,9 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         super().__init__(master)
         self.chords = chords
         self.lang = lang
+        self._last_fingering = []
+        self._last_fingers = []
+
         self.modes = [
             f"{self.lang['trainer_mode_random']}", 
             f"{self.lang['trainer_mode_song']}", 
@@ -35,8 +38,10 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
     def update_chord_label(self, text):
         self.current_chord.configure(text=text)
 
-    def update_fretboard(self, fingering):
-        self.fretboard_middle.draw_chord(fingering)
+    def update_fretboard(self, fingering, fingers):
+        self.fretboard_middle.draw_chord(fingering, fingers)
+        self._last_fingering = fingering
+        self._last_fingers = fingers
 
     def update_learned_label(self, text):
         self.learned_label.configure(text=text)
@@ -46,6 +51,15 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
 
     def set_timer_button_text(self, text):
         self.timer_button.configure(text=text)
+
+    def set_chord_setting(self, value):
+        if value == self.lang['chord_setting_frets']:
+            config.CHORD_DISPLAY_SETTING = "frets"
+        elif value == self.lang['chord_setting_fingering']:
+            config.CHORD_DISPLAY_SETTING = "fingers"
+        else:
+            config.CHORD_DISPLAY_SETTING = "frets"
+        self.update_fretboard(self._last_fingering, self._last_fingers)
 
     def set_next_chord_button_state(self, state):
         self.next_random_chord_button.configure(state=state)
@@ -64,7 +78,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             intervals = chord_obj.get("intervals", [])
             self.chord_interval.configure(text=f"{self.lang['chord_interval']} {'-'.join(intervals)}")
         else:
-            self.chord_interval.configure(text=f"{self.lang['error_intervals']}")
+            self.chord_interval.configure(text=f"{self.lang['error_interval']}")
 
     def update_chord_tones(self, chord):
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
@@ -146,7 +160,11 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.fingering_setting_label = ctk.CTkLabel(self.display_settings_frame, text=f"{self.lang['chord_display_setting']}", font=(config.BASE_FONT, 16, "underline"))
         self.fingering_setting_label.pack(expand=True, pady=(5, 0))
 
-        self.fingering_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=[f"{self.lang['chord_setting_frets']}", f"{self.lang['chord_setting_fingering']}"], font=(config.BASE_FONT, 16), state="disabled")
+        self.fingering_setting = ctk.CTkSegmentedButton(
+            self.display_settings_frame, 
+            values=[f"{self.lang['chord_setting_frets']}", f"{self.lang['chord_setting_fingering']}"], 
+            font=(config.BASE_FONT, 16),
+            command=self.set_chord_setting)
         self.fingering_setting.set(f"{self.lang['chord_setting_frets']}")
         self.fingering_setting.pack(expand=True, pady=(0, 5))
 

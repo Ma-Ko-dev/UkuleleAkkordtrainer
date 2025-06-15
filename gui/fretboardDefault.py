@@ -127,9 +127,11 @@ class DefaultFretboard(ctk.CTkCanvas):
                 font=("Arial", 12, "bold")
             )
 
-    def draw_chord(self, fingering):
+    def draw_chord(self, fingering, fingers):
         self.fingering = fingering
+        self.fingers = fingers
         r = self.marker_radius
+
         for marker in self.markers:
             self.delete(marker)
         self.markers.clear()
@@ -137,6 +139,7 @@ class DefaultFretboard(ctk.CTkCanvas):
         for string_index, fret_str in enumerate(fingering):
             try:
                 fret = int(fret_str)
+                finger = int(fingers[string_index])
             except ValueError:
                 continue
             if fret == 0:
@@ -149,5 +152,14 @@ class DefaultFretboard(ctk.CTkCanvas):
                     x - r, y - r, x + r, y + r,
                     fill="green", outline=""
                 )
-                text = self.create_text(x, y, text=str(fret), fill="white", font=("Arial", 10, "bold"))
+
+                if config.CHORD_DISPLAY_SETTING == "frets":
+                    label = str(fret)
+                elif config.CHORD_DISPLAY_SETTING == "fingers":
+                    label = str(finger) if finger > 0 else ""
+                else:
+                    label = "?"
+
+                text = self.create_text(x, y, text=label, fill="white", font=("Arial", 10, "bold"))
                 self.markers.extend([circle, text])
+
