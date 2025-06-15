@@ -14,7 +14,7 @@ class GuiLogicManager:
         self.chords = chords
         self.lang = lang
         self.speech_enabled = True
-        self.learned_chords = 0
+        self.learned_chords = -1
         self.timer_active = False
         self.timer_interval = 10000 # in ms ca. 10 seconds
         self.timer_id = None
