@@ -37,22 +37,9 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
   <img src="assets/previews/preview_v1.1.9.png" alt="Preview of the Ukulele Chord Trainer" width="600">
 </p>
 
-## Requirements
-
-- Python 3.x  
-- Tkinter  
-- SpeechRecognition  
-- PyAudio  
-
 ## Installation
 
 Download the latest [release](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/releases/latest), extract it, and run the program.
-
--- or --
-
-1. Clone or download the repository  
-2. Install dependencies  
-3. Run the app  
 
 ## Notes on voice recognition
 
