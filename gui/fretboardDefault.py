@@ -10,6 +10,8 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.string_height = 45
         self.marker_radius = 13
         self.fingering = []
+        self.fingers = []
+        self.string_names = ["G", "C", "E", "A"]
 
         width = self.fret_width * self.strings + 60
         height = self.string_height * self.frets + 60
@@ -38,7 +40,7 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.delete("all")
         self.draw_fretboard()
         self.draw_string_names()
-        self.draw_chord(self.fingering)
+        self.draw_chord(self.fingering, self.fingers)
 
     def on_resize(self, event):
         min_width = self.fret_width * (self.strings - 1) + 60
@@ -63,6 +65,7 @@ class DefaultFretboard(ctk.CTkCanvas):
 
         self.draw_fretboard()
         self.draw_string_names()
+        self.draw_chord(self.fingering, self.fingers)
 
 
     def draw_fretboard(self):
@@ -114,7 +117,9 @@ class DefaultFretboard(ctk.CTkCanvas):
             )
 
     def draw_string_names(self):
-        string_names = ["G", "C", "E", "A"]
+        string_names = self.string_names
+        if config.PREFERED_HAND == "left":
+            string_names = self.string_names[::-1]
         y = self.padding_y - 15
 
         for i, name in enumerate(string_names):
@@ -131,6 +136,7 @@ class DefaultFretboard(ctk.CTkCanvas):
         self.fingering = fingering
         self.fingers = fingers
         r = self.marker_radius
+        num_strings = len(fingering)
 
         for marker in self.markers:
             self.delete(marker)
@@ -145,7 +151,12 @@ class DefaultFretboard(ctk.CTkCanvas):
             if fret == 0:
                 continue
             if 1 <= fret <= self.frets:
-                x = self.padding_x + string_index * self.fret_width
+                draw_index = (
+                num_strings - 1 - string_index
+                if config.PREFERED_HAND == "left"
+                else string_index
+                )
+                x = self.padding_x + draw_index * self.fret_width
                 y = self.padding_y + (fret - 1) * self.string_height + self.string_height / 2
 
                 circle = self.create_oval(

@@ -7,6 +7,7 @@ MAX_HISTORY = 4
 LANG_CODE = ""
 BASE_FONT = ""
 CHORD_DISPLAY_SETTING = "frets"
+PREFERED_HAND = "right"
 CONFIG_PATH = "config.json"
 CHORD_PATH = "chords/chord_db.json"
 ASSET_PATH = os.path.join("assets", "images")

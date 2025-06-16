@@ -64,6 +64,15 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             config.CHORD_DISPLAY_SETTING = "frets"
         self.update_fretboard(self._last_fingering, self._last_fingers)
 
+    def set_prefered_hand(self, value):
+        if value == self.lang['chord_hand_right']:
+            config.PREFERED_HAND = "right"
+        elif value == self.lang['chord_hand_left']:
+            config.PREFERED_HAND = "left"
+        else:
+            config.PREFERED_HAND = "right"
+        self.fretboard_middle.redraw()
+
     def set_next_chord_button_state(self, state):
         self.next_random_chord_button.configure(state=state)
         self.next_in_history_button.configure(state=state)
@@ -174,7 +183,11 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.left_hand_display = ctk.CTkLabel(self.display_settings_frame, text=f"{self.lang['chord_hand_preference']}", font=(config.BASE_FONT, 16, "underline"))
         self.left_hand_display.pack(expand=True, pady=(5,0))
 
-        self.left_hand_setting = ctk.CTkSegmentedButton(self.display_settings_frame, values=[f"{self.lang['chord_hand_left']}", f"{self.lang['chord_hand_right']}"], font=(config.BASE_FONT, 16), state="disabled")
+        self.left_hand_setting = ctk.CTkSegmentedButton(
+            self.display_settings_frame, 
+            values=[f"{self.lang['chord_hand_left']}", f"{self.lang['chord_hand_right']}"], 
+            font=(config.BASE_FONT, 16),
+            command=self.set_prefered_hand)
         self.left_hand_setting.set(f"{self.lang['chord_hand_right']}")
         self.left_hand_setting.pack(expand=True, padx=10, pady=(0, 10))
 
