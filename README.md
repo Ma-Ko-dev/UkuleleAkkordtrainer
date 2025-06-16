@@ -30,6 +30,8 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Dark/Light colortheme
 - Discord rich presence shows what chord you are currently learning
 - Displays some musik theory
+- Left/Right hand mode
+- Choose between fretnumber display or fingernumber display
 
 ## Preview
 
