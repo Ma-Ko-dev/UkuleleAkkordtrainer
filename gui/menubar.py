@@ -74,7 +74,7 @@ def create_menubar(root, app, lang, config_data):
                 config_data["layout"] = layout
                 utils.save_config(config_data)
                 tk.messagebox.showinfo(lang["restart_info_title"], lang["restart_info_text"])
-        layout_submenu.add_command(label=label, state=state, command=on_select)
+        layout_submenu.add_command(label=label, state="disabled", command=on_select)
 
     # theme submenu
     theme_submenu = tk.Menu(optionmenu, tearoff=0)
