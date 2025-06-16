@@ -32,6 +32,7 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Displays some musik theory
 - Left/Right hand mode
 - Choose between fretnumber display or fingernumber display
+- Go back and forth through the last 4 chords you practiced
 
 ## Preview
 
