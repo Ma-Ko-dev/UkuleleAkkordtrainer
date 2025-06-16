@@ -65,7 +65,7 @@
   "trainer_mode_song": "Brano",
   "trainer_mode_twitch": "Twitch",
   "error_notes": "Note: Sconosciuto",
-  "error_interval": "[MISSING] Intervals: Unknown",
+  "error_interval": "Intervalli: Sconosciuto",
   "error_write_file": "Errore nella scrittura del file:",
   "error_api": "Errore API",
   "error_reloading_chords": "Errore nel ricaricamento degli accordi",
