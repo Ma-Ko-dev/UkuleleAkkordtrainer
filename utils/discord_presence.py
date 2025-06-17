@@ -34,6 +34,7 @@ class DiscordRichPresence:
     def _presence_loop(self):
         self.rpc = Presence(self.client_id)
         self.rpc.connect()
+        # TODO make state dynamic. for example: display "editing chords" instead of "Current Chord" stuff
         current_chord = None
         last_update = 0
 

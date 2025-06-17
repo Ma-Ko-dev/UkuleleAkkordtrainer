@@ -2,13 +2,14 @@ import customtkinter as ctk
 import tkinter as tk
 import config
 import utils
-from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI
+from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI, ChordEditor
 
 
 
 def create_menubar(root, app, lang, config_data):
     root.theme_var = tk.StringVar()
-    root.theme_var.set(ctk.get_appearance_mode()) 
+    root.theme_var.set(ctk.get_appearance_mode())
+    chord_editor_ref = None  # <- Referenz auf das Fenster 
 
     def set_difficulty(level):
         nonlocal current_difficulty
@@ -42,6 +43,14 @@ def create_menubar(root, app, lang, config_data):
         if hasattr(app, "update_theme"):
             app.update_theme()
         utils.save_config(config_data)
+
+    def open_chord_editor():
+        nonlocal chord_editor_ref
+        if chord_editor_ref is None or not chord_editor_ref.winfo_exists():
+            chord_editor_ref = ChordEditor(lang)
+            chord_editor_ref.after(25, chord_editor_ref.focus)
+        else:
+            chord_editor_ref.focus()
 
 
     menubar = tk.Menu(root)
@@ -95,6 +104,10 @@ def create_menubar(root, app, lang, config_data):
     # load difficulty from file or set easy as default
     current_difficulty = config_data.get("difficulty", "easy")
     update_difficulty_menu()
+
+    # chord editor entry
+    # TODO add translation
+    optionmenu.add_command(label="Akkord Editor", command=open_chord_editor)
 
     # Help menu
     helpmenu = tk.Menu(menubar, tearoff=0)
