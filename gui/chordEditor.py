@@ -7,12 +7,13 @@ import utils
 
 class ChordEditor(ctk.CTkToplevel):
     style_initialized = False
-
+    # TODO add translations to whole file
     def __init__(self, lang):
         super().__init__()
         self.title("Akkord Editor")
         self.geometry("1000x650")
 
+        self.is_dirty = False # just to make sure "no changes" are saved to the file later
         self.lang = lang
         self.data = utils.load_chords(self.lang, filter_by_difficulty=False)
         self.tables = {}      
@@ -59,13 +60,14 @@ class ChordEditor(ctk.CTkToplevel):
                                 background = self.bg_even,
                                 foreground = self.fg,
                                 fieldbackground = self.bg_even,
-                                rowheight = 25)
+                                rowheight = 25,
+                                font=(config.BASE_FONT, 12,))
             
             self.style.configure("Custom.Treeview.Heading",
                                 background = self.header_bg,
                                 foreground = self.header_fg,
                                 relief = "flat",
-                                font = (config.BASE_FONT, 14))
+                                font = (config.BASE_FONT, 13, "bold"))
             
             self.style.map("Custom.Treeview.Heading",
                         background = [('active', self.header_bg)],
@@ -77,7 +79,7 @@ class ChordEditor(ctk.CTkToplevel):
             self.create_table(tab, level)
 
         # Info label at the bottom
-        self.info_label = ctk.CTkLabel(self, text="Doppelklick auf eine Zelle zum Bearbeiten", anchor="center")
+        self.info_label = ctk.CTkLabel(self, text="Doppelklick auf eine Zelle zum Bearbeiten", anchor="center", font=(config.BASE_FONT, 16))
         self.info_label.pack(pady=(5, 0))
 
         # Button row
@@ -133,19 +135,25 @@ class ChordEditor(ctk.CTkToplevel):
         # Fill table with data
         for i, chord in enumerate(self.data.get(level, [])):
             tag = "evenrow" if i % 2 == 0 else "oddrow"
-            tree.insert("", "end", values=(
-                chord.get("name", ""),
-                chord.get("fingering", ""),
-                chord.get("fingers", ""),
-                chord.get("notes_on_strings", ""),
-                chord.get("chord_notes", ""),
-                chord.get("intervals", "")
-            ), tags=(tag,))
-
+            tree.insert("", "end", values=self.format_chord_for_display(chord), tags=(tag,))
         self.tables[level] = tree
 
         # Bind double-click to start editing
         tree.bind("<Double-1>", self.on_double_click)
+
+
+    def format_chord_for_display(self, chord):
+        def to_display(value):
+            return ", ".join(value) if isinstance(value, list) else value or ""
+
+        return (
+            chord.get("name", ""),
+            to_display(chord.get("fingering", [])),
+            to_display(chord.get("fingers", [])),
+            to_display(chord.get("notes_on_strings", [])),
+            to_display(chord.get("chord_notes", [])),
+            to_display(chord.get("intervals", []))
+        )
 
 
     def on_double_click(self, event):
@@ -207,26 +215,85 @@ class ChordEditor(ctk.CTkToplevel):
 
     def validate_tables(self):
         invalid_cells = 0
-        placeholders = {"???", "Bearbeiten...", "Neuer Akkord"}
+        placeholders = {"???", "Bearbeiten...", "Neuer Akkord"}  
+        list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
+
+        seen_names = {}
+        seen_fingering = {}
 
         for level, tree in self.tables.items():
             for row_id in tree.get_children():
+                entry = {}
+                parts_cache = {}
+                row_index = tree.index(row_id) + 1  # 1-basiert für bessere Anzeige
+
                 for col in tree["columns"]:
                     value = tree.set(row_id, col).strip()
+                    entry[col] = value
+
+                    # Leere oder Platzhalter
                     if value == "" or value in placeholders:
+                        print(f"[Tab '{level}', Zeile {row_index}] Leerer oder Platzhalter-Wert in Spalte '{col}'")
                         invalid_cells += 1
+                        continue
+
+                    # Listen-Spalten prüfen
+                    if col in list_columns:
+                        if "." in value:
+                            print(f"[Tab '{level}', Zeile {row_index}] Punkt statt Komma in Spalte '{col}': {value}")
+                            invalid_cells += 1
+                            continue
+
+                        parts = [p.strip() for p in value.split(",")]
+                        parts_cache[col] = parts
+
+                        if any(p == "" for p in parts):
+                            print(f"[Tab '{level}', Zeile {row_index}] Leeres Element in Liste bei Spalte '{col}': {value}")
+                            invalid_cells += 1
+                            continue
+
+                        if col in {"fingering", "fingers"}:
+                            if len(parts) != 4:
+                                print(f"[Tab '{level}', Zeile {row_index}] Ungueltige Laenge in '{col}': {parts}")
+                                invalid_cells += 1
+                                continue
+                            for p in parts:
+                                if not p.isdigit() or not (0 <= int(p) <= 12):
+                                    print(f"[Tab '{level}', Zeile {row_index}] Ungueltige Zahl in '{col}': {p}")
+                                    invalid_cells += 1
+                                    break
+
+                # Duplikate checken
+                name = entry.get("name", "")
+                fingering = entry.get("fingering", "")
+
+                if name:
+                    if name in seen_names:
+                        print(f"[Tab '{level}', Zeile {row_index}] Duplikat beim Akkordnamen: '{name}' (zuvor in Zeile {seen_names[name]})")
+                        invalid_cells += 1
+                    else:
+                        seen_names[name] = row_index
+
+                if fingering:
+                    if fingering in seen_fingering:
+                        print(f"[Tab '{level}', Zeile {row_index}] Duplikat bei 'fingering': '{fingering}' (zuvor in Zeile {seen_fingering[fingering]})")
+                        invalid_cells += 1
+                    else:
+                        seen_fingering[fingering] = row_index
         return invalid_cells
-    
+
+
     def save_changes(self):
+        # TODO Make sure to implement is_dirty to avoid unnecessary saving
         errors = self.validate_tables()
         if errors > 0:
             messagebox.showerror(
                 "Validierungsfehler",
-                f"Es gibt {errors} ungültige Zelle(n). Bitte alle Felder ausfüllen und Platzhalter entfernen."
+                f"Es gibt {errors} ungültige Zelle(n). Bitte alle Felder korreckt ausfüllen und Platzhalter entfernen."
             )
             return
 
-        # Hier könnte später die echte Speicherfunktion rein (z.B. JSON-Datei schreiben)
+        # Dummy saving
         messagebox.showinfo("Speichern", "Alle Daten sind gültig. Speichern (Dummy) erfolgreich.")
 
 
@@ -237,14 +304,7 @@ class ChordEditor(ctk.CTkToplevel):
 
             for i, chord in enumerate(self.data.get(level, [])):
                 tag = "evenrow" if i % 2 == 0 else "oddrow"
-                tree.insert("", "end", values=(
-                    chord.get("name", ""),
-                    chord.get("fingering", ""),
-                    chord.get("fingers", ""),
-                    chord.get("notes_on_strings", ""),
-                    chord.get("chord_notes", ""),
-                    chord.get("intervals", "")
-                ), tags=(tag,))
+                tree.insert("", "end", values=self.format_chord_for_display(chord), tags=(tag,))
 
 
     def delete_selected_row(self):
@@ -310,6 +370,7 @@ class ChordEditor(ctk.CTkToplevel):
             tree.set(row_id, next_col, new_value)
             self.edit_box.destroy()
             self.edit_box = None
+            self.is_dirty = True
 
         self.edit_box.bind("<FocusOut>", save_edit)
         self.edit_box.bind("<Return>", save_edit)
