@@ -191,4 +191,4 @@ class ChordEditor(ctk.CTkToplevel):
         for item in selected:
             tree.delete(item)
 
-        print(f"{len(selected)} Zeile(n) gelöscht im Tab '{current_tab}'.")
+        # print(f"{len(selected)} Zeile(n) gelöscht im Tab '{current_tab}'.")
