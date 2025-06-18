@@ -207,7 +207,13 @@ class ChordEditor(ctk.CTkToplevel):
 
         selected = tree.selection()
         if not selected:
-            messagebox.showinfo("Keine Auswahl", "Bitte wähle eine Zeile zum Löschen aus.")
+            messagebox.showinfo("Keine Auswahl", "Bitte waehle eine Zeile zum Loeschen aus.", parent=self)
+            return
+
+        confirm = messagebox.askyesno("Loeschen bestaetigen",
+                                    "Bist du sicher, dass du den/die ausgewaehlte(n) Eintrag/Eintraege endgueltig loeschen moechtest?\nDieser Vorgang kann nicht rueckgaengig gemacht werden.",
+                                    parent=self)
+        if not confirm:
             return
 
         for item in selected:
@@ -217,6 +223,7 @@ class ChordEditor(ctk.CTkToplevel):
         for i, item in enumerate(tree.get_children()):
             tag = "evenrow" if i % 2 == 0 else "oddrow"
             tree.item(item, tags=(tag,))
+
 
 
 
