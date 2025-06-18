@@ -90,6 +90,12 @@ class ChordEditor(ctk.CTkToplevel):
         self.delete_button = ctk.CTkButton(self.button_frame, text="Löschen", command=self.delete_selected_row)
         self.delete_button.pack(side="left", padx=10)
 
+        self.save_button = ctk.CTkButton(self.button_frame, text="Speichern", command=self.save_changes)
+        self.save_button.pack(side="left", padx=10)
+
+        self.reset_button = ctk.CTkButton(self.button_frame, text="Zurücksetzen", command=self.reset_tables)
+        self.reset_button.pack(side="left", padx=10)
+
 
     def create_table(self, parent, level):
         tree_frame = ctk.CTkFrame(parent)
@@ -199,6 +205,48 @@ class ChordEditor(ctk.CTkToplevel):
             tree.insert("", "end", values=default_values, tags=(tag,))
 
 
+    def validate_tables(self):
+        invalid_cells = 0
+        placeholders = {"???", "Bearbeiten...", "Neuer Akkord"}
+
+        for level, tree in self.tables.items():
+            for row_id in tree.get_children():
+                for col in tree["columns"]:
+                    value = tree.set(row_id, col).strip()
+                    if value == "" or value in placeholders:
+                        invalid_cells += 1
+        return invalid_cells
+    
+    def save_changes(self):
+        errors = self.validate_tables()
+        if errors > 0:
+            messagebox.showerror(
+                "Validierungsfehler",
+                f"Es gibt {errors} ungültige Zelle(n). Bitte alle Felder ausfüllen und Platzhalter entfernen."
+            )
+            return
+
+        # Hier könnte später die echte Speicherfunktion rein (z.B. JSON-Datei schreiben)
+        messagebox.showinfo("Speichern", "Alle Daten sind gültig. Speichern (Dummy) erfolgreich.")
+
+
+    def reset_tables(self):
+        # Reset all tables to initial loaded data state
+        for level, tree in self.tables.items():
+            tree.delete(*tree.get_children())  # Clear all rows
+
+            for i, chord in enumerate(self.data.get(level, [])):
+                tag = "evenrow" if i % 2 == 0 else "oddrow"
+                tree.insert("", "end", values=(
+                    chord.get("name", ""),
+                    chord.get("fingering", ""),
+                    chord.get("fingers", ""),
+                    chord.get("notes_on_strings", ""),
+                    chord.get("chord_notes", ""),
+                    chord.get("intervals", "")
+                ), tags=(tag,))
+
+
     def delete_selected_row(self):
         current_tab = self.tabview.get().lower()
         tree = self.tables.get(current_tab)
@@ -207,7 +255,8 @@ class ChordEditor(ctk.CTkToplevel):
 
         selected = tree.selection()
         if not selected:
-            messagebox.showinfo("Keine Auswahl", "Bitte waehle eine Zeile zum Loeschen aus.", parent=self)
+            messagebox.showinfo("Keine Auswahl", 
+                                "Bitte waehle eine Zeile zum Loeschen aus.", parent=self)
             return
 
         confirm = messagebox.askyesno("Loeschen bestaetigen",
@@ -223,8 +272,6 @@ class ChordEditor(ctk.CTkToplevel):
         for i, item in enumerate(tree.get_children()):
             tag = "evenrow" if i % 2 == 0 else "oddrow"
             tree.item(item, tags=(tag,))
-
-
 
 
     def tab_to_next_cell(self, tree, row_id, col, event=None):
