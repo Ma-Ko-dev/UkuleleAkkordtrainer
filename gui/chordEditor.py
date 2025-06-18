@@ -213,6 +213,12 @@ class ChordEditor(ctk.CTkToplevel):
         for item in selected:
             tree.delete(item)
 
+        # Re-tag remaining rows to fix alternating colors
+        for i, item in enumerate(tree.get_children()):
+            tag = "evenrow" if i % 2 == 0 else "oddrow"
+            tree.item(item, tags=(tag,))
+
+
 
     def tab_to_next_cell(self, tree, row_id, col, event=None):
         col_index = int(col[1:]) - 1  # '#1' → 0
