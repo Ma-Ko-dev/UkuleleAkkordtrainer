@@ -10,11 +10,11 @@ class ChordEditor(ctk.CTkToplevel):
     # TODO add translations to whole file
     def __init__(self, lang):
         super().__init__()
-        self.title("Akkord Editor")
+        self.lang = lang
+        self.title(f"{self.lang['editor_title']}")
         self.geometry("1000x650")
 
         self.is_dirty = False # just to make sure "no changes" are saved to the file later
-        self.lang = lang
         self.data = utils.load_chords(self.lang, filter_by_difficulty=False)
         self.tables = {}      
         self.config_data = utils.load_config()
@@ -263,7 +263,7 @@ class ChordEditor(ctk.CTkToplevel):
                                     invalid_cells += 1
                                     break
 
-                # Duplikate checken
+                # duplicate check
                 name = entry.get("name", "")
                 fingering = entry.get("fingering", "")
 
