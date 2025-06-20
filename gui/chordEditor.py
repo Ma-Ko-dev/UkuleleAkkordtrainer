@@ -79,23 +79,23 @@ class ChordEditor(ctk.CTkToplevel):
             self.create_table(tab, level)
 
         # Info label at the bottom
-        self.info_label = ctk.CTkLabel(self, text="Doppelklick auf eine Zelle zum Bearbeiten", anchor="center", font=(config.BASE_FONT, 16))
+        self.info_label = ctk.CTkLabel(self, text=f"{self.lang['editor_info_text']}", anchor="center", font=(config.BASE_FONT, 16))
         self.info_label.pack(pady=(5, 0))
 
         # Button row
         self.button_frame = ctk.CTkFrame(self, fg_color="transparent")
         self.button_frame.pack(pady=10)
 
-        self.add_button = ctk.CTkButton(self.button_frame, text="Hinzufügen", command=self.add_entry)
+        self.add_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_add']}", command=self.add_entry)
         self.add_button.pack(side="left", padx=10)
 
-        self.delete_button = ctk.CTkButton(self.button_frame, text="Löschen", command=self.delete_selected_row)
+        self.delete_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_delete']}", command=self.delete_selected_row)
         self.delete_button.pack(side="left", padx=10)
 
-        self.save_button = ctk.CTkButton(self.button_frame, text="Speichern", command=self.save_changes)
+        self.save_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_save']}", command=self.save_changes)
         self.save_button.pack(side="left", padx=10)
 
-        self.reset_button = ctk.CTkButton(self.button_frame, text="Zurücksetzen", command=self.reset_tables)
+        self.reset_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_reset']}", command=self.reset_tables)
         self.reset_button.pack(side="left", padx=10)
 
 
@@ -117,12 +117,12 @@ class ChordEditor(ctk.CTkToplevel):
         tree.configure(yscrollcommand=scrollbar.set)
 
         # Header labels
-        tree.heading("name", text="Akkordname", anchor="center")
-        tree.heading("fingering", text="Griff", anchor="center")
-        tree.heading("fingers", text="Fingerempfehlung", anchor="center")
-        tree.heading("notes_on_strings", text="Saiten-Noten", anchor="center")
-        tree.heading("chord_notes", text="Akkordtöne", anchor="center")
-        tree.heading("intervals", text="Intervalle", anchor="center")
+        tree.heading("name", text=f"{self.lang['editor_chordname']}", anchor="center")
+        tree.heading("fingering", text=f"{self.lang['editor_fingering']}", anchor="center")
+        tree.heading("fingers", text=f"{self.lang['editor_fingers']}", anchor="center")
+        tree.heading("notes_on_strings", text=f"{self.lang['editor_notes_on_strings']}", anchor="center")
+        tree.heading("chord_notes", text=f"{self.lang['editor_chord_notes']}", anchor="center")
+        tree.heading("intervals", text=f"{self.lang['editor_interval']}", anchor="center")
 
         # Define column properties
         for col in tree["columns"]:
@@ -201,8 +201,8 @@ class ChordEditor(ctk.CTkToplevel):
         tree = self.tables.get(current_tab)
         if tree:
             default_values = [
-                "Neuer Akkord",    # placeholder chord name
-                "Bearbeiten...",  # editable fingering field
+                f"{self.lang['editor_placeholder1']}",    # placeholder chord name
+                f"{self.lang['editor_placeholder2']}",  # editable fingering field
                 "???",            # unknown finger suggestion
                 "???",            # unknown notes on strings
                 "???",            # unknown chord tones
@@ -215,7 +215,7 @@ class ChordEditor(ctk.CTkToplevel):
 
     def validate_tables(self):
         invalid_cells = 0
-        placeholders = {"???", "Bearbeiten...", "Neuer Akkord"}  
+        placeholders = {"???", f"{self.lang['editor_placeholder1']}", f"{self.lang['editor_placeholder2']}"}  
         list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
 
         seen_names = {}
@@ -233,14 +233,20 @@ class ChordEditor(ctk.CTkToplevel):
 
                     # Leere oder Platzhalter
                     if value == "" or value in placeholders:
-                        print(f"[Tab '{level}', Zeile {row_index}] Leerer oder Platzhalter-Wert in Spalte '{col}'")
+                        msg = self.lang["error_editor_empty_or_placeholder_value"].format(
+                            level=level, row_index=row_index, col=col
+                            )
+                        print(msg)
                         invalid_cells += 1
                         continue
 
                     # Listen-Spalten prüfen
                     if col in list_columns:
                         if "." in value:
-                            print(f"[Tab '{level}', Zeile {row_index}] Punkt statt Komma in Spalte '{col}': {value}")
+                            msg = self.lang["error_editor_dot_instead_of_comma"].format(
+                                level=level, row_index=row_index, col=col, value=value
+                            )
+                            print(msg)
                             invalid_cells += 1
                             continue
 
@@ -248,38 +254,56 @@ class ChordEditor(ctk.CTkToplevel):
                         parts_cache[col] = parts
 
                         if any(p == "" for p in parts):
-                            print(f"[Tab '{level}', Zeile {row_index}] Leeres Element in Liste bei Spalte '{col}': {value}")
+                            msg = self.lang["error_editor_empty_list_element"].format(
+                                level=level, row_index=row_index, col=col, value=value
+                            )
+                            print(msg)
                             invalid_cells += 1
                             continue
 
                         if col in {"fingering", "fingers"}:
                             if len(parts) != 4:
-                                print(f"[Tab '{level}', Zeile {row_index}] Ungueltige Laenge in '{col}': {parts}")
+                                msg = self.lang["error_editor_invalid_length"].format(
+                                    level=level, row_index=row_index, col=col, parts=parts
+                                )
+                                print(msg)
                                 invalid_cells += 1
                                 continue
                             for p in parts:
                                 if not p.isdigit() or not (0 <= int(p) <= 12):
-                                    print(f"[Tab '{level}', Zeile {row_index}] Ungueltige Zahl in '{col}': {p}")
+                                    msg = self.lang["error_editor_invalid_number"].format(
+                                        level=level, row_index=row_index, col=col, p=p
+                                    )
+                                    print(msg)
                                     invalid_cells += 1
                                     break
 
                 # duplicate check
-                name = entry.get("name", "")
+                name = entry.get("name", "").strip()
                 fingering = entry.get("fingering", "")
+                normalized_name = name.lower()
+                normalized_fingering = fingering.replace(" ", "")
 
                 if name:
-                    if name in seen_names:
-                        print(f"[Tab '{level}', Zeile {row_index}] Duplikat beim Akkordnamen: '{name}' (zuvor in Zeile {seen_names[name]})")
+                    # print("Keys in seen_names:", seen_names.keys())
+                    if normalized_name in seen_names:
+                        msg = self.lang["error_editor_duplicate_chord_name"].format(
+                            level=level, row_index=row_index, name=name, previous_row=seen_names[normalized_name]
+                        )
+                        print(msg)
                         invalid_cells += 1
                     else:
-                        seen_names[name] = row_index
+                        seen_names[normalized_name] = row_index
 
                 if fingering:
-                    if fingering in seen_fingering:
-                        print(f"[Tab '{level}', Zeile {row_index}] Duplikat bei 'fingering': '{fingering}' (zuvor in Zeile {seen_fingering[fingering]})")
+                    if normalized_fingering in seen_fingering:
+                        msg = self.lang["error_editor_duplicate_fingering"].format(
+                            level=level, row_index=row_index, fingering=fingering, previous_row=seen_fingering[normalized_fingering]
+                        )
+                        print(msg)
                         invalid_cells += 1
                     else:
-                        seen_fingering[fingering] = row_index
+                        seen_fingering[normalized_fingering] = row_index
         return invalid_cells
 
 
@@ -288,14 +312,17 @@ class ChordEditor(ctk.CTkToplevel):
         errors = self.validate_tables()
         if errors > 0:
             messagebox.showerror(
-                "Validierungsfehler",
-                f"Es gibt {errors} ungültige Zelle(n). Bitte alle Felder korreckt ausfüllen und Platzhalter entfernen."
+                f"{self.lang['error_editor_validation_title']}",
+                f"{self.lang['error_editor_validation_message']}".format(errors=errors), 
+                parent=self
             )
             return
 
         # Dummy saving
-        messagebox.showinfo("Speichern", "Alle Daten sind gültig. Speichern (Dummy) erfolgreich.")
-
+        messagebox.showinfo(f"{self.lang['editor_button_save']}", 
+                            f"{self.lang['editor_save_success_message']}", 
+                            parent=self)
+        
 
     def reset_tables(self):
         # Reset all tables to initial loaded data state
@@ -315,12 +342,12 @@ class ChordEditor(ctk.CTkToplevel):
 
         selected = tree.selection()
         if not selected:
-            messagebox.showinfo("Keine Auswahl", 
-                                "Bitte waehle eine Zeile zum Loeschen aus.", parent=self)
+            messagebox.showinfo(f"{self.lang['error_editor_no_selection_title']}", 
+                                f"{self.lang['error_editor_no_selection_message']}", parent=self)
             return
 
-        confirm = messagebox.askyesno("Loeschen bestaetigen",
-                                    "Bist du sicher, dass du den/die ausgewaehlte(n) Eintrag/Eintraege endgueltig loeschen moechtest?\nDieser Vorgang kann nicht rueckgaengig gemacht werden.",
+        confirm = messagebox.askyesno(f"{self.lang['editor_confirm_delete_title']}",
+                                    f"{self.lang['editor_confirm_delete_message']}",
                                     parent=self)
         if not confirm:
             return
