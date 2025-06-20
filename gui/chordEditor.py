@@ -73,10 +73,17 @@ class ChordEditor(ctk.CTkToplevel):
                         background = [('active', self.header_bg)],
                         relief = [('active', 'flat'), ('pressed', 'sunken')])
         
+        # levels with translations
+        levels = [
+            ("easy", self.lang["difficulty_easy"]),
+            ("medium", self.lang["difficulty_medium"]),
+            ("hard", self.lang["difficulty_hard"]),
+        ]
+
         # Create tabs for each difficulty level
-        for level in ["easy", "medium", "hard"]:
-            tab = self.tabview.add(level.capitalize())
-            self.create_table(tab, level)
+        for level_key, display_name in levels:
+            tab = self.tabview.add(display_name)
+            self.create_table(tab, level_key)
 
         # Info label at the bottom
         self.info_label = ctk.CTkLabel(self, text=f"{self.lang['editor_info_text']}", anchor="center", font=(config.BASE_FONT, 16))
@@ -285,7 +292,6 @@ class ChordEditor(ctk.CTkToplevel):
                 normalized_fingering = fingering.replace(" ", "")
 
                 if name:
-                    # print("Keys in seen_names:", seen_names.keys())
                     if normalized_name in seen_names:
                         msg = self.lang["error_editor_duplicate_chord_name"].format(
                             level=level, row_index=row_index, name=name, previous_row=seen_names[normalized_name]
