@@ -106,8 +106,7 @@ def create_menubar(root, app, lang, config_data):
     update_difficulty_menu()
 
     # chord editor entry
-    # TODO add translation
-    optionmenu.add_command(label="Akkord Editor", command=open_chord_editor)
+    optionmenu.add_command(label=f"{lang['editor_title']}", command=open_chord_editor)
 
     # Help menu
     helpmenu = tk.Menu(menubar, tearoff=0)

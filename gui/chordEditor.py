@@ -7,7 +7,6 @@ import utils
 
 class ChordEditor(ctk.CTkToplevel):
     style_initialized = False
-    # TODO add translations to whole file
     def __init__(self, lang):
         super().__init__()
         self.lang = lang
