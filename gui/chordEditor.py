@@ -6,8 +6,45 @@ import utils
 
 
 class ChordEditor(ctk.CTkToplevel):
+    """
+    A graphical chord editing interface for managing ukulele chords by difficulty level.
+
+    This class provides a tabbed UI using CustomTkinter, where each tab represents a difficulty 
+    level (easy, medium, hard). Users can view, edit, add, delete, and validate chord entries 
+    presented in Treeviews.
+
+    Key features:
+    - Dynamic loading of chords from JSON using `utils.load_chords`.
+    - Tabbed layout with separate Treeviews per difficulty level.
+    - Custom-styled Treeviews supporting light and dark themes.
+    - In-place cell editing by double-clicking.
+    - Validation of chord data with detailed error reporting.
+    - Save and reset functionality for managing changes.
+    - Multilingual support via injected `lang` dictionary.
+
+    Attributes:
+        lang (dict): Language dictionary for UI translations.
+        is_dirty (bool): Tracks whether unsaved changes exist.
+        data (dict): Loaded chord data grouped by difficulty.
+        tables (dict): Mapping of difficulty levels to Treeview widgets.
+        config_data (dict): Loaded user configuration, including theme.
+        mode (str): UI theme mode, either 'dark' or 'light'.
+
+    Methods:
+        create_table(parent, level): Builds a Treeview for the specified difficulty level.
+        format_chord_for_display(chord): Formats a chord dict into a tuple for Treeview display.
+        on_double_click(event): Enables in-place editing of a Treeview cell.
+        add_entry(): Adds a new placeholder chord entry to the current tab.
+        validate_tables(): Validates all entries in all tabs and prints errors.
+        save_changes(): Validates and (eventually) saves the current table data.
+        reset_tables(): Restores all tables to their initially loaded state.
+        delete_selected_row(): Removes selected entries from the current tab.
+        tab_to_next_cell(tree, row_id, col, event): Moves edit focus to the next cell in a row.
+    """
+
     style_initialized = False
     def __init__(self, lang):
+        # TODO refactor the logic part into its own file for example
         super().__init__()
         self.lang = lang
         self.title(f"{self.lang['editor_title']}")
@@ -22,6 +59,7 @@ class ChordEditor(ctk.CTkToplevel):
         self.tabview = ctk.CTkTabview(self)
         self.tabview.pack(padx=10, pady=(10, 0), expand=True, fill="both")
 
+        # TODO think about theme handling
         # Define colors for dark/light mode
         if self.mode == "dark":
             self.bg_even = "#2e2e2e"
@@ -191,6 +229,7 @@ class ChordEditor(ctk.CTkToplevel):
         self.edit_box.focus()
 
         # Save on return, focus out or tab
+        # TODO save_edit is defined two times. here and in tab_to_next_cell - refactor that
         def save_edit(event=None):
             new_value = self.edit_box.get()
             tree.set(row_id, col, new_value)
@@ -220,6 +259,7 @@ class ChordEditor(ctk.CTkToplevel):
 
 
     def validate_tables(self):
+        # TODO think about refactor that into its own file
         invalid_cells = 0
         placeholders = {"???", f"{self.lang['editor_placeholder1']}", f"{self.lang['editor_placeholder2']}"}  
         list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
