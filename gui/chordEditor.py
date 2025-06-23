@@ -2,6 +2,8 @@ import customtkinter as ctk
 from tkinter import ttk, messagebox
 import config
 import utils
+import json
+import re
 
 
 
@@ -118,8 +120,10 @@ class ChordEditor(ctk.CTkToplevel):
         ]
 
         # Create tabs for each difficulty level
+        self.tab_name_to_level = {}
         for level_key, display_name in levels:
             tab = self.tabview.add(display_name)
+            self.tab_name_to_level[display_name] = level_key
             self.create_table(tab, level_key)
 
         # Info label at the bottom
@@ -235,6 +239,7 @@ class ChordEditor(ctk.CTkToplevel):
             tree.set(row_id, col, new_value)
             self.edit_box.destroy()
             self.edit_box = None
+            self.is_dirty = True
 
         self.edit_box.bind("<FocusOut>", save_edit)
         self.edit_box.bind("<Return>", save_edit)
@@ -242,7 +247,8 @@ class ChordEditor(ctk.CTkToplevel):
 
 
     def add_entry(self):
-        current_tab = self.tabview.get().lower()
+        current_tab_name = self.tabview.get()
+        current_tab = self.tab_name_to_level.get(current_tab_name)
         tree = self.tables.get(current_tab)
         if tree:
             default_values = [
@@ -256,14 +262,23 @@ class ChordEditor(ctk.CTkToplevel):
             index = len(tree.get_children())
             tag = "evenrow" if index % 2 == 0 else "oddrow"
             tree.insert("", "end", values=default_values, tags=(tag,))
+            self.is_dirty = True  
 
 
     def validate_tables(self):
         # TODO think about refactor that into its own file
+        # Count invalid cells during validation
         invalid_cells = 0
+        # Placeholders that indicate empty or default values
         placeholders = {"???", f"{self.lang['editor_placeholder1']}", f"{self.lang['editor_placeholder2']}"}  
+        # Columns containing lists to validate specially
         list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
+        # Regex for note validation (A-G with optional sharp/flat)
+        note_pattern = re.compile(r"^[A-Ga-g](?:#|b|♯|♭)?$")
+        # Regex for interval validation (optional b/# prefix + digits)
+        interval_pattern = re.compile(r"^(?:b|#)?\d+$")
 
+        # Track duplicates to warn about repeated chords or fingerings
         seen_names = {}
         seen_fingering = {}
 
@@ -271,23 +286,24 @@ class ChordEditor(ctk.CTkToplevel):
             for row_id in tree.get_children():
                 entry = {}
                 parts_cache = {}
-                row_index = tree.index(row_id) + 1  # 1-basiert für bessere Anzeige
+                row_index = tree.index(row_id) + 1  # 1-based index for messages
 
                 for col in tree["columns"]:
                     value = tree.set(row_id, col).strip()
                     entry[col] = value
 
-                    # Leere oder Platzhalter
+                    # Check for empty or placeholder values
                     if value == "" or value in placeholders:
                         msg = self.lang["error_editor_empty_or_placeholder_value"].format(
                             level=level, row_index=row_index, col=col
                             )
-                        print(msg)
+                        print(msg) 
                         invalid_cells += 1
                         continue
 
-                    # Listen-Spalten prüfen
+                    # Validate list columns
                     if col in list_columns:
+                        # Ensure comma separators (no dots)
                         if "." in value:
                             msg = self.lang["error_editor_dot_instead_of_comma"].format(
                                 level=level, row_index=row_index, col=col, value=value
@@ -299,6 +315,7 @@ class ChordEditor(ctk.CTkToplevel):
                         parts = [p.strip() for p in value.split(",")]
                         parts_cache[col] = parts
 
+                        # Check for empty list elements
                         if any(p == "" for p in parts):
                             msg = self.lang["error_editor_empty_list_element"].format(
                                 level=level, row_index=row_index, col=col, value=value
@@ -307,6 +324,7 @@ class ChordEditor(ctk.CTkToplevel):
                             invalid_cells += 1
                             continue
 
+                        # Validate fingering/fingers length and values
                         if col in {"fingering", "fingers"}:
                             if len(parts) != 4:
                                 msg = self.lang["error_editor_invalid_length"].format(
@@ -323,8 +341,47 @@ class ChordEditor(ctk.CTkToplevel):
                                     print(msg)
                                     invalid_cells += 1
                                     break
+                        
+                        # Validate notes (min 3, only valid notes)
+                        if col in {"notes_on_strings", "chord_notes"}:
+                            if len(parts) < 3:
+                                msg = self.lang["error_editor_minimum_length"].format(
+                                    level=level, row_index=row_index, col=col, min_length=3
+                                )
+                                print(msg)
+                                invalid_cells += 1
+                                continue
 
-                # duplicate check
+                            for p in parts:
+                                if not note_pattern.match(p):
+                                    msg = self.lang["error_editor_invalid_note_format"].format(
+                                        level=level, row_index=row_index, col=col, value=p
+                                    )
+                                    print(msg)
+                                    invalid_cells += 1
+                                    break
+
+                        # Validate intervals (min 3, valid intervals)
+                        elif col == "intervals":
+                            if len(parts) < 3:
+                                msg = self.lang["error_editor_minimum_length"].format(
+                                    level=level, row_index=row_index, col=col, min_length=3
+                                )
+                                print(msg)
+                                invalid_cells += 1
+                                continue
+
+                            for p in parts:
+                                if not interval_pattern.match(p):
+                                    msg = self.lang["error_editor_invalid_interval_format"].format(
+                                        level=level, row_index=row_index, col=col, value=p
+                                    )
+                                    print(msg)
+                                    invalid_cells += 1
+                                    break
+
+
+                # Check for duplicate chord names
                 name = entry.get("name", "").strip()
                 fingering = entry.get("fingering", "")
                 normalized_name = name.lower()
@@ -340,6 +397,7 @@ class ChordEditor(ctk.CTkToplevel):
                     else:
                         seen_names[normalized_name] = row_index
 
+                 # Check for duplicate fingerings
                 if fingering:
                     if normalized_fingering in seen_fingering:
                         msg = self.lang["error_editor_duplicate_fingering"].format(
@@ -350,24 +408,61 @@ class ChordEditor(ctk.CTkToplevel):
                     else:
                         seen_fingering[normalized_fingering] = row_index
         return invalid_cells
+    
+
+    def json_dumps_compact_lists(self, data):
+        text = json.dumps(data, ensure_ascii=False, indent=4)
+        pattern = re.compile(r'\[\s*(\".*?\"(?:,\s*\".*?\")*)\s*\]', re.DOTALL)
+
+        def replacer(match):
+            content = match.group(1)
+            compact = content.replace('\n', '').replace(' ', '')
+            return f'[{compact}]'
+
+        return pattern.sub(replacer, text)
 
 
     def save_changes(self):
-        # TODO Make sure to implement is_dirty to avoid unnecessary saving
+        if not self.is_dirty:
+            return
+
         errors = self.validate_tables()
         if errors > 0:
             messagebox.showerror(
-                f"{self.lang['error_editor_validation_title']}",
-                f"{self.lang['error_editor_validation_message']}".format(errors=errors), 
+                self.lang["error_editor_validation_title"],
+                self.lang["error_editor_validation_message"].format(errors=errors), 
                 parent=self
             )
             return
 
-        # Dummy saving
-        messagebox.showinfo(f"{self.lang['editor_button_save']}", 
-                            f"{self.lang['editor_save_success_message']}", 
-                            parent=self)
-        
+        data = {}
+        for level, tree in self.tables.items():
+            data[level] = []
+            for row_id in tree.get_children():
+                item = tree.item(row_id)["values"]
+                chord = {
+                    "name": item[0],
+                    "fingering": [s.strip() for s in item[1].split(",")],
+                    "fingers": [s.strip() for s in item[2].split(",")],
+                    "notes_on_strings": [s.strip() for s in item[3].split(",")],
+                    "chord_notes": [s.strip() for s in item[4].split(",")],
+                    "intervals": [s.strip() for s in item[5].split(",")],
+                }
+                data[level].append(chord)
+
+        try:
+            json_text = self.json_dumps_compact_lists(data)
+            with open(config.CHORD_PATH, "w", encoding="utf-8") as f:
+                f.write(json_text)
+            self.is_dirty = False
+            messagebox.showinfo(
+                self.lang["editor_button_save"], 
+                self.lang["editor_save_success_message"], 
+                parent=self)
+        except Exception as e:
+            print(f"{self.lang['error_editor_saving']}")
+            print(e)
+
 
     def reset_tables(self):
         # Reset all tables to initial loaded data state
@@ -377,12 +472,15 @@ class ChordEditor(ctk.CTkToplevel):
             for i, chord in enumerate(self.data.get(level, [])):
                 tag = "evenrow" if i % 2 == 0 else "oddrow"
                 tree.insert("", "end", values=self.format_chord_for_display(chord), tags=(tag,))
+        self.is_dirty = False
 
 
     def delete_selected_row(self):
-        current_tab = self.tabview.get().lower()
+        current_tab_name = self.tabview.get()
+        current_tab = self.tab_name_to_level.get(current_tab_name)
         tree = self.tables.get(current_tab)
         if not tree:
+            print(self.lang["error_editor_no_treeview_for_tab"].format(tab_name=current_tab_name))
             return
 
         selected = tree.selection()
