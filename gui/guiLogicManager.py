@@ -27,6 +27,13 @@ class GuiLogicManager:
         self.master.after(100, lambda: self.master.get_first_chord())
         threading.Thread(target=self.speech_recognition, args=(lang,), daemon=True).start()
 
+
+    def clear_history(self):
+        config.PAST_CHORDS = []
+        self.history_index = None
+        self.next_chord(self.lang)
+
+
     def show_chord_by_name(self, name):
         if isinstance(name, dict):
             name = name.get("name", "")

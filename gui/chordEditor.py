@@ -54,6 +54,7 @@ class ChordEditor(ctk.CTkToplevel):
         self.geometry("1000x650")
 
         self.is_dirty = False # just to make sure "no changes" are saved to the file later
+        self.saved = False
         self.data = utils.load_chords(self.lang, filter_by_difficulty=False)
         self.tables = {}      
         self.config_data = utils.load_config()
@@ -141,10 +142,10 @@ class ChordEditor(ctk.CTkToplevel):
         self.delete_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_delete']}", command=self.delete_selected_row)
         self.delete_button.pack(side="left", padx=10)
 
-        self.save_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_save']}", command=self.save_changes)
+        self.save_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_save']}", command=self.save_changes, state="disabled")
         self.save_button.pack(side="left", padx=10)
 
-        self.reset_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_reset']}", command=self.reset_tables)
+        self.reset_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_reset']}", command=self.reset_tables, state="disabled")
         self.reset_button.pack(side="left", padx=10)
 
         self.transient(self.master)  # makes this window associated with the main window (optional but clean)
@@ -155,6 +156,7 @@ class ChordEditor(ctk.CTkToplevel):
 
 
     def _on_close(self):
+        print(self.is_dirty)
         if self.on_close:
             self.on_close()
         self.destroy()
@@ -249,10 +251,13 @@ class ChordEditor(ctk.CTkToplevel):
         # TODO save_edit is defined two times. here and in tab_to_next_cell - refactor that
         def save_edit(event=None):
             new_value = self.edit_box.get()
-            tree.set(row_id, col, new_value)
+            old_value = tree.set(row_id, col)
+            if new_value != old_value:
+                tree.set(row_id, col, new_value)
+                self.is_dirty = True
+                self.update_buttons_state()
             self.edit_box.destroy()
             self.edit_box = None
-            self.is_dirty = True
 
         self.edit_box.bind("<FocusOut>", save_edit)
         self.edit_box.bind("<Return>", save_edit)
@@ -276,6 +281,7 @@ class ChordEditor(ctk.CTkToplevel):
             tag = "evenrow" if index % 2 == 0 else "oddrow"
             tree.insert("", "end", values=default_values, tags=(tag,))
             self.is_dirty = True  
+            self.update_buttons_state()
 
 
     def validate_tables(self):
@@ -468,11 +474,14 @@ class ChordEditor(ctk.CTkToplevel):
             with open(config.CHORD_PATH, "w", encoding="utf-8") as f:
                 f.write(json_text)
             self.is_dirty = False
+            self.saved = True
+            self.update_buttons_state()
             messagebox.showinfo(
                 self.lang["editor_button_save"], 
                 self.lang["editor_save_success_message"], 
                 parent=self)
         except Exception as e:
+            self.saved = False
             print(f"{self.lang['error_editor_saving']}")
             print(e)
 
@@ -486,6 +495,7 @@ class ChordEditor(ctk.CTkToplevel):
                 tag = "evenrow" if i % 2 == 0 else "oddrow"
                 tree.insert("", "end", values=self.format_chord_for_display(chord), tags=(tag,))
         self.is_dirty = False
+        self.update_buttons_state()
 
 
     def delete_selected_row(self):
@@ -518,6 +528,7 @@ class ChordEditor(ctk.CTkToplevel):
             tree.item(item, tags=(tag,))
         
         self.is_dirty = True
+        self.update_buttons_state()
 
 
     def tab_to_next_cell(self, tree, row_id, col, event=None):
@@ -553,13 +564,24 @@ class ChordEditor(ctk.CTkToplevel):
         # Bind again for the next cell
         def save_edit(event=None):
             new_value = self.edit_box.get()
-            tree.set(row_id, next_col, new_value)
+            old_value = tree.set(row_id, col)
+            if new_value != old_value:
+                tree.set(row_id, next_col, new_value)
+                self.is_dirty = True
+                self.update_buttons_state()
             self.edit_box.destroy()
             self.edit_box = None
-            self.is_dirty = True
 
         self.edit_box.bind("<FocusOut>", save_edit)
         self.edit_box.bind("<Return>", save_edit)
         self.edit_box.bind("<Tab>", lambda e: self.tab_to_next_cell(tree, row_id, next_col, e))
 
         return "break"
+
+    def update_buttons_state(self):
+        if self.is_dirty:
+            self.reset_button.configure(state="normal")
+            self.save_button.configure(state="normal")
+        else:
+            self.reset_button.configure(state="disabled")
+            self.save_button.configure(state="disabled")
