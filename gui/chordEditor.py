@@ -45,10 +45,11 @@ class ChordEditor(ctk.CTkToplevel):
     """
 
     style_initialized = False
-    def __init__(self, lang, master=None):
+    def __init__(self, lang, master=None, on_close=None):
         # TODO refactor the logic part into its own file for example
         super().__init__(master)
         self.lang = lang
+        self.on_close = on_close
         self.title(f"{self.lang['editor_title']}")
         self.geometry("1000x650")
 
@@ -149,6 +150,14 @@ class ChordEditor(ctk.CTkToplevel):
         self.transient(self.master)  # makes this window associated with the main window (optional but clean)
         self.grab_set()              # blocks interaction with other windows (makes this window modal)
         self.focus_force()           # actively sets focus to this window
+
+        self.protocol("WM_DELETE_WINDOW", self._on_close)
+
+
+    def _on_close(self):
+        if self.on_close:
+            self.on_close()
+        self.destroy()
 
         
     def create_table(self, parent, level):
@@ -490,7 +499,8 @@ class ChordEditor(ctk.CTkToplevel):
         selected = tree.selection()
         if not selected:
             messagebox.showinfo(f"{self.lang['error_editor_no_selection_title']}", 
-                                f"{self.lang['error_editor_no_selection_message']}", parent=self)
+                                f"{self.lang['error_editor_no_selection_message']}", 
+                                parent=self)
             return
 
         confirm = messagebox.askyesno(f"{self.lang['editor_confirm_delete_title']}",
@@ -506,6 +516,8 @@ class ChordEditor(ctk.CTkToplevel):
         for i, item in enumerate(tree.get_children()):
             tag = "evenrow" if i % 2 == 0 else "oddrow"
             tree.item(item, tags=(tag,))
+        
+        self.is_dirty = True
 
 
     def tab_to_next_cell(self, tree, row_id, col, event=None):

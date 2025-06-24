@@ -47,7 +47,11 @@ def create_menubar(root, app, lang, config_data):
     def open_chord_editor():
         nonlocal chord_editor_ref
         if chord_editor_ref is None or not chord_editor_ref.winfo_exists():
-            chord_editor_ref = ChordEditor(lang, master=root)
+            chord_editor_ref = ChordEditor(
+                lang = lang, 
+                master = root,
+                on_close = lambda: app.logic.reload_chords(lang)
+            )
             chord_editor_ref.after(25, chord_editor_ref.focus)
         else:
             chord_editor_ref.focus()
