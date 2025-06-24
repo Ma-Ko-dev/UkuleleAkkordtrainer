@@ -156,7 +156,6 @@ class ChordEditor(ctk.CTkToplevel):
 
 
     def _on_close(self):
-        print(self.is_dirty)
         if self.on_close:
             self.on_close()
         self.destroy()
