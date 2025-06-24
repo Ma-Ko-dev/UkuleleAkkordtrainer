@@ -45,9 +45,9 @@ class ChordEditor(ctk.CTkToplevel):
     """
 
     style_initialized = False
-    def __init__(self, lang):
+    def __init__(self, lang, master=None):
         # TODO refactor the logic part into its own file for example
-        super().__init__()
+        super().__init__(master)
         self.lang = lang
         self.title(f"{self.lang['editor_title']}")
         self.geometry("1000x650")
@@ -146,7 +146,11 @@ class ChordEditor(ctk.CTkToplevel):
         self.reset_button = ctk.CTkButton(self.button_frame, text=f"{self.lang['editor_button_reset']}", command=self.reset_tables)
         self.reset_button.pack(side="left", padx=10)
 
+        self.transient(self.master)  # makes this window associated with the main window (optional but clean)
+        self.grab_set()              # blocks interaction with other windows (makes this window modal)
+        self.focus_force()           # actively sets focus to this window
 
+        
     def create_table(self, parent, level):
         tree_frame = ctk.CTkFrame(parent)
         tree_frame.pack(fill="both", expand=True)
