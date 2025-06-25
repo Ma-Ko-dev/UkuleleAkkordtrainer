@@ -1,4 +1,6 @@
 import re
+import json
+import config
 
 
 
@@ -116,3 +118,43 @@ class ChordEditorLogic:
                         seen_fingering[norm_fingering] = row_index
 
         return invalid_cells
+
+
+    def prepare_save_data(self, tables: dict) -> dict:
+        data = {}
+        for level, tree in tables.items():
+            data[level] = []
+            for row_id in tree.get_children():
+                item = tree.item(row_id)["values"]
+                chord = {
+                    "name": item[0],
+                    "fingering": [s.strip() for s in item[1].split(",")],
+                    "fingers": [s.strip() for s in item[2].split(",")],
+                    "notes_on_strings": [s.strip() for s in item[3].split(",")],
+                    "chord_notes": [s.strip() for s in item[4].split(",")],
+                    "intervals": [s.strip() for s in item[5].split(",")],
+                }
+                data[level].append(chord)
+        return data
+
+
+    def json_dumps_compact_lists(self, data):
+        # Dump JSON with indents but compact list formatting for readability
+        text = json.dumps(data, ensure_ascii=False, indent=4)
+        pattern = re.compile(r'\[\s*(\".*?\"(?:,\s*\".*?\")*)\s*\]', re.DOTALL)
+
+        def replacer(match):
+            content = match.group(1)
+            compact = content.replace('\n', '').replace(' ', '')
+            return f'[{compact}]'
+
+        return pattern.sub(replacer, text)
+
+    def save_data(self, data):
+        try:
+            json_text = self.json_dumps_compact_lists(data)
+            with open(config.CHORD_PATH, "w", encoding="utf-8") as f:
+                f.write(json_text)
+            return True, None
+        except Exception as e:
+            return False, e

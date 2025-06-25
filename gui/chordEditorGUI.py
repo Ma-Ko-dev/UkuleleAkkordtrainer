@@ -248,151 +248,6 @@ class ChordEditor(ctk.CTkToplevel):
             self.update_buttons_state()
 
 
-    # def validate_tables(self):
-    #     # TODO think about refactor that into its own file
-    #     # Count invalid cells during validation
-    #     invalid_cells = 0
-    #     # Placeholders that indicate empty or default values
-    #     placeholders = {"???", f"{self.lang['editor_placeholder1']}", f"{self.lang['editor_placeholder2']}"}  
-    #     # Columns containing lists to validate specially
-    #     list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
-    #     # Regex for note validation (A-G with optional sharp/flat)
-    #     note_pattern = re.compile(r"^[A-Ga-g](?:#|b|♯|♭)?$")
-    #     # Regex for interval validation (optional b/# prefix + digits)
-    #     interval_pattern = re.compile(r"^(?:b|#)?\d+$")
-
-    #     # Track duplicates to warn about repeated chords or fingerings
-    #     seen_names = {}
-    #     seen_fingering = {}
-
-    #     for level, tree in self.tables.items():
-    #         for row_id in tree.get_children():
-    #             entry = {}
-    #             parts_cache = {}
-    #             row_index = tree.index(row_id) + 1  # 1-based index for messages
-
-    #             for col in tree["columns"]:
-    #                 value = tree.set(row_id, col).strip()
-    #                 entry[col] = value
-
-    #                 # Check for empty or placeholder values
-    #                 if value == "" or value in placeholders:
-    #                     msg = self.lang["error_editor_empty_or_placeholder_value"].format(
-    #                         level=level, row_index=row_index, col=col
-    #                         )
-    #                     print(msg) 
-    #                     invalid_cells += 1
-    #                     continue
-
-    #                 # Validate list columns
-    #                 if col in list_columns:
-    #                     # Ensure comma separators (no dots)
-    #                     if "." in value:
-    #                         msg = self.lang["error_editor_dot_instead_of_comma"].format(
-    #                             level=level, row_index=row_index, col=col, value=value
-    #                         )
-    #                         print(msg)
-    #                         invalid_cells += 1
-    #                         continue
-
-    #                     parts = [p.strip() for p in value.split(",")]
-    #                     parts_cache[col] = parts
-
-    #                     # Check for empty list elements
-    #                     if any(p == "" for p in parts):
-    #                         msg = self.lang["error_editor_empty_list_element"].format(
-    #                             level=level, row_index=row_index, col=col, value=value
-    #                         )
-    #                         print(msg)
-    #                         invalid_cells += 1
-    #                         continue
-
-    #                     # Validate fingering/fingers length and values
-    #                     if col in {"fingering", "fingers"}:
-    #                         if len(parts) != 4:
-    #                             msg = self.lang["error_editor_invalid_length"].format(
-    #                                 level=level, row_index=row_index, col=col, parts=parts
-    #                             )
-    #                             print(msg)
-    #                             invalid_cells += 1
-    #                             continue
-    #                         for p in parts:
-    #                             if not p.isdigit() or not (0 <= int(p) <= 12):
-    #                                 msg = self.lang["error_editor_invalid_number"].format(
-    #                                     level=level, row_index=row_index, col=col, p=p
-    #                                 )
-    #                                 print(msg)
-    #                                 invalid_cells += 1
-    #                                 break
-                        
-    #                     # Validate notes (min 3, only valid notes)
-    #                     if col in {"notes_on_strings", "chord_notes"}:
-    #                         if len(parts) < 3:
-    #                             msg = self.lang["error_editor_minimum_length"].format(
-    #                                 level=level, row_index=row_index, col=col, min_length=3
-    #                             )
-    #                             print(msg)
-    #                             invalid_cells += 1
-    #                             continue
-
-    #                         for p in parts:
-    #                             if not note_pattern.match(p):
-    #                                 msg = self.lang["error_editor_invalid_note_format"].format(
-    #                                     level=level, row_index=row_index, col=col, value=p
-    #                                 )
-    #                                 print(msg)
-    #                                 invalid_cells += 1
-    #                                 break
-
-    #                     # Validate intervals (min 3, valid intervals)
-    #                     elif col == "intervals":
-    #                         if len(parts) < 3:
-    #                             msg = self.lang["error_editor_minimum_length"].format(
-    #                                 level=level, row_index=row_index, col=col, min_length=3
-    #                             )
-    #                             print(msg)
-    #                             invalid_cells += 1
-    #                             continue
-
-    #                         for p in parts:
-    #                             if not interval_pattern.match(p):
-    #                                 msg = self.lang["error_editor_invalid_interval_format"].format(
-    #                                     level=level, row_index=row_index, col=col, value=p
-    #                                 )
-    #                                 print(msg)
-    #                                 invalid_cells += 1
-    #                                 break
-
-
-    #             # Check for duplicate chord names
-    #             name = entry.get("name", "").strip()
-    #             fingering = entry.get("fingering", "")
-    #             normalized_name = name.lower()
-    #             normalized_fingering = fingering.replace(" ", "")
-
-    #             if name:
-    #                 if normalized_name in seen_names:
-    #                     msg = self.lang["error_editor_duplicate_chord_name"].format(
-    #                         level=level, row_index=row_index, name=name, previous_row=seen_names[normalized_name]
-    #                     )
-    #                     print(msg)
-    #                     invalid_cells += 1
-    #                 else:
-    #                     seen_names[normalized_name] = row_index
-
-    #              # Check for duplicate fingerings
-    #             if fingering:
-    #                 if normalized_fingering in seen_fingering:
-    #                     msg = self.lang["error_editor_duplicate_fingering"].format(
-    #                         level=level, row_index=row_index, fingering=fingering, previous_row=seen_fingering[normalized_fingering]
-    #                     )
-    #                     print(msg)
-    #                     invalid_cells += 1
-    #                 else:
-    #                     seen_fingering[normalized_fingering] = row_index
-    #     return invalid_cells
-    
-
     def json_dumps_compact_lists(self, data):
         text = json.dumps(data, ensure_ascii=False, indent=4)
         pattern = re.compile(r'\[\s*(\".*?\"(?:,\s*\".*?\")*)\s*\]', re.DOTALL)
@@ -418,36 +273,22 @@ class ChordEditor(ctk.CTkToplevel):
             )
             return
 
-        data = {}
-        for level, tree in self.tables.items():
-            data[level] = []
-            for row_id in tree.get_children():
-                item = tree.item(row_id)["values"]
-                chord = {
-                    "name": item[0],
-                    "fingering": [s.strip() for s in item[1].split(",")],
-                    "fingers": [s.strip() for s in item[2].split(",")],
-                    "notes_on_strings": [s.strip() for s in item[3].split(",")],
-                    "chord_notes": [s.strip() for s in item[4].split(",")],
-                    "intervals": [s.strip() for s in item[5].split(",")],
-                }
-                data[level].append(chord)
+        data = self.logic.prepare_save_data(self.tables)
+        success, error = self.logic.save_data(data)
 
-        try:
-            json_text = self.json_dumps_compact_lists(data)
-            with open(config.CHORD_PATH, "w", encoding="utf-8") as f:
-                f.write(json_text)
+        if success:
             self.is_dirty = False
             self.saved = True
             self.update_buttons_state()
             messagebox.showinfo(
-                self.lang["editor_button_save"], 
-                self.lang["editor_save_success_message"], 
-                parent=self)
-        except Exception as e:
+                self.lang["editor_button_save"],
+                self.lang["editor_save_success_message"],
+                parent=self
+            )
+        else:
             self.saved = False
-            print(f"{self.lang['error_editor_saving']}")
-            print(e)
+            print(self.lang["error_editor_saving"])
+            print(error)
 
 
     def reset_tables(self):
