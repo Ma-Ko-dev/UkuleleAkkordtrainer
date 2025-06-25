@@ -1,7 +1,7 @@
 import tkinter as tk
 import config
 from gui.fretboardLegacy import LegacyFretboard
-from gui.guiLogicManager import GuiLogicManager
+from gui.mainGuiLogicManager import GuiLogicManager
 
 
 class LegacyChordTrainerGUI(tk.Frame):

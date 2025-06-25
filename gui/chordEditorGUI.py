@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from tkinter import ttk, messagebox
+from gui.editorLogicManager import ChordEditorLogic
 import config
 import utils
 import json
@@ -8,47 +9,11 @@ import re
 
 
 class ChordEditor(ctk.CTkToplevel):
-    """
-    A graphical chord editing interface for managing ukulele chords by difficulty level.
-
-    This class provides a tabbed UI using CustomTkinter, where each tab represents a difficulty 
-    level (easy, medium, hard). Users can view, edit, add, delete, and validate chord entries 
-    presented in Treeviews.
-
-    Key features:
-    - Dynamic loading of chords from JSON using `utils.load_chords`.
-    - Tabbed layout with separate Treeviews per difficulty level.
-    - Custom-styled Treeviews supporting light and dark themes.
-    - In-place cell editing by double-clicking.
-    - Validation of chord data with detailed error reporting.
-    - Save and reset functionality for managing changes.
-    - Multilingual support via injected `lang` dictionary.
-
-    Attributes:
-        lang (dict): Language dictionary for UI translations.
-        is_dirty (bool): Tracks whether unsaved changes exist.
-        data (dict): Loaded chord data grouped by difficulty.
-        tables (dict): Mapping of difficulty levels to Treeview widgets.
-        config_data (dict): Loaded user configuration, including theme.
-        mode (str): UI theme mode, either 'dark' or 'light'.
-
-    Methods:
-        create_table(parent, level): Builds a Treeview for the specified difficulty level.
-        format_chord_for_display(chord): Formats a chord dict into a tuple for Treeview display.
-        on_double_click(event): Enables in-place editing of a Treeview cell.
-        add_entry(): Adds a new placeholder chord entry to the current tab.
-        validate_tables(): Validates all entries in all tabs and prints errors.
-        save_changes(): Validates and (eventually) saves the current table data.
-        reset_tables(): Restores all tables to their initially loaded state.
-        delete_selected_row(): Removes selected entries from the current tab.
-        tab_to_next_cell(tree, row_id, col, event): Moves edit focus to the next cell in a row.
-    """
-
     style_initialized = False
     def __init__(self, lang, master=None, on_close=None):
-        # TODO refactor the logic part into its own file for example
         super().__init__(master)
         self.lang = lang
+        self.logic = ChordEditorLogic(self.lang)
         self.on_close = on_close
         self.title(f"{self.lang['editor_title']}")
         self.geometry("1000x650")
@@ -283,149 +248,149 @@ class ChordEditor(ctk.CTkToplevel):
             self.update_buttons_state()
 
 
-    def validate_tables(self):
-        # TODO think about refactor that into its own file
-        # Count invalid cells during validation
-        invalid_cells = 0
-        # Placeholders that indicate empty or default values
-        placeholders = {"???", f"{self.lang['editor_placeholder1']}", f"{self.lang['editor_placeholder2']}"}  
-        # Columns containing lists to validate specially
-        list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
-        # Regex for note validation (A-G with optional sharp/flat)
-        note_pattern = re.compile(r"^[A-Ga-g](?:#|b|♯|♭)?$")
-        # Regex for interval validation (optional b/# prefix + digits)
-        interval_pattern = re.compile(r"^(?:b|#)?\d+$")
+    # def validate_tables(self):
+    #     # TODO think about refactor that into its own file
+    #     # Count invalid cells during validation
+    #     invalid_cells = 0
+    #     # Placeholders that indicate empty or default values
+    #     placeholders = {"???", f"{self.lang['editor_placeholder1']}", f"{self.lang['editor_placeholder2']}"}  
+    #     # Columns containing lists to validate specially
+    #     list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
+    #     # Regex for note validation (A-G with optional sharp/flat)
+    #     note_pattern = re.compile(r"^[A-Ga-g](?:#|b|♯|♭)?$")
+    #     # Regex for interval validation (optional b/# prefix + digits)
+    #     interval_pattern = re.compile(r"^(?:b|#)?\d+$")
 
-        # Track duplicates to warn about repeated chords or fingerings
-        seen_names = {}
-        seen_fingering = {}
+    #     # Track duplicates to warn about repeated chords or fingerings
+    #     seen_names = {}
+    #     seen_fingering = {}
 
-        for level, tree in self.tables.items():
-            for row_id in tree.get_children():
-                entry = {}
-                parts_cache = {}
-                row_index = tree.index(row_id) + 1  # 1-based index for messages
+    #     for level, tree in self.tables.items():
+    #         for row_id in tree.get_children():
+    #             entry = {}
+    #             parts_cache = {}
+    #             row_index = tree.index(row_id) + 1  # 1-based index for messages
 
-                for col in tree["columns"]:
-                    value = tree.set(row_id, col).strip()
-                    entry[col] = value
+    #             for col in tree["columns"]:
+    #                 value = tree.set(row_id, col).strip()
+    #                 entry[col] = value
 
-                    # Check for empty or placeholder values
-                    if value == "" or value in placeholders:
-                        msg = self.lang["error_editor_empty_or_placeholder_value"].format(
-                            level=level, row_index=row_index, col=col
-                            )
-                        print(msg) 
-                        invalid_cells += 1
-                        continue
+    #                 # Check for empty or placeholder values
+    #                 if value == "" or value in placeholders:
+    #                     msg = self.lang["error_editor_empty_or_placeholder_value"].format(
+    #                         level=level, row_index=row_index, col=col
+    #                         )
+    #                     print(msg) 
+    #                     invalid_cells += 1
+    #                     continue
 
-                    # Validate list columns
-                    if col in list_columns:
-                        # Ensure comma separators (no dots)
-                        if "." in value:
-                            msg = self.lang["error_editor_dot_instead_of_comma"].format(
-                                level=level, row_index=row_index, col=col, value=value
-                            )
-                            print(msg)
-                            invalid_cells += 1
-                            continue
+    #                 # Validate list columns
+    #                 if col in list_columns:
+    #                     # Ensure comma separators (no dots)
+    #                     if "." in value:
+    #                         msg = self.lang["error_editor_dot_instead_of_comma"].format(
+    #                             level=level, row_index=row_index, col=col, value=value
+    #                         )
+    #                         print(msg)
+    #                         invalid_cells += 1
+    #                         continue
 
-                        parts = [p.strip() for p in value.split(",")]
-                        parts_cache[col] = parts
+    #                     parts = [p.strip() for p in value.split(",")]
+    #                     parts_cache[col] = parts
 
-                        # Check for empty list elements
-                        if any(p == "" for p in parts):
-                            msg = self.lang["error_editor_empty_list_element"].format(
-                                level=level, row_index=row_index, col=col, value=value
-                            )
-                            print(msg)
-                            invalid_cells += 1
-                            continue
+    #                     # Check for empty list elements
+    #                     if any(p == "" for p in parts):
+    #                         msg = self.lang["error_editor_empty_list_element"].format(
+    #                             level=level, row_index=row_index, col=col, value=value
+    #                         )
+    #                         print(msg)
+    #                         invalid_cells += 1
+    #                         continue
 
-                        # Validate fingering/fingers length and values
-                        if col in {"fingering", "fingers"}:
-                            if len(parts) != 4:
-                                msg = self.lang["error_editor_invalid_length"].format(
-                                    level=level, row_index=row_index, col=col, parts=parts
-                                )
-                                print(msg)
-                                invalid_cells += 1
-                                continue
-                            for p in parts:
-                                if not p.isdigit() or not (0 <= int(p) <= 12):
-                                    msg = self.lang["error_editor_invalid_number"].format(
-                                        level=level, row_index=row_index, col=col, p=p
-                                    )
-                                    print(msg)
-                                    invalid_cells += 1
-                                    break
+    #                     # Validate fingering/fingers length and values
+    #                     if col in {"fingering", "fingers"}:
+    #                         if len(parts) != 4:
+    #                             msg = self.lang["error_editor_invalid_length"].format(
+    #                                 level=level, row_index=row_index, col=col, parts=parts
+    #                             )
+    #                             print(msg)
+    #                             invalid_cells += 1
+    #                             continue
+    #                         for p in parts:
+    #                             if not p.isdigit() or not (0 <= int(p) <= 12):
+    #                                 msg = self.lang["error_editor_invalid_number"].format(
+    #                                     level=level, row_index=row_index, col=col, p=p
+    #                                 )
+    #                                 print(msg)
+    #                                 invalid_cells += 1
+    #                                 break
                         
-                        # Validate notes (min 3, only valid notes)
-                        if col in {"notes_on_strings", "chord_notes"}:
-                            if len(parts) < 3:
-                                msg = self.lang["error_editor_minimum_length"].format(
-                                    level=level, row_index=row_index, col=col, min_length=3
-                                )
-                                print(msg)
-                                invalid_cells += 1
-                                continue
+    #                     # Validate notes (min 3, only valid notes)
+    #                     if col in {"notes_on_strings", "chord_notes"}:
+    #                         if len(parts) < 3:
+    #                             msg = self.lang["error_editor_minimum_length"].format(
+    #                                 level=level, row_index=row_index, col=col, min_length=3
+    #                             )
+    #                             print(msg)
+    #                             invalid_cells += 1
+    #                             continue
 
-                            for p in parts:
-                                if not note_pattern.match(p):
-                                    msg = self.lang["error_editor_invalid_note_format"].format(
-                                        level=level, row_index=row_index, col=col, value=p
-                                    )
-                                    print(msg)
-                                    invalid_cells += 1
-                                    break
+    #                         for p in parts:
+    #                             if not note_pattern.match(p):
+    #                                 msg = self.lang["error_editor_invalid_note_format"].format(
+    #                                     level=level, row_index=row_index, col=col, value=p
+    #                                 )
+    #                                 print(msg)
+    #                                 invalid_cells += 1
+    #                                 break
 
-                        # Validate intervals (min 3, valid intervals)
-                        elif col == "intervals":
-                            if len(parts) < 3:
-                                msg = self.lang["error_editor_minimum_length"].format(
-                                    level=level, row_index=row_index, col=col, min_length=3
-                                )
-                                print(msg)
-                                invalid_cells += 1
-                                continue
+    #                     # Validate intervals (min 3, valid intervals)
+    #                     elif col == "intervals":
+    #                         if len(parts) < 3:
+    #                             msg = self.lang["error_editor_minimum_length"].format(
+    #                                 level=level, row_index=row_index, col=col, min_length=3
+    #                             )
+    #                             print(msg)
+    #                             invalid_cells += 1
+    #                             continue
 
-                            for p in parts:
-                                if not interval_pattern.match(p):
-                                    msg = self.lang["error_editor_invalid_interval_format"].format(
-                                        level=level, row_index=row_index, col=col, value=p
-                                    )
-                                    print(msg)
-                                    invalid_cells += 1
-                                    break
+    #                         for p in parts:
+    #                             if not interval_pattern.match(p):
+    #                                 msg = self.lang["error_editor_invalid_interval_format"].format(
+    #                                     level=level, row_index=row_index, col=col, value=p
+    #                                 )
+    #                                 print(msg)
+    #                                 invalid_cells += 1
+    #                                 break
 
 
-                # Check for duplicate chord names
-                name = entry.get("name", "").strip()
-                fingering = entry.get("fingering", "")
-                normalized_name = name.lower()
-                normalized_fingering = fingering.replace(" ", "")
+    #             # Check for duplicate chord names
+    #             name = entry.get("name", "").strip()
+    #             fingering = entry.get("fingering", "")
+    #             normalized_name = name.lower()
+    #             normalized_fingering = fingering.replace(" ", "")
 
-                if name:
-                    if normalized_name in seen_names:
-                        msg = self.lang["error_editor_duplicate_chord_name"].format(
-                            level=level, row_index=row_index, name=name, previous_row=seen_names[normalized_name]
-                        )
-                        print(msg)
-                        invalid_cells += 1
-                    else:
-                        seen_names[normalized_name] = row_index
+    #             if name:
+    #                 if normalized_name in seen_names:
+    #                     msg = self.lang["error_editor_duplicate_chord_name"].format(
+    #                         level=level, row_index=row_index, name=name, previous_row=seen_names[normalized_name]
+    #                     )
+    #                     print(msg)
+    #                     invalid_cells += 1
+    #                 else:
+    #                     seen_names[normalized_name] = row_index
 
-                 # Check for duplicate fingerings
-                if fingering:
-                    if normalized_fingering in seen_fingering:
-                        msg = self.lang["error_editor_duplicate_fingering"].format(
-                            level=level, row_index=row_index, fingering=fingering, previous_row=seen_fingering[normalized_fingering]
-                        )
-                        print(msg)
-                        invalid_cells += 1
-                    else:
-                        seen_fingering[normalized_fingering] = row_index
-        return invalid_cells
+    #              # Check for duplicate fingerings
+    #             if fingering:
+    #                 if normalized_fingering in seen_fingering:
+    #                     msg = self.lang["error_editor_duplicate_fingering"].format(
+    #                         level=level, row_index=row_index, fingering=fingering, previous_row=seen_fingering[normalized_fingering]
+    #                     )
+    #                     print(msg)
+    #                     invalid_cells += 1
+    #                 else:
+    #                     seen_fingering[normalized_fingering] = row_index
+    #     return invalid_cells
     
 
     def json_dumps_compact_lists(self, data):
@@ -444,7 +409,7 @@ class ChordEditor(ctk.CTkToplevel):
         if not self.is_dirty:
             return
 
-        errors = self.validate_tables()
+        errors = self.logic.validate_treeviews(self.tables)
         if errors > 0:
             messagebox.showerror(
                 self.lang["error_editor_validation_title"],

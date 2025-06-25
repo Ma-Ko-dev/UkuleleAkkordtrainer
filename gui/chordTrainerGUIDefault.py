@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import config
 from gui.fretboardDefault import DefaultFretboard
-from gui.guiLogicManager import GuiLogicManager
+from gui.mainGuiLogicManager import GuiLogicManager
 
 
 class DefaultChordTrainerGUI(ctk.CTkFrame):
