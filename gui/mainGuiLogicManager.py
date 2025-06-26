@@ -76,6 +76,7 @@ class GuiLogicManager:
         self.history_index = None
         self.master.update_status_display_label("")
         self.show_chord_by_name(chord)
+        self.master.update_navigation_buttons(self.history_index)
 
     def forward_chord(self):
         if not hasattr(self, "history_index") or self.history_index is None:
@@ -95,6 +96,7 @@ class GuiLogicManager:
         if self.history_index == -1:
             self.history_index = None
         self.master.update_status_display_label("")
+        self.master.update_navigation_buttons(self.history_index)
 
     def previous_chord(self):
         if not hasattr(self, "history_index") or self.history_index is None:
@@ -111,6 +113,7 @@ class GuiLogicManager:
         chord_name = config.PAST_CHORDS[self.history_index]
         self.show_chord_by_name(chord_name)
         self.master.update_status_display_label("")
+        self.master.update_navigation_buttons(self.history_index)
 
     def speech_recognition(self, lang):
         recognizer = sr.Recognizer()
@@ -165,6 +168,8 @@ class GuiLogicManager:
             self.schedule_next_timer()
 
         self.master.set_timer_button_text(lang["timer_button_stop"] if self.timer_active else lang["timer_button_start"])
+        if not self.timer_active:
+            self.master.update_navigation_buttons(self.history_index)
     
     def schedule_next_timer(self):
         if self.timer_active:

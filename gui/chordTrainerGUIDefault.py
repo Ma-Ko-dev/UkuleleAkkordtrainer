@@ -100,6 +100,22 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         else:
             self.chord_tones.configure(text=f"{self.lang['error_notes']}")
 
+    def update_navigation_buttons(self, history_index):
+        total = len(config.PAST_CHORDS)
+
+        # Forward button: enabled only if there is something forward to go
+        if history_index is not None and history_index < -1:
+            self.next_in_history_button.configure(state="normal")
+        else:
+            self.next_in_history_button.configure(state="disabled")
+
+        # Backward button: enabled only if there is something to go back to
+        if history_index is None and total > 1:
+            self.prev_in_history_button.configure(state="normal")
+        elif history_index is not None and abs(history_index) < total:
+            self.prev_in_history_button.configure(state="normal")
+        else:
+            self.prev_in_history_button.configure(state="disabled")
 
     def build_widgets(self):
         # outer frame
@@ -220,6 +236,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             self.control_frame, text=f"{self.lang['forward_chord_button']}", 
             font=(config.BASE_FONT, 14),
             command=lambda: self.logic.forward_chord())
+
         self.next_in_history_button.pack(pady=2)
 
         self.prev_in_history_button = ctk.CTkButton(
