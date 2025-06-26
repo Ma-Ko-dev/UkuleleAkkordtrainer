@@ -23,6 +23,7 @@ def create_menubar(root, app, lang, config_data):
                 app.set_difficulty(level)
             # refresh menu
             update_difficulty_menu()
+            app.logic.clear_history()
 
     def update_difficulty_menu():
         difficulty_submenu.delete(0, "end")
