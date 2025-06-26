@@ -3,17 +3,48 @@ from tkinter import ttk, messagebox
 from gui.editorLogicManager import ChordEditorLogic
 import config
 import utils
-import json
-import re
 
 
 
 class ChordEditor(ctk.CTkToplevel):
+    """
+    A modal editor window for managing ukulele chord data grouped by difficulty levels.
+
+    This GUI allows users to:
+    - View, add, edit, or delete chord entries across difficulty tabs (easy, medium, hard)
+    - Inline-edit table cells with tab and shift-tab navigation
+    - Save changes to disk with validation
+    - Reset changes to the initially loaded state
+    - Be prompted to save changes on close if unsaved modifications exist
+
+    Attributes:
+        lang (dict): Dictionary with localized strings.
+        logic (ChordEditorLogic): Logic handler for data operations.
+        on_close (callable): Optional callback executed when the window is closed.
+        is_dirty (bool): Tracks if there are unsaved changes in the current session.
+        saved (bool): Indicates whether the last save attempt was successful.
+        data (dict): Raw chord data grouped by difficulty level.
+        tables (dict): Maps difficulty levels to their corresponding Treeview widgets.
+        tab_name_to_level (dict): Maps tab titles to internal level keys (e.g., 'easy').
+        config_data (dict): The loaded configuration, e.g., theme settings.
+        mode (str): Current theme mode ('light' or 'dark').
+        edit_box (ttk.Entry | None): Currently active inline editing widget, if any.
+        tabview (CTkTabview): Main container holding difficulty-specific tables.
+        info_label (CTkLabel): Info label displayed below the tab view.
+        add_button, delete_button, save_button, reset_button (CTkButton): Editor control buttons.
+        button_frame (CTkFrame): Frame holding the action buttons.
+        bg_even, bg_odd (str): Background colors for even/odd rows depending on the theme.
+        fg, header_bg, header_fg (str): Theme-related foreground/background colors.
+        style (ttk.Style): Custom style applied to Treeview widgets.
+        style_initialized (bool): Class-level flag to initialize Treeview style only once.
+    """
+
     style_initialized = False
     def __init__(self, lang, master=None, on_close=None):
         super().__init__(master)
         self.lang = lang
         self.logic = ChordEditorLogic(self.lang)
+        self.edit_box = None
         self.on_close = on_close
         self.title(f"{self.lang['editor_title']}")
         self.geometry("1000x650")
@@ -121,12 +152,36 @@ class ChordEditor(ctk.CTkToplevel):
 
 
     def _on_close(self):
+        """Handle window close event with optional save confirmation if unsaved changes exist."""
+        if self.is_dirty:
+            confirm = messagebox.askyesnocancel(
+                self.lang["editor_confirm_close_title"],
+                self.lang["editor_confirm_close_message"],
+                parent=self
+            )
+            # Yes = save and close, No = close without saving, Cancel = abort closing
+            if confirm is None:
+                return   # Cancel: keep the window open
+            elif confirm:  # Yes: save
+                self.save_changes()
+                if self.is_dirty:  # if saving fails, abort closing
+                    return
+            # else: No (do not save) - just close
+
         if self.on_close:
             self.on_close()
         self.destroy()
 
         
     def create_table(self, parent, level):
+        """
+        Create and populate a Treeview table for a given difficulty level.
+
+        Args:
+            parent (CTkFrame): The parent widget to place the table in.
+            level (str): The difficulty level key (e.g., 'easy', 'medium', 'hard').
+        """
+
         tree_frame = ctk.CTkFrame(parent)
         tree_frame.pack(fill="both", expand=True)
 
@@ -160,87 +215,21 @@ class ChordEditor(ctk.CTkToplevel):
         tree.tag_configure("oddrow", background=self.bg_odd, foreground=self.fg)
 
         # Fill table with data
-        for i, chord in enumerate(self.data.get(level, [])):
-            tag = "evenrow" if i % 2 == 0 else "oddrow"
-            tree.insert("", "end", values=self.format_chord_for_display(chord), tags=(tag,))
+        self.logic.insert_chords_into_tree(tree, self.data.get(level, []))
         self.tables[level] = tree
 
         # Bind double-click to start editing
         tree.bind("<Double-1>", self.on_double_click)
 
 
-    def format_chord_for_display(self, chord):
-        def to_display(value):
-            return ", ".join(value) if isinstance(value, list) else value or ""
-
-        return (
-            chord.get("name", ""),
-            to_display(chord.get("fingering", [])),
-            to_display(chord.get("fingers", [])),
-            to_display(chord.get("notes_on_strings", [])),
-            to_display(chord.get("chord_notes", [])),
-            to_display(chord.get("intervals", []))
-        )
-
-
-    def on_double_click(self, event):
-        # If already editing, ignore new click
-        if hasattr(self, 'edit_box') and self.edit_box is not None:
-            return
-
-        tree = event.widget
-        region = tree.identify("region", event.x, event.y)
-        if region != "cell":
-            return
-
-        row_id = tree.identify_row(event.y)
-        col = tree.identify_column(event.x)
-        if not row_id or not col:
-            return
-
-        # Get absolute position of clicked cell
-        x, y, width, height = tree.bbox(row_id, col)
-        abs_x = tree.winfo_rootx() - self.winfo_rootx() + x
-        abs_y = tree.winfo_rooty() - self.winfo_rooty() + y
-
-        current_value = tree.set(row_id, col)
-
-        # Create entry box in place
-        self.edit_box = ttk.Entry(self)
-        self.edit_box.place(x=abs_x, y=abs_y, width=width, height=height)
-        self.edit_box.insert(0, current_value)
-        self.edit_box.focus()
-
-        # Save on return, focus out or tab
-        # TODO save_edit is defined two times. here and in tab_to_next_cell - refactor that
-        def save_edit(event=None):
-            new_value = self.edit_box.get()
-            old_value = tree.set(row_id, col)
-            if new_value != old_value:
-                tree.set(row_id, col, new_value)
-                self.is_dirty = True
-                self.update_buttons_state()
-            self.edit_box.destroy()
-            self.edit_box = None
-
-        self.edit_box.bind("<FocusOut>", save_edit)
-        self.edit_box.bind("<Return>", save_edit)
-        self.edit_box.bind("<Tab>", lambda e: self.tab_to_next_cell(tree, row_id, col, e))
-
-
     def add_entry(self):
+        """Insert a new chord row with default values into the currently selected tab."""
+
         current_tab_name = self.tabview.get()
         current_tab = self.tab_name_to_level.get(current_tab_name)
         tree = self.tables.get(current_tab)
         if tree:
-            default_values = [
-                f"{self.lang['editor_placeholder1']}",    # placeholder chord name
-                f"{self.lang['editor_placeholder2']}",  # editable fingering field
-                "???",            # unknown finger suggestion
-                "???",            # unknown notes on strings
-                "???",            # unknown chord tones
-                "???"             # unknown intervals
-            ]
+            default_values = self.logic.get_default_row()
             index = len(tree.get_children())
             tag = "evenrow" if index % 2 == 0 else "oddrow"
             tree.insert("", "end", values=default_values, tags=(tag,))
@@ -248,62 +237,9 @@ class ChordEditor(ctk.CTkToplevel):
             self.update_buttons_state()
 
 
-    def json_dumps_compact_lists(self, data):
-        text = json.dumps(data, ensure_ascii=False, indent=4)
-        pattern = re.compile(r'\[\s*(\".*?\"(?:,\s*\".*?\")*)\s*\]', re.DOTALL)
-
-        def replacer(match):
-            content = match.group(1)
-            compact = content.replace('\n', '').replace(' ', '')
-            return f'[{compact}]'
-
-        return pattern.sub(replacer, text)
-
-
-    def save_changes(self):
-        if not self.is_dirty:
-            return
-
-        errors = self.logic.validate_treeviews(self.tables)
-        if errors > 0:
-            messagebox.showerror(
-                self.lang["error_editor_validation_title"],
-                self.lang["error_editor_validation_message"].format(errors=errors), 
-                parent=self
-            )
-            return
-
-        data = self.logic.prepare_save_data(self.tables)
-        success, error = self.logic.save_data(data)
-
-        if success:
-            self.is_dirty = False
-            self.saved = True
-            self.update_buttons_state()
-            messagebox.showinfo(
-                self.lang["editor_button_save"],
-                self.lang["editor_save_success_message"],
-                parent=self
-            )
-        else:
-            self.saved = False
-            print(self.lang["error_editor_saving"])
-            print(error)
-
-
-    def reset_tables(self):
-        # Reset all tables to initial loaded data state
-        for level, tree in self.tables.items():
-            tree.delete(*tree.get_children())  # Clear all rows
-
-            for i, chord in enumerate(self.data.get(level, [])):
-                tag = "evenrow" if i % 2 == 0 else "oddrow"
-                tree.insert("", "end", values=self.format_chord_for_display(chord), tags=(tag,))
-        self.is_dirty = False
-        self.update_buttons_state()
-
-
     def delete_selected_row(self):
+        """Delete the selected row(s) from the currently active Treeview tab."""
+
         current_tab_name = self.tabview.get()
         current_tab = self.tab_name_to_level.get(current_tab_name)
         tree = self.tables.get(current_tab)
@@ -336,57 +272,162 @@ class ChordEditor(ctk.CTkToplevel):
         self.update_buttons_state()
 
 
-    def tab_to_next_cell(self, tree, row_id, col, event=None):
-        col_index = int(col[1:]) - 1  # '#1' → 0
-        columns = tree["columns"]
+    def reset_tables(self):
+        """Reset all chord tables to the original loaded state."""
 
-        # Save current value
-        new_value = self.edit_box.get()
-        tree.set(row_id, col, new_value)
-        self.edit_box.destroy()
-        self.edit_box = None
+        # Reset all tables to initial loaded data state
+        for level, tree in self.tables.items():
+            tree.delete(*tree.get_children())  # Clear all rows
+            self.logic.insert_chords_into_tree(tree, self.data.get(level, []))
+        self.is_dirty = False
+        self.update_buttons_state()
 
-        # Determine next column
-        next_index = col_index + 1
-        if next_index >= len(columns):
-            return "break"  # no more columns
 
-        next_col = f"#{next_index + 1}"
-        x, y, width, height = tree.bbox(row_id, next_col)
-        if not width:
-            return "break"  # invalid cell
+    def save_changes(self):
+        """Validate and save all chord data to file if changes were made."""
 
-        # Create new entry box at next cell
-        current_value = tree.set(row_id, next_col)
+        if not self.is_dirty:
+            return
 
-        self.edit_box = ttk.Entry(self)
-        abs_x = tree.winfo_rootx() - self.winfo_rootx() + x
-        abs_y = tree.winfo_rooty() - self.winfo_rooty() + y
-        self.edit_box.place(x=abs_x, y=abs_y, width=width, height=height)
-        self.edit_box.insert(0, current_value)
-        self.edit_box.focus()
+        errors = self.logic.validate_treeviews(self.tables)
+        if errors > 0:
+            messagebox.showerror(
+                self.lang["error_editor_validation_title"],
+                self.lang["error_editor_validation_message"].format(errors=errors), 
+                parent=self
+            )
+            return
 
-        # Bind again for the next cell
-        def save_edit(event=None):
-            new_value = self.edit_box.get()
-            old_value = tree.set(row_id, col)
-            if new_value != old_value:
-                tree.set(row_id, next_col, new_value)
-                self.is_dirty = True
-                self.update_buttons_state()
-            self.edit_box.destroy()
-            self.edit_box = None
+        data = self.logic.prepare_save_data(self.tables)
+        success, error = self.logic.save_data(data)
 
-        self.edit_box.bind("<FocusOut>", save_edit)
-        self.edit_box.bind("<Return>", save_edit)
-        self.edit_box.bind("<Tab>", lambda e: self.tab_to_next_cell(tree, row_id, next_col, e))
+        if success:
+            self.is_dirty = False
+            self.saved = True
+            self.update_buttons_state()
+            messagebox.showinfo(
+                self.lang["editor_button_save"],
+                self.lang["editor_save_success_message"],
+                parent=self
+            )
+        else:
+            self.saved = False
+            messagebox.showerror(
+                self.lang["error_editor_saving_title"],
+                self.lang["error_editor_saving_message"],
+                parent=self
+            )
 
-        return "break"
 
     def update_buttons_state(self):
+        """Enable or disable save/reset buttons based on the dirty state."""
+        
         if self.is_dirty:
             self.reset_button.configure(state="normal")
             self.save_button.configure(state="normal")
         else:
             self.reset_button.configure(state="disabled")
             self.save_button.configure(state="disabled")
+
+
+    def on_double_click(self, event):
+        """Handle double-clicks on a Treeview cell to start inline editing."""
+
+        tree = event.widget
+        if tree.identify("region", event.x, event.y) != "cell":
+            return
+        row_id = tree.identify_row(event.y)
+        col = tree.identify_column(event.x)
+        if row_id and col:
+            self.start_editing_cell(tree, row_id, col)
+
+
+    def start_editing_cell(self, tree, row_id, col):
+        """
+        Open an entry widget to allow inline editing of a Treeview cell.
+
+        Args:
+            tree (Treeview): The Treeview widget.
+            row_id (str): The ID of the row to edit.
+            col (str): The column identifier (e.g., '#1').
+        """
+
+        # Prevent duplicate edit boxes
+        if self.edit_box:
+            return
+
+        x, y, width, height = tree.bbox(row_id, col)
+        if not width:
+            return
+
+        abs_x = tree.winfo_rootx() - self.winfo_rootx() + x
+        abs_y = tree.winfo_rooty() - self.winfo_rooty() + y
+        current_value = tree.set(row_id, col)
+
+        self.edit_box = ttk.Entry(self)
+        self.edit_box.place(x=abs_x, y=abs_y, width=width, height=height)
+        self.edit_box.insert(0, current_value)
+        self.edit_box.after_idle(self.edit_box.focus)
+        self.edit_box.select_range(0, "end")
+
+        def save_edit(event=None, next_col=None, prev_col=None):
+            new_value = self.edit_box.get()
+            old_value = tree.set(row_id, col)
+            if new_value != old_value:
+                tree.set(row_id, col, new_value)
+                self.is_dirty = True
+                self.update_buttons_state()
+            self.edit_box.destroy()
+            self.edit_box = None
+
+            # Move to next cell (just focus, don't set any value)
+            if next_col:
+                self.start_editing_cell(tree, row_id, next_col)
+            elif prev_col:
+                self.start_editing_cell(tree, row_id, prev_col)
+
+        self.edit_box.bind("<FocusOut>", save_edit)
+        self.edit_box.bind("<Return>", save_edit)
+        self.edit_box.bind("<Tab>", lambda e: save_edit(next_col=self._get_next_col(tree, col)), "break")
+        self.edit_box.bind("<Shift-Tab>", lambda e: save_edit(prev_col=self._get_prev_col(tree, col)), "break")
+
+
+    def _get_next_col(self, tree, col):
+        """
+        Get the identifier of the next column in the Treeview.
+
+        Args:
+            tree (Treeview): The Treeview widget.
+            col (str): The current column identifier (e.g., '#2').
+
+        Returns:
+            str or None: The next column identifier, or None if at the end.
+        """
+
+        col_index = int(col[1:]) - 1
+        next_index = col_index + 1
+        columns = tree["columns"]
+        if next_index < len(columns):
+            return f"#{next_index + 1}"
+        return None
+    
+
+    def _get_prev_col(self, tree, col):
+        """
+        Get the identifier of the previous column in the Treeview.
+
+        Args:
+            tree (Treeview): The Treeview widget.
+            col (str): The current column identifier (e.g., '#2').
+
+        Returns:
+            str or None: The previous column identifier, or None if at the start.
+        """
+
+        col_index = int(col[1:]) - 1
+        prev_index = col_index - 1
+        columns = tree["columns"]
+        if prev_index >= 0:
+            return f"#{prev_index + 1}"
+        return None
+

@@ -5,14 +5,35 @@ import config
 
 
 class ChordEditorLogic:
+    """
+    Logic handler for validating, preparing, and saving chord data in the chord editor.
+
+    This class provides:
+    - Input validation for chord entries (format, duplicates, placeholders, etc.)
+    - Data preparation for JSON output
+    - JSON serialization with custom formatting
+    - Integration with Treeview display logic
+
+    Attributes:
+        lang (dict): Dictionary of localized strings for error messages and placeholders.
+        placeholder_name (str): Placeholder text for the 'name' field.
+        placeholder_fingering (str): Placeholder text for the 'fingering' field.
+        placeholders (set): Set of strings considered invalid input placeholders.
+        list_columns (set): Columns that expect comma-separated lists.
+        note_pattern (Pattern): Regex for validating musical note input (e.g., C#, F♭).
+        interval_pattern (Pattern): Regex for validating interval input (e.g., b3, #5, 7).
+    """
+    
     def __init__(self, lang):
         self.lang = lang
 
         # common placeholders
+        self.placeholder_name = self.lang["editor_placeholder1"]
+        self.placeholder_fingering = self.lang["editor_placeholder2"]
         self.placeholders = {
             "???",
-            self.lang["editor_placeholder1"],
-            self.lang["editor_placeholder2"]
+            self.placeholder_name,
+            self.placeholder_fingering
         }
 
         self.list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
@@ -21,6 +42,16 @@ class ChordEditorLogic:
 
 
     def validate_treeviews(self, tables: dict) -> int:
+        """
+        Validate all cells in all Treeviews for syntax, completeness, and uniqueness.
+
+        Args:
+            tables (dict): Dictionary mapping difficulty levels to Treeview widgets.
+
+        Returns:
+            int: Number of invalid cells detected.
+        """
+
         invalid_cells = 0
         seen_names = {}
         seen_fingering = {}
@@ -121,6 +152,16 @@ class ChordEditorLogic:
 
 
     def prepare_save_data(self, tables: dict) -> dict:
+        """
+        Extract chord data from all Treeviews and convert it into a structured dict.
+
+        Args:
+            tables (dict): Dictionary mapping difficulty levels to Treeview widgets.
+
+        Returns:
+            dict: Structured chord data ready for serialization.
+        """
+                
         data = {}
         for level, tree in tables.items():
             data[level] = []
@@ -139,7 +180,16 @@ class ChordEditorLogic:
 
 
     def json_dumps_compact_lists(self, data):
-        # Dump JSON with indents but compact list formatting for readability
+        """
+        Serialize the chord data to a JSON string with compact list formatting.
+
+        Args:
+            data (dict): Chord data to be serialized.
+
+        Returns:
+            str: Formatted JSON string with compact lists.
+        """
+
         text = json.dumps(data, ensure_ascii=False, indent=4)
         pattern = re.compile(r'\[\s*(\".*?\"(?:,\s*\".*?\")*)\s*\]', re.DOTALL)
 
@@ -150,7 +200,18 @@ class ChordEditorLogic:
 
         return pattern.sub(replacer, text)
 
+
     def save_data(self, data):
+        """
+        Write chord data to file with compact list formatting.
+
+        Args:
+            data (dict): Chord data to save.
+
+        Returns:
+            tuple: (True, None) on success, or (False, Exception) on error.
+        """
+
         try:
             json_text = self.json_dumps_compact_lists(data)
             with open(config.CHORD_PATH, "w", encoding="utf-8") as f:
@@ -158,3 +219,62 @@ class ChordEditorLogic:
             return True, None
         except Exception as e:
             return False, e
+
+
+    def format_chord_for_display(self, chord: dict) -> tuple:
+        """
+        Convert a chord dictionary into a tuple of displayable strings for Treeview.
+
+        Args:
+            chord (dict): Chord entry with structured data.
+
+        Returns:
+            tuple: Display-friendly string values for each column.
+        """
+            
+        def to_display(value):
+            return ", ".join(value) if isinstance(value, list) else value or ""
+
+        return (
+            chord.get("name", ""),
+            to_display(chord.get("fingering", [])),
+            to_display(chord.get("fingers", [])),
+            to_display(chord.get("notes_on_strings", [])),
+            to_display(chord.get("chord_notes", [])),
+            to_display(chord.get("intervals", []))
+        )
+    
+
+    def get_default_row(self) -> list:
+        """
+        Return a default row with placeholders for a new chord.
+
+        Returns:
+            list: List of default placeholder values for each column.
+        """
+
+        return [
+            self.placeholder_name,             # placeholder chord name
+            self.placeholder_fingering,        # editable fingering field
+            "???",                             # unknown finger suggestion
+            "???",                             # unknown notes on strings
+            "???",                             # unknown chord tones
+            "???"                              # unknown intervals
+        ]
+
+
+    def insert_chords_into_tree(self, tree, chords: list):
+        """
+        Populate a Treeview with a list of chords and apply alternating row tags.
+
+        Args:
+            tree (Treeview): The target Treeview widget.
+            chords (list): List of chord dictionaries to insert.
+        """
+        
+        for i, chord in enumerate(chords):
+            tag = "evenrow" if i % 2 == 0 else "oddrow"
+            values = self.format_chord_for_display(chord)
+            tree.insert("", "end", values=values, tags=(tag,))
+
+
