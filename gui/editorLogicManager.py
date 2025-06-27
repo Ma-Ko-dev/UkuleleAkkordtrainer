@@ -95,11 +95,18 @@ class ChordEditorLogic:
                                 invalid_cells += 1
                                 continue
                             for p in parts:
-                                if not p.isdigit() or not (0 <= int(p) <= 12):
-                                    print(self.lang["error_editor_invalid_number"].format(
-                                        level=level, row_index=row_index, col=col, p=p))
-                                    invalid_cells += 1
-                                    break
+                                if col == "fingering":
+                                    if not p.isdigit() or not (0 <= int(p) <= 12):
+                                        print(self.lang["error_editor_invalid_number"].format(
+                                            level=level, row_index=row_index, col=col, p=p))
+                                        invalid_cells += 1
+                                        break
+                                elif col == "fingers":
+                                    if not p.isdigit() or not (0 <= int(p) <= 4):
+                                        print(self.lang["error_editor_invalid_number"].format(
+                                            level=level, row_index=row_index, col=col, p=p))
+                                        invalid_cells += 1
+                                        break
 
                         if col in {"notes_on_strings", "chord_notes"}:
                             if len(parts) < 3:
