@@ -34,10 +34,20 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 - Choose between fretnumber display or fingernumber display
 - Go back and forth through the last 4 chords you practiced
 
+### Chord Editor
+
+- Supports complex chord notations including slash chords and extensions  
+- Prevents duplicates in chord names and fingerings within difficulty levels  
+- Real-time feedback to prevent invalid input before saving  
+- Automatic handling of open edit dialogs on save or cancel  
+
 ## Preview
 
 <p align="center">
-  <img src="assets/previews/preview_v1.2.0.png" alt="Preview of the Ukulele Chord Trainer" width="600">
+  <img src="assets/previews/preview_v1.3.0.png" alt="Preview of the Ukulele Chord Trainer" width="600">
+</p>
+<p align="center">
+  <img src="assets/previews/editor_preview_1.3.0.png" alt="Preview of the Chord Editor" width="600">
 </p>
 
 ## Installation
