@@ -1,6 +1,7 @@
-import customtkinter as ctk
 from tkinter import ttk, messagebox
 from gui.editorLogicManager import ChordEditorLogic
+from version import __VERSION__
+import customtkinter as ctk
 import config
 import utils
 
@@ -46,7 +47,7 @@ class ChordEditor(ctk.CTkToplevel):
         self.logic = ChordEditorLogic(self.lang)
         self.edit_box = None
         self.on_close = on_close
-        self.title(f"{self.lang['editor_title']}")
+        self.title(f"{lang['title']} - {lang['info_version'].format(version=__VERSION__)} - {self.lang['editor_title']}")
         self.geometry("1000x650")
 
         self.is_dirty = False # just to make sure "no changes" are saved to the file later
