@@ -399,6 +399,15 @@ class ChordEditor(ctk.CTkToplevel):
         self.edit_box.bind("<Return>", save_edit)
         self.edit_box.bind("<Tab>", lambda e: save_edit(next_col=self._get_next_col(tree, col)), "break")
         self.edit_box.bind("<Shift-Tab>", lambda e: save_edit(prev_col=self._get_prev_col(tree, col)), "break")
+        self.edit_box.bind("<Escape>", lambda e: self.cancel_edit())
+
+
+    def cancel_edit(self):
+        """Cancel editing and remove the edit box without saving changes."""
+        if self.edit_box:
+            self.edit_box.destroy()
+            self.edit_box = None
+            self.focus_force()
 
 
     def _get_next_col(self, tree, col):
