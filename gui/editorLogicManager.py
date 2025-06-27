@@ -38,15 +38,24 @@ class ChordEditorLogic:
 
         self.list_columns = {"fingering", "fingers", "notes_on_strings", "chord_notes", "intervals"}
         self.chord_name_pattern = re.compile(
-            r"^[A-G]"                           # Root note A-G
-            r"(?:#|b|♯|♭)?"                     # Optional sharp/flat symbol (including Unicode ♯♭)
-            r"(?:m|maj|min|dim|aug|sus|add|M)?" # Optional chord quality (minor, major, diminished, augmented, suspended, added, M for major)
-            r"(?:\d{0,2})?"                     # Optional chord number (up to two digits, e.g., 6, 13)
-            r"(?:[24679])?"                     # Optional additional number for added tones (2,4,6,7,9)
-            r"(?:[^\s/]*)?"                     # Optional extra suffix (e.g. 7, 9, 11 etc.)
-            r"(?:/[A-G](?:#|b|♯|♭)?(?:m|maj|min|dim|aug|sus|add|M)?\d{0,2}[24679]?[^\s/]*)?$",
+            r"^"                                # Start string
+            r"[A-G]"                            # Root note A-G
+            r"(?:#|b|♯|♭)?"                     # Optional sharp/flat symbol
+            r"(?:m|maj|min|dim|aug|sus|add|M)?" # Optional chord quality
+            r"\d{0,2}"                          # Optional chord number (e.g. 7, 13)
+            r"(?:sus\d?)?"                      # Optional suspension (sus or sus2, sus4)
+            r"(?:[+#-]?\d*)?"                   # Optional alteration like #9, b5, +11, -13
+            r"(?:b5|#5|b9|#9|b11|#11|b13|#13)?" # Optional common alterations explicitly
+            r"(?:/[A-G](?:#|b|♯|♭)?"            # Optional slash chord bass note
+            r"(?:m|maj|min|dim|aug|sus|add|M)?" # Optional chord quality in bass note
+            r"\d{0,2}"                          # Optional number in bass note
+            r"(?:sus\d?)?"                      # Optional suspension in bass note
+            r"(?:[+#-]?\d*)?"                   # Optional alteration in bass note
+            r"(?:b5|#5|b9|#9|b11|#11|b13|#13)?" # Optional common alterations in bass note
+            r")?$",
             re.IGNORECASE
         )
+
         self.note_pattern = re.compile(
             r"^[A-Ga-g]"        # Note letter A-G (case insensitive)
             r"(?:#|b|♯|♭)?$"    # Optional sharp or flat (including Unicode ♯♭)
@@ -156,7 +165,7 @@ class ChordEditorLogic:
                 norm_fingering = fingering.replace(" ", "")
 
                 if name:
-                    if name and not self.chord_name_pattern.match(name):
+                    if name and not self.chord_name_pattern.fullmatch(name):
                         print(self.lang["error_editor_invalid_chord_name"].format(
                             level=level, row_index=row_index, name=name))
                         invalid_cells += 1
