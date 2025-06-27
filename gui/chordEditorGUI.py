@@ -292,6 +292,11 @@ class ChordEditor(ctk.CTkToplevel):
 
         if not self.is_dirty:
             return
+        
+        if self.edit_box:
+            self.edit_box.focus_force()  # move focus away to trigger FocusOut
+            self.focus_force()           # bring focus back to the main window
+            self.update()                # process pending events (optional but clean)
 
         errors = self.logic.validate_treeviews(self.tables)
         if errors > 0:
