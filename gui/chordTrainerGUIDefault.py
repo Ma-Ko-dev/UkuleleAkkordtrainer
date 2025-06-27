@@ -5,8 +5,30 @@ from gui.mainGuiLogicManager import GuiLogicManager
 
 
 class DefaultChordTrainerGUI(ctk.CTkFrame):
+    """
+    A custom Tkinter frame for the main user interface of the ukulele chord trainer.
+
+    This class builds a complete layout for chord training, displaying chord details,
+    history, fingering visualization, and various settings. It also connects to the
+    logic layer to handle chord progression, timer functionality, and state updates.
+    
+    Attributes:
+        chords (list): List of chord data dictionaries.
+        lang (dict): Dictionary with language-specific UI labels.
+        mode_var (StringVar): Current mode selection (random, song, twitch).
+        logic (GuiLogicManager): Handles all non-visual chord logic.
+    """
 
     def __init__(self, master, chords, lang):
+        """
+        Initialize the GUI and build all widgets and frames.
+
+        Args:
+            master (tk.Widget): The parent widget.
+            chords (list): A list of chords loaded from the JSON data.
+            lang (dict): Language dictionary for UI localization.
+        """
+
         super().__init__(master)
         self.chords = chords
         self.lang = lang
@@ -33,29 +55,73 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         # self.after(100, zeige_breite)
     
     def get_first_chord(self):
+        """ Trigger the logic to display the first chord. """
         self.logic.next_chord(self.lang)
 
     def reload_chords(self, chords):
+        """
+        Reload the chord list (e.g. after language or difficulty change).
+
+        Args:
+            chords (list): The new list of chords.
+        """
         self.chords = chords
 
     def update_chord_label(self, text):
+        """
+        Update the label that displays the current chord name.
+
+        Args:
+            text (str): The new chord name.
+        """
         self.current_chord.configure(text=text)
 
     def update_fretboard(self, fingering, fingers):
+        """
+        Draw the current chord fingering on the fretboard.
+
+        Args:
+            fingering (list): List of finger positions per string.
+            fingers (list): List of finger numbers per string.
+        """
         self.fretboard_middle.draw_chord(fingering, fingers)
         self._last_fingering = fingering
         self._last_fingers = fingers
 
     def update_learned_label(self, text):
+        """
+        Update the label showing learned chord stats.
+
+        Args:
+            text (str): The updated stats text.
+        """
         self.learned_label.configure(text=text)
 
     def update_status_display_label(self, text):
+        """
+        Update the status display label at the bottom of the UI.
+
+        Args:
+            text (str): The status message to display.
+        """
         self.status_display_label.configure(text=text)
 
     def set_timer_button_text(self, text):
+        """
+        Set the text of the timer start/stop button.
+
+        Args:
+            text (str): New label text for the button.
+        """
         self.timer_button.configure(text=text)
 
     def set_chord_setting(self, value):
+        """
+        Change the chord display mode (frets or fingering).
+
+        Args:
+            value (str): Display mode label from the language dict.
+        """
         if value == self.lang['chord_setting_frets']:
             config.CHORD_DISPLAY_SETTING = "frets"
         elif value == self.lang['chord_setting_fingering']:
@@ -65,6 +131,12 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.update_fretboard(self._last_fingering, self._last_fingers)
 
     def set_prefered_hand(self, value):
+        """
+        Set the preferred hand (left or right) and update the fretboard.
+
+        Args:
+            value (str): Selected hand preference from the language dict.
+        """
         if value == self.lang['chord_hand_right']:
             config.PREFERED_HAND = "right"
         elif value == self.lang['chord_hand_left']:
@@ -74,17 +146,31 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         self.fretboard_middle.redraw()
 
     def set_next_chord_button_state(self, state):
+        """
+        Enable or disable the next/previous chord buttons.
+
+        Args:
+            state (str): Either "normal" or "disabled".
+        """
         self.next_random_chord_button.configure(state=state)
         self.next_in_history_button.configure(state=state)
         self.prev_in_history_button.configure(state=state)
 
     def update_theme(self):
+        """ Trigger a theme update on the fretboard. """
         self.fretboard_middle.update_theme()
 
     def update_previous_chords(self):
+        """ Update the label that shows previously played chords. """
         self.chord_history.configure(text=f"{self.lang['chord_history']}\n" + " ".join(config.PAST_CHORDS))
 
     def update_interval(self, chord):
+        """
+        Display the musical intervals of the given chord.
+
+        Args:
+            chord (str): Name of the chord.
+        """
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
         if chord_obj:
             intervals = chord_obj.get("intervals", [])
@@ -93,6 +179,12 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             self.chord_interval.configure(text=f"{self.lang['error_interval']}")
 
     def update_chord_tones(self, chord):
+        """
+        Display the individual chord tones of the given chord.
+
+        Args:
+            chord (str): Name of the chord.
+        """
         chord_obj = next((c for c in self.chords if c["name"].lower() == chord.lower()), None)
         if chord_obj:
             tones = chord_obj.get("chord_notes", [])
@@ -101,6 +193,12 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             self.chord_tones.configure(text=f"{self.lang['error_notes']}")
 
     def update_navigation_buttons(self, history_index):
+        """
+        Update the state (enabled/disabled) of the navigation buttons based on history.
+
+        Args:
+            history_index (int or None): The current index in the chord history.
+        """
         total = len(config.PAST_CHORDS)
 
         # Forward button: enabled only if there is something forward to go
@@ -118,6 +216,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             self.prev_in_history_button.configure(state="disabled")
 
     def build_widgets(self):
+        """ Construct and arrange all GUI components and frames. """
         # outer frame
         self.outer_frame = ctk.CTkFrame(self, border_width=3, corner_radius=16)
         self.outer_frame.pack(expand=True, fill="both", pady=10, padx=10)
