@@ -57,3 +57,14 @@ Download the latest [release](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/
 ## Notes on voice recognition
 
 Voice control uses the Google Web Speech API, which requires an internet connection and may be subject to usage limits. For extensive or commercial use, consider using your own API solution.
+
+
+### 🙌 Optional Support
+
+This project is open source and provided for free – no donations, no paid features.  
+If you'd still like to send a small token of appreciation, you can do so via my personal wishlist:  
+[![Wishlist on Throne](https://raw.githubusercontent.com/throneapp/media-kit/main/badges/throne-black.svg)](https://throne.com/gariot)
+
+Please note: This is entirely voluntary and not connected to any service, support, or feature.  
+You're not expected to give anything – using or enjoying the project is more than enough. 😊
+
