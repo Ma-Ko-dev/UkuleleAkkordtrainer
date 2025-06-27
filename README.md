@@ -59,7 +59,7 @@ Download the latest [release](https://github.com/Ma-Ko-dev/UkuleleAkkordtrainer/
 Voice control uses the Google Web Speech API, which requires an internet connection and may be subject to usage limits. For extensive or commercial use, consider using your own API solution.
 
 
-### 🙌 Optional Support
+## 🙌 Optional Support
 
 This project is open source and provided for free – no donations, no paid features.  
 If you'd still like to send a small token of appreciation, you can do so via my personal wishlist:  
