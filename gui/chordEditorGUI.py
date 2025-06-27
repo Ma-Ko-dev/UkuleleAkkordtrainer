@@ -276,7 +276,10 @@ class ChordEditor(ctk.CTkToplevel):
     def reset_tables(self):
         """Reset all chord tables to the original loaded state."""
 
-        # Reset all tables to initial loaded data state
+        if self.edit_box is not None:
+            self.edit_box.destroy()
+            self.edit_box = None
+
         for level, tree in self.tables.items():
             tree.delete(*tree.get_children())  # Clear all rows
             self.logic.insert_chords_into_tree(tree, self.data.get(level, []))
