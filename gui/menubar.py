@@ -7,6 +7,12 @@ from gui import LegacyChordTrainerGUI, DefaultChordTrainerGUI, ChordEditor
 
 
 def create_menubar(root, app, lang, config_data):
+    """
+    Creates and returns the main menu bar for the application window.
+
+    Includes file actions, layout and theme settings, difficulty levels, and help options.
+    """
+    
     root.theme_var = tk.StringVar()
     root.theme_var.set(ctk.get_appearance_mode())
     chord_editor_ref = None  # <- Referenz auf das Fenster 
