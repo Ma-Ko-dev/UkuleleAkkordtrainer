@@ -15,9 +15,16 @@ def create_menubar(root, app, lang, config_data):
     
     root.theme_var = tk.StringVar()
     root.theme_var.set(ctk.get_appearance_mode())
-    chord_editor_ref = None  # <- Referenz auf das Fenster 
+    chord_editor_ref = None 
 
+    
     def set_difficulty(level):
+        """
+        Changes the current difficulty level, reloads chords, updates the config and menu.
+
+        Args:
+            level (str): The difficulty level to set ("easy", "medium", or "hard").
+        """
         nonlocal current_difficulty
         if level != current_difficulty:
             config_data["difficulty"] = level
