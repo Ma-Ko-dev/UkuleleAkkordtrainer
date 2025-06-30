@@ -39,6 +39,9 @@ def create_menubar(root, app, lang, config_data):
             app.logic.clear_history()
 
     def update_difficulty_menu():
+        """
+        Rebuilds the difficulty submenu with the correct enabled/disabled states.
+        """
         difficulty_submenu.delete(0, "end")
         for level in difficulty_labels:
             state = "disabled" if level == current_difficulty else "normal"
@@ -49,6 +52,12 @@ def create_menubar(root, app, lang, config_data):
             )
 
     def switch_theme(mode):
+        """
+        Switches the application's theme between Light and Dark.
+
+        Args:
+            mode (str): The theme to switch to ("Light" or "Dark").
+        """
         if mode == ctk.get_appearance_mode():
             return
         ctk.set_appearance_mode(mode)
@@ -59,6 +68,11 @@ def create_menubar(root, app, lang, config_data):
         utils.save_config(config_data)
 
     def open_chord_editor():
+        """
+        Opens the Chord Editor window, or brings it to focus if it's already open.
+
+        On closing the editor, chords are reloaded if changes were saved.
+        """
         nonlocal chord_editor_ref
 
         def on_editor_close():
