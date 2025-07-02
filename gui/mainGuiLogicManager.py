@@ -9,7 +9,21 @@ from utils.discord_presence import DiscordRichPresence
 
 
 class GuiLogicManager:
+    """
+    Manages the core logic for the Ukulele Chord Trainer GUI.
+
+    Handles chord progression, speech recognition commands, timer functionality,
+    and integration with Discord Rich Presence.
+    """
     def __init__(self, master, chords, lang):
+        """
+        Initialize the logic manager.
+
+        Args:
+            master (tk.Widget): The main GUI widget to interact with.
+            chords (list): List of chord dictionaries.
+            lang (dict): Dictionary with language strings for UI and messages.
+        """
         self.master = master
         self.chords = chords
         self.lang = lang
