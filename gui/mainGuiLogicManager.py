@@ -43,12 +43,22 @@ class GuiLogicManager:
 
 
     def clear_history(self):
+        """
+        Clears the history of previously shown chords and resets the history index.
+        Then immediately shows the next chord.
+        """
         config.PAST_CHORDS = []
         self.history_index = None
         self.next_chord(self.lang)
 
 
     def show_chord_by_name(self, name):
+        """
+        Display a chord by its name: updates Discord presence, labels, and fretboard.
+
+        Args:
+            name (str or dict): The chord name or a dict containing a 'name' key.
+        """
         if isinstance(name, dict):
             name = name.get("name", "")
         chord = next((c for c in self.chords if c["name"].strip().lower() == name.lower()), None)
