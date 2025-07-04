@@ -71,6 +71,13 @@ class GuiLogicManager:
 
 
     def next_chord(self, lang):
+        """
+        Select and display a random chord not recently shown.
+        Manages the history buffer and updates the GUI accordingly.
+
+        Args:
+            lang (dict): Language strings used for messages and errors.
+        """
         past_names = [n.strip().lower() for n in config.PAST_CHORDS]
 
         possible = [
@@ -103,6 +110,10 @@ class GuiLogicManager:
         self.master.update_navigation_buttons(self.history_index)
 
     def forward_chord(self):
+        """
+        Move forward in the chord history, if possible, and display the chord.
+        Shows warnings if at the newest chord already.
+        """
         if not hasattr(self, "history_index") or self.history_index is None:
             warning = f"{self.lang['no_more_forward']}"
             self.master.update_status_display_label(warning)
@@ -123,11 +134,16 @@ class GuiLogicManager:
         self.master.update_navigation_buttons(self.history_index)
 
     def previous_chord(self):
+        """
+        Move backward in the chord history and display the previous chord.
+        Shows warnings if at the oldest chord already.
+        """
         if not hasattr(self, "history_index") or self.history_index is None:
             self.history_index = -2
         else:
             self.history_index -= 1
 
+        # the warnings are technically obsolet but will stay just in case
         if abs(self.history_index) > len(config.PAST_CHORDS):
             warning = f"{self.lang['no_more_back']}"
             self.master.update_status_display_label(warning)
@@ -140,6 +156,14 @@ class GuiLogicManager:
         self.master.update_navigation_buttons(self.history_index)
 
     def speech_recognition(self, lang):
+        """
+        Continuously listen for voice commands using Google's Speech API.
+
+        Recognizes commands for 'next' chord and 'stop' program.
+
+        Args:
+            lang (dict): Language strings for messages and recognized commands.
+        """
         recognizer = sr.Recognizer()
         with sr.Microphone() as source:
             while self.running:
