@@ -192,6 +192,12 @@ class GuiLogicManager:
                     break
 
     def reload_chords(self, lang):
+        """
+        Reload the chord list from disk and update the GUI.
+
+        Args:
+            lang (dict): Language strings used for error messages.
+        """
         new_chords = load_chords(lang)
         if new_chords:
             self.chords = new_chords
@@ -200,6 +206,14 @@ class GuiLogicManager:
             print(f"{lang['error_reloading_chords']}")
 
     def toggle_timer(self, lang):
+        """
+        Start or stop the automatic chord progression timer.
+
+        Updates GUI controls, speech recognition status, and timer button text.
+
+        Args:
+            lang (dict): Language strings for button labels and messages.
+        """
         if self.timer_active:
             self.timer_active = False
             if self.timer_id:
@@ -220,13 +234,30 @@ class GuiLogicManager:
             self.master.update_navigation_buttons(self.history_index)
     
     def schedule_next_timer(self):
+        """
+        Schedule the next countdown tick if the timer is active.
+        """
         if self.timer_active:
             self.countdown(self.timer_interval // 1000)
 
     def update_timer_display(self, seconds_left):
         self.master.update_status_display_label(f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
+        """
+        Update the GUI status label to show the remaining time on the timer.
+
+        Args:
+            seconds_left (int): Seconds left on the countdown.
+        """
 
     def countdown(self, seconds_left):
+        """
+        Recursively counts down the timer in one-second intervals.
+
+        When the countdown reaches zero, advances to the next chord and restarts the timer.
+
+        Args:
+            seconds_left (int): Seconds left on the countdown.
+        """
         if not self.timer_active:
             self.master.update_status_display_label("")
             return
