@@ -258,6 +258,7 @@ class GuiLogicManager:
         Args:
             seconds_left (int): Seconds left on the countdown.
         """
+        # TODO make the countdown adjustable by user
         if not self.timer_active:
             self.master.update_status_display_label("")
             return
