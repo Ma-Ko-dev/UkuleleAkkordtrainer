@@ -30,7 +30,7 @@ class GuiLogicManager:
         self.speech_enabled = True
         self.learned_chords = -1
         self.timer_active = False
-        self.timer_interval = 10000 # in ms ca. 10 seconds
+        self.timer_interval = config.TIMER_INTERVAL_MS
         self.timer_id = None
         self.running = True
         self.history_index = None
