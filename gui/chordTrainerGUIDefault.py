@@ -215,6 +215,12 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
         else:
             self.prev_in_history_button.configure(state="disabled")
 
+    def update_timer_interval(self, value):
+        """Update the global timer interval and display it."""
+        seconds = int(round(value))
+        config.TIMER_INTERVAL_MS = seconds * 1000
+        self.timer_slider_label.configure(text=f"Timer: {seconds} s")
+
     def build_widgets(self):
         """ Construct and arrange all GUI components and frames. """
         # outer frame
@@ -348,7 +354,23 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
             self.control_frame, text=f"{self.lang['timer_button_start']}", 
             font=(config.BASE_FONT, 14), 
             command=lambda: self.logic.toggle_timer(self.lang))
-        self.timer_button.pack(pady=(2, 10))
+        self.timer_button.pack(pady=2)
+
+        self.timer_slider_label = ctk.CTkLabel(
+            self.control_frame,
+            text=f"Timer: {config.TIMER_INTERVAL_MS // 1000} s",
+            font=(config.BASE_FONT, 14))
+        self.timer_slider_label.pack(pady=2)
+
+        self.timer_slider = ctk.CTkSlider(
+            self.control_frame,
+            from_=1,
+            to=15,
+            number_of_steps=14,
+            command=self.update_timer_interval,
+            width=150)
+        self.timer_slider.set(config.TIMER_INTERVAL_MS // 1000)
+        self.timer_slider.pack(pady=(2, 10))
 
 
         # third inner frame, inside of outer frame

@@ -238,7 +238,7 @@ class GuiLogicManager:
         Schedule the next countdown tick if the timer is active.
         """
         if self.timer_active:
-            self.countdown(self.timer_interval // 1000)
+            self.countdown(config.TIMER_INTERVAL_MS // 1000)
 
     def update_timer_display(self, seconds_left):
         self.master.update_status_display_label(f"{self.lang['timer_text'].format(seconds_left=seconds_left)}")
@@ -267,6 +267,6 @@ class GuiLogicManager:
 
         if seconds_left <= 0:
             self.next_chord(self.lang)
-            self.countdown(self.timer_interval // 1000)
+            self.countdown(config.TIMER_INTERVAL_MS // 1000)
         else:
             self.timer_id = self.master.after(1000, lambda: self.countdown(seconds_left - 1))
