@@ -47,6 +47,7 @@
   "speech_next": "next",
   "speech_stop": "stop",
   "timer_text": "{seconds_left} seconds left until the next chord",
+  "timer_slider_label": "Timer",
   "learned_chords_text": "Learned: {count} Chords",
   "chord_history": "Last Chords:",
   "chord_interval": "Intervals:",

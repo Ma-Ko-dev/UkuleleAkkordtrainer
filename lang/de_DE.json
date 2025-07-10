@@ -47,6 +47,7 @@
   "speech_next": "weiter",
   "speech_stop": "stopp",
   "timer_text": "Noch {seconds_left} Sekunden bis zum nächsten Akkord",
+  "timer_slider_label": "Timer",
   "learned_chords_text": "Gelernt: {count} Akkorde",
   "chord_history": "Letzte Akkorde:",
   "chord_interval": "Intervalle:",

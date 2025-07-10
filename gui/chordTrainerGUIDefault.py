@@ -358,7 +358,7 @@ class DefaultChordTrainerGUI(ctk.CTkFrame):
 
         self.timer_slider_label = ctk.CTkLabel(
             self.control_frame,
-            text=f"Timer: {config.TIMER_INTERVAL_MS // 1000} s",
+            text=f"{self.lang['timer_slider_label']} {config.TIMER_INTERVAL_MS // 1000} s",
             font=(config.BASE_FONT, 14))
         self.timer_slider_label.pack(pady=2)
 
