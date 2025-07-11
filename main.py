@@ -7,15 +7,24 @@ from gui import DefaultChordTrainerGUI
 from gui import create_menubar
 from version import __VERSION__
 
+# TODO Check error handling in the whole project, its currently a bit sloppy
 
 
 def main():
+    # list of valid layouts in case a user edits the config file manually
+    valid_layouts = ["default"]
+
     root = ctk.CTk()
 
-    # TODO Check error handling in the whole project, its currently a bit sloppy
-
+    # Validate layout value from config. reset to default if invalid
     config_data = utils.load_config()
     layout = config_data.get("layout", "default")
+    if layout not in valid_layouts:
+        # TODO Add strings to lang files
+        print(f"⚠ Warning: Unknown layout '{layout}', falling back to 'default'")
+        layout = "default"
+        config_data["layout"] = layout
+        utils.save_config(config_data)
 
     # set color theme
     ctk.set_appearance_mode(config_data["theme"])  # "Dark" (standard), "Light", "System"
