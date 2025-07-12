@@ -102,6 +102,7 @@
   "error_editor_validation_message": "Es gibt {errors} ungültige Zelle(n). Bitte alle Felder korrekt ausfuellen und Platzhalter entfernen.",
   "error_editor_no_selection_title": "Keine Auswahl",
   "error_editor_no_selection_message": "Bitte wähle eine Zeile zum Löschen aus.",
+  "error_layout": "Warnung: Unbekanntes Layout '{layout}', falle zurück auf 'default' Layout",
   "error_notes": "Noten: Unbekannt",
   "error_interval": "Intervalle: Unbekannt",
   "error_write_file": "Fehler beim schreiben der Datei:",

@@ -102,6 +102,7 @@
   "error_editor_validation_message": "There are {errors} invalid cell(s). Please fill all fields correctly and remove placeholders.",
   "error_editor_no_selection_title": "No Selection",
   "error_editor_no_selection_message": "Please select a row to delete.",
+  "error_layout": "Warning: Unknown layout '{layout}', falling back to 'default'",
   "error_notes": "Notes: Unknown",
   "error_interval": "Intervals: Unknown",
   "error_write_file": "Error writing file:",

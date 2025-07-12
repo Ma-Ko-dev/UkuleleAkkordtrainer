@@ -15,13 +15,17 @@ def main():
     valid_layouts = ["default"]
 
     root = ctk.CTk()
+    
+    # for debug purposes
+    # lang = utils.load_language("en_US")
+    lang = utils.load_language(utils.get_system_language())
+    utils.set_font(config.LANG_CODE)
 
     # Validate layout value from config. reset to default if invalid
     config_data = utils.load_config()
     layout = config_data.get("layout", "default")
     if layout not in valid_layouts:
-        # TODO Add strings to lang files
-        print(f"⚠ Warning: Unknown layout '{layout}', falling back to 'default'")
+        print(f"{lang['error_layout']}")
         layout = "default"
         config_data["layout"] = layout
         utils.save_config(config_data)
@@ -29,11 +33,6 @@ def main():
     # set color theme
     ctk.set_appearance_mode(config_data["theme"])  # "Dark" (standard), "Light", "System"
     ctk.set_default_color_theme("dark-blue")  # "blue" (standard), "green", "dark-blue"
-    
-    # for debug purposes
-    # lang = utils.load_language("en_US")
-    lang = utils.load_language(utils.get_system_language())
-    utils.set_font(config.LANG_CODE)
 
     config.DIFFICULTY = config_data.get("difficulty", "easy")
     chords = utils.load_chords(lang)
