@@ -16,7 +16,7 @@ def main():
 
     root = ctk.CTk()
     
-    # for debug purposes
+    # for debug purposes. voice control wont work this way!
     # lang = utils.load_language("en_US")
     lang = utils.load_language(utils.get_system_language())
     utils.set_font(config.LANG_CODE)
