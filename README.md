@@ -44,7 +44,7 @@ A simple ukulele chord trainer with graphical fretboard and voice control, writt
 ## Preview
 
 <p align="center">
-  <img src="assets/previews/preview_v1.3.0.png" alt="Preview of the Ukulele Chord Trainer" width="600">
+  <img src="assets/previews/preview_v1.3.1.png" alt="Preview of the Ukulele Chord Trainer" width="600">
 </p>
 <p align="center">
   <img src="assets/previews/editor_preview_1.3.0.png" alt="Preview of the Chord Editor" width="600">
